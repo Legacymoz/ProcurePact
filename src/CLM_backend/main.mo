@@ -16,7 +16,6 @@ actor class CLM() = {
     phone : Text;
     address : Text;
     bio : Text;
-    profilePicture : Text; // URL to the profile picture
     createdAt : Int; // Timestamp of when the user was created
     updatedAt : Int; // Timestamp of the last update to the user profile
     contracts : List.List<Nat32>;
@@ -43,6 +42,10 @@ actor class CLM() = {
     };
   };
 
+  type document = {
+
+  };
+
   type Contract = {
     name : Text;
     description : Text;
@@ -53,6 +56,7 @@ actor class CLM() = {
     expiresAt : ?Int; // optional expiration date
     parties : Trie.Trie<Principal, Party>;
     //signatures
+    //document
   };
 
   type ContractStatus = {
@@ -78,7 +82,7 @@ actor class CLM() = {
   stable var connections : Trie.Trie<Principal, Trie.Trie<Principal, ConnectionStatus>> = Trie.empty();
 
   //add user
-  public shared ({ caller }) func addUser(name : Text, email : Text, phone : Text, address : Text, bio : Text, profilePicture : Text) : async Result.Result<Text, Text> {
+  public shared ({ caller }) func addUser(name : Text, email : Text, phone : Text, address : Text, bio : Text) : async Result.Result<Text, Text> {
     if (Trie.get(users, key(caller), Principal.equal) != null) {
       return #err("User already exists.");
     };
@@ -90,7 +94,6 @@ actor class CLM() = {
       phone = phone;
       address = address;
       bio = bio;
-      profilePicture = profilePicture; // URL to the profile picture
       createdAt = now;
       updatedAt = now; // assume creation time is also update time
       contracts = List.nil<Nat32>();
@@ -98,17 +101,50 @@ actor class CLM() = {
     users := Trie.put(users, key(caller), Principal.equal, newUser).0;
     return #ok("User added successfully.");
   };
-  //get contracts for user
-  public shared ({ caller }) func getContracts() : async Result.Result<[Contract], Text> {
+  //get user
+  public shared func getUser(principal : Principal) : async ?User {
+    return Trie.get(users, key(principal), Principal.equal);
+  };
+  //update user
+  public shared ({ caller }) func updateUser(name : Text, email : Text, phone : Text, address : Text, bio : Text) : async Result.Result<Text, Text> {
     switch (Trie.get(users, key(caller), Principal.equal)) {
       case (?user) {
-        let contractList = List.foldLeft<Nat32, List.List<Contract>>(
+        let now = Time.now();
+        let updatedUser : User = {
+          name = name;
+          email = email;
+          phone = phone;
+          address = address;
+          bio = bio;
+          createdAt = user.createdAt;
+          updatedAt = now;
+          contracts = user.contracts;
+        };
+        users := Trie.put(users, key(caller), Principal.equal, updatedUser).0;
+        return #ok("User updated successfully!");
+      };
+      case (null) {
+        #err("User doesn't exist!");
+      };
+    };
+  };
+
+  //get contracts for user
+  public shared func getContracts(principal : Principal) : async Result.Result<[{ contractId : Nat32; contract : Contract }], Text> {
+    switch (Trie.get(users, key(principal), Principal.equal)) {
+      case (?user) {
+        let contractList = List.foldLeft<Nat32, List.List<{ contractId : Nat32; contract : Contract }>>(
           user.contracts,
-          List.nil<Contract>(),
+          List.nil<{ contractId : Nat32; contract : Contract }>(),
+          
           func(acc, cId) {
             switch (Trie.get(contracts, { hash = cId; key = cId }, Nat32.equal)) {
-              case (?contract) { List.push(contract, acc) };
-              case null { acc };
+              case (?contract) {
+                List.push({ contractId = cId; contract = contract }, acc);
+              };
+              case null {
+                acc;
+              };
             };
           },
         );
@@ -119,6 +155,7 @@ actor class CLM() = {
       };
     };
   };
+
   /*connection functions:
   requestConnection: request a connection to another user
   acceptConnectionRequest: accept a connection request from another user
@@ -138,7 +175,7 @@ actor class CLM() = {
       case (?userConnections) {
         // Check if 'to' is already connected
         switch (Trie.get(userConnections, key(to), Principal.equal)) {
-          case (?status) {
+          case (?_status) {
             // If a connection exists, return an error
             return #err("Connection already exists with this user");
           };
@@ -236,7 +273,6 @@ actor class CLM() = {
       phone = user.phone;
       address = user.address;
       bio = user.bio;
-      profilePicture = user.profilePicture;
       createdAt = user.createdAt;
       updatedAt = Time.now(); // assume update time here
       contracts = List.push(contractId, user.contracts);
@@ -256,13 +292,25 @@ actor class CLM() = {
     };
   };
 
-  public shared ({ caller }) func createContract(name : Text, description : Text, party : Party) : async Result.Result<Text, Text> {
+  public shared ({ caller }) func createContract(name : Text, description : Text, role : Text) : async Result.Result<Text, Text> {
     let contractId = nextContractId;
     let now = Time.now();
 
     //check if user exists
     switch (Trie.get(users, key(caller), Principal.equal)) {
       case (?user) {
+
+        let party : Party = {
+          status = #Accepted;
+          classification = switch (role) {
+            case ("Buyer") #Buyer;
+            case ("Supplier") #Supplier;
+            case ("ThirdParty") #ThirdParty;
+            case (_) {
+              return #err("Invalid role provided. Must be 'Buyer', 'Supplier', or 'ThirdParty'.");
+            };
+          };
+        };
         // User exists, proceed to create contract
         let newContract : Contract = {
           name = name;
@@ -381,4 +429,6 @@ actor class CLM() = {
       };
     };
   };
+
+  //Editing contract
 };

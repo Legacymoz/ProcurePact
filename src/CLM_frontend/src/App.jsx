@@ -1,30 +1,24 @@
-import { useState } from 'react';
-import { CLM_backend } from 'declarations/CLM_backend';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./Hooks/AuthContext";
+import Layout from "./Components/Layout";
+import Contracts from "./Pages/Contracts";
+import EditContract from "./Pages/EditContract";
+import Profile from "./Pages/Profile";
 
-function App() {
-  const [greeting, setGreeting] = useState('');
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    CLM_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
-
+const App = () => {
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Contracts />} />
+              <Route path="profile" element={<Profile/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </>
   );
 }
 
