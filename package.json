@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@dfinity/identity": "^2.4.1",
+    "react-quill": "^2.0.0",
     "react-toastify": "^11.0.5"
   }
 }

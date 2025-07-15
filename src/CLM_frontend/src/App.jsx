@@ -14,6 +14,7 @@ const App = () => {
             <Route path="/" element={<Layout />}>
               <Route index element={<Contracts />} />
               <Route path="profile" element={<Profile/>}/>
+              <Route path="contract/:id" element={<EditContract />} />
             </Route>
           </Routes>
         </BrowserRouter>

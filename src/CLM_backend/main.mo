@@ -5,6 +5,7 @@ import Result "mo:base/Result";
 import List "mo:base/List";
 import Nat32 "mo:base/Nat32";
 import Time "mo:base/Time";
+import Blob "mo:base/Blob";
 
 actor class CLM() = {
 
@@ -42,19 +43,23 @@ actor class CLM() = {
     };
   };
 
-  type document = {
-
+  type ContractDocument = {
+    file : Blob;
+    fileType : Text;
+    //🚩 use trie to store document versions
   };
 
   type Contract = {
     name : Text;
     description : Text;
     createdAt : Int; // timestamp of contract creation
+    updatedAt : Int;
     createdBy : Principal;
     status : ContractStatus; // e.g., "draft", "active", "completed", "cancelled"
     completionDate : ?Int; // optional completion date
     expiresAt : ?Int; // optional expiration date
     parties : Trie.Trie<Principal, Party>;
+    //updated At
     //signatures
     //document
   };
@@ -129,18 +134,27 @@ actor class CLM() = {
     };
   };
 
-  //get contracts for user
-  public shared func getContracts(principal : Principal) : async Result.Result<[{ contractId : Nat32; contract : Contract }], Text> {
+  //get contracts summary for user
+  // get contracts summary for user
+  public shared func getContracts(principal : Principal) : async Result.Result<[{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int }], Text> {
     switch (Trie.get(users, key(principal), Principal.equal)) {
       case (?user) {
-        let contractList = List.foldLeft<Nat32, List.List<{ contractId : Nat32; contract : Contract }>>(
+        let summaries = List.foldLeft<Nat32, List.List<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int }>>(
           user.contracts,
-          List.nil<{ contractId : Nat32; contract : Contract }>(),
-          
+          List.nil<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int }>(),
           func(acc, cId) {
             switch (Trie.get(contracts, { hash = cId; key = cId }, Nat32.equal)) {
               case (?contract) {
-                List.push({ contractId = cId; contract = contract }, acc);
+                List.push(
+                  {
+                    contractId = cId;
+                    name = contract.name;
+                    description = contract.description;
+                    createdAt = contract.createdAt;
+                    updatedAt = contract.updatedAt;
+                  },
+                  acc,
+                );
               };
               case null {
                 acc;
@@ -148,10 +162,23 @@ actor class CLM() = {
             };
           },
         );
-        return #ok(List.toArray(List.reverse(contractList)));
+        return #ok(List.toArray(List.reverse(summaries)));
       };
       case (null) {
         return #err("User not found.");
+      };
+    };
+  };
+
+  //get full single contract details
+  // get full single contract details
+  public shared func getContractDetails(contractId : Nat32) : async Result.Result<Contract, Text> {
+    switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
+      case (?contract) {
+        return #ok(contract);
+      };
+      case null {
+        return #err("Contract not found.");
       };
     };
   };
@@ -284,6 +311,7 @@ actor class CLM() = {
       name = c.name;
       description = c.description;
       createdAt = c.createdAt;
+      updatedAt = Time.now();
       createdBy = c.createdBy;
       status = c.status;
       completionDate = c.completionDate;
@@ -316,6 +344,7 @@ actor class CLM() = {
           name = name;
           description = description;
           createdAt = now;
+          updatedAt = now;
           createdBy = caller;
           status = #Draft;
           completionDate = null;

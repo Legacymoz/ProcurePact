@@ -2,8 +2,11 @@ import { CLM_backend } from 'declarations/CLM_backend';
 import { useEffect, useState } from 'react';
 import Modal from '../Components/Modal';
 import { useAuth } from "../Hooks/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 
 const Contracts = () => {
+    const navigate = useNavigate();
     const { user, isAuthenticated, authClient } = useAuth();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -37,7 +40,7 @@ const Contracts = () => {
         if (isAuthenticated && user?.length != 0) {
             fetchContracts();
         }
-    }, []);
+    }, [user]);
 
     return (
         <>
@@ -59,9 +62,9 @@ const Contracts = () => {
                     </thead>
                     <tbody>
                         {contracts.length > 0 &&
-                            contracts?.map(({ contractId, contract }) => (
-                                <tr key={contractId}>
-                                    <td>{contractId}</td>
+                            contracts?.map((contract) => (
+                                <tr key={contract.contractId} onClick={() => navigate(`/contract/${contract.contractId}`)}>
+                                    <td>{contract.contractId}</td>
                                     <td>{contract.name}</td>
                                     <td>
                                         {
