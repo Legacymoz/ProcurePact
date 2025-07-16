@@ -33,7 +33,7 @@ actor class CLM() = {
 
   type Party = {
     status : {
-      #Accepted;
+      #Accepted; //accepted invitation
       #Pending;
       #Rejected;
       #Invited;
@@ -56,7 +56,12 @@ actor class CLM() = {
   type Notification = {
     date : Int;
     message : Text;
-    read : Trie.Trie<Principal, Bool>;
+  };
+
+  type DeliveryNote = {
+    date : Int;
+    description : Text; //description of the delivery
+    items : List.List<Item>; //items delivered
   };
 
   type PaymentTerm = {
@@ -78,13 +83,13 @@ actor class CLM() = {
     pricing : List.List<Item>;
     value : Nat32; //calculated fron the pricing
     paymentTerm : ?PaymentTerm;
+    deliveryNote : ?DeliveryNote;
     //late penalty fee
     //comments
   };
 
   type ContractStatus = {
-    #Draft; //initial stage
-    #Review; //edits being made
+    #Draft; //initial stage, edits being made
     #Approved; //awaiting signatures
     #Signed; //signatures submitted
     #DeliveryConfirmed;
@@ -342,8 +347,9 @@ actor class CLM() = {
       expiresAt = c.expiresAt;
       parties = updatedParties;
       pricing = c.pricing;
-      paymentTerm=c.paymentTerm;
+      paymentTerm = c.paymentTerm;
       value = c.value;
+      deliveryNote = c.deliveryNote;
     };
   };
 
@@ -380,6 +386,7 @@ actor class CLM() = {
           value = 0;
           paymentTerm = null;
           parties = Trie.put(Trie.empty<Principal, Party>(), key(caller), Principal.equal, party).0;
+          deliveryNote = null;
         };
 
         // Use helper to update user contracts
@@ -518,13 +525,16 @@ actor class CLM() = {
         };*/
         let newStatus = switch (updatedStatus) {
           case ("Draft") #Draft;
-          case ("Review") #Review;
           case ("Approved") #Approved;
           case ("Signed") #Signed;
           case ("Active") #Active;
           case ("Renewed") #Renewed;
           case ("Terminated") #Terminated;
           case ("Expired") #Expired;
+          case ("Complete") #Complete;
+          case ("Disputed") #Disputed;
+          case ("DeliveryConfirmed") #DeliveryConfirmed;
+          case ("DeliveryNoteSubmitted") #DeliveryNoteSubmitted;
           case (_) { return #err("Invalid status provided.") };
         };
         let updatedContract : Contract = {
@@ -539,7 +549,8 @@ actor class CLM() = {
           parties = contract.parties; // keep parties same
           pricing = contract.pricing;
           value = contract.value;
-          paymentTerm=contract.paymentTerm;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = contract.deliveryNote;
         };
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
         return #ok("Contract status updated to " # updatedStatus);
@@ -573,8 +584,9 @@ actor class CLM() = {
           expiresAt = contract.expiresAt;
           parties = contract.parties;
           pricing = contract.pricing;
-          paymentTerm=contract.paymentTerm;
+          paymentTerm = contract.paymentTerm;
           value = total;
+          deliveryNote = contract.deliveryNote;
         };
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
 
@@ -605,7 +617,8 @@ actor class CLM() = {
           parties = contract.parties;
           pricing = contract.pricing;
           value = contract.value;
-          paymentTerm=contract.paymentTerm;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = contract.deliveryNote;
         };
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
         return #ok("Expiry date updated.");
@@ -638,7 +651,8 @@ actor class CLM() = {
           parties = contract.parties;
           pricing = updatedPricing;
           value = 0; // Temporary value; will be updated by calculateContractValue
-          paymentTerm=contract.paymentTerm;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = contract.deliveryNote;
         };
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
 
@@ -653,7 +667,7 @@ actor class CLM() = {
     };
   };
 
-  public shared func updatePayementTerms(contractId: Nat32, term: PaymentTerm): async Result.Result<Text, Text> {
+  public shared func updatePayementTerms(contractId : Nat32, term : PaymentTerm) : async Result.Result<Text, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
         let updatedContract : Contract = {
@@ -669,6 +683,7 @@ actor class CLM() = {
           pricing = contract.pricing;
           value = contract.value;
           paymentTerm = ?term;
+          deliveryNote = contract.deliveryNote;
         };
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
         return #ok("Payment terms updated.");
@@ -679,12 +694,169 @@ actor class CLM() = {
     };
   };
 
+  // Add a signature for a party to a contract
+  public shared ({ caller }) func addSignature(contractId : Nat32) : async Result.Result<Text, Text> {
+    switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
+      case (?contract) {
+        // Check if caller is a party to the contract
+        switch (Trie.get(contract.parties, key(caller), Principal.equal)) {
+          case (?party) {
+            // Only parties with Accepted status can sign
+            switch (party.status) {
+              case (#Accepted) {
+                let updatedParty : Party = {
+                  status = #Signatory;
+                  role = party.role;
+                };
+                let updatedParties = Trie.put(contract.parties, key(caller), Principal.equal, updatedParty).0;
 
-  //Escrow functionality
+                // Check if all parties have signed after this signature
+                var allSigned = true;
+                label checkLoop for ((_, p) in Trie.iter(updatedParties)) {
+                  switch (p.status) {
+                    case (#Signatory) {};
+                    case _ { allSigned := false; break checkLoop };
+                  };
+                };
+
+                // Update contract status if all have signed
+                let newStatus = if (allSigned) #Active else contract.status;
+                let updatedContract : Contract = {
+                  name = contract.name;
+                  description = contract.description;
+                  createdAt = contract.createdAt;
+                  updatedAt = Time.now();
+                  createdBy = contract.createdBy;
+                  status = newStatus;
+                  completionDate = contract.completionDate;
+                  expiresAt = contract.expiresAt;
+                  parties = updatedParties;
+                  pricing = contract.pricing;
+                  value = contract.value;
+                  paymentTerm = contract.paymentTerm;
+                  deliveryNote = contract.deliveryNote;
+                };
+                contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
+
+                if (allSigned) {
+                  return #ok("Signature added. All parties have signed. Contract is now active.");
+                } else {
+                  return #ok("Signature added to contract.");
+                };
+              };
+              case (#Signatory) {
+                return #err("You have already signed this contract.");
+              };
+              case _ {
+                return #err("You must accept the invitation before signing.");
+              };
+            };
+          };
+          case null {
+            return #err("You are not a party to this contract.");
+          };
+        };
+      };
+      case null {
+        return #err("Contract not found.");
+      };
+    };
+  };
+
+  //add delivery note. Can only happen to an active contract, changes the status to deliveryNoteSubmitted
+
+  //🚩 will be modified in future to allow partial performance
+  public shared ({ caller }) func addDeliveryNote(contractId : Nat32, description : Text) : async Result.Result<Text, Text> {
+    //add note
+    let contractOpt = Trie.find(
+      contracts,
+      {
+        hash = contractId;
+        key = contractId;
+      },
+      Nat32.equal,
+    );
+
+    switch (contractOpt) {
+      case (null) {
+        return #err("Contract Not found!");
+      };
+      case (?contract) {
+        let now = Time.now();
+        if (contract.status != #Active) {
+          return #err("Contract not in the correct state");
+        };
+        let newNote : DeliveryNote = {
+          date = now;
+          description = description;
+          items = contract.pricing;
+        };
+
+        let updatedContract : Contract = {
+          name = contract.name;
+          description = contract.description;
+          createdAt = contract.createdAt;
+          updatedAt = now;
+          createdBy = contract.createdBy;
+          status = contract.status;
+          completionDate = contract.completionDate;
+          expiresAt = contract.expiresAt;
+          parties = contract.parties;
+          pricing = contract.pricing;
+          value = contract.value;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = ?newNote;
+        };
+
+        contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
+        //update contracts
+
+        return #ok("Delivery Note added!");
+      };
+    };
+  };
+
+  public shared ({ caller }) func confirmDelivery(contractId : Nat32) : async Result.Result<Text, Text> {
+    let contractOpt = Trie.find(
+      contracts,
+      {
+        hash = contractId;
+        key = contractId;
+      },
+      Nat32.equal,
+    );
+
+    switch (contractOpt) {
+      case (null) {
+        return #err("Contract Not found!");
+      };
+      case (?contract) {
+        //🚩add validation to check if caller is buyer
+        if (contract.status != #DeliveryNoteSubmitted) {
+          return #err("Contract not in correct state!");
+        };
+        let updatedContract : Contract = {
+          name = contract.name;
+          description = contract.description;
+          createdAt = contract.createdAt;
+          updatedAt = Time.now();
+          createdBy = contract.createdBy;
+          status = #DeliveryConfirmed;
+          completionDate = contract.completionDate;
+          expiresAt = contract.expiresAt;
+          parties = contract.parties;
+          pricing = contract.pricing;
+          value = contract.value;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = contract.deliveryNote;
+        };
+        contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
+        return #ok("Delivery Confirmed");
+      };
+    };
+  };
   /*
   1. Transfer tokens to escrow
-  2. Add deliverable
-  3. Confirm delivery
   4. Complete deal
   5. Terminate contract
   6. Dispute contract
