@@ -17,7 +17,9 @@
   ],
   "dependencies": {
     "@dfinity/identity": "^2.4.1",
+    "@tailwindcss/vite": "^4.1.11",
     "react-quill": "^2.0.0",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "tailwindcss": "^4.1.11"
   }
 }

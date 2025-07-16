@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Modal from '../Components/Modal';
 import { useAuth } from "../Hooks/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "../styles/ContractStyles.css";
 
 
 const Contracts = () => {
@@ -44,23 +45,24 @@ const Contracts = () => {
 
     return (
         <>
-            <h1>My Contracts</h1>
-            {user != null && isAuthenticated ? <><button onClick={handleOpen}>Create</button>
+            <h1 className='contract-heading'>My Contracts</h1>
+            {user != null && isAuthenticated ? <div className='contract-container'>
+            <button className='create-button' onClick={handleOpen}>Create</button>
 
                 {/*
           Map contracts to display
           Only show ID, name and truncated Description
           */}
 
-                <table className='table table striped'>
-                    <thead >
-                        <tr>
+                <table className='contract-table'>
+                    <thead className='contract-thead'>
+                        <tr className='contract-tr'>
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Description</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className='contract-tbody'>
                         {contracts.length > 0 &&
                             contracts?.map((contract) => (
                                 <tr key={contract.contractId} onClick={() => navigate(`/contract/${contract.contractId}`)}>
@@ -78,12 +80,12 @@ const Contracts = () => {
                         }
                     </tbody>
                 </table>
-            </>
+            </div>
 
 
-                : <><p>Update profile to view contracts</p></>}
+                : <><p  className="empty-state" >Update profile to view contracts</p></>}
             {!isAuthenticated && <>
-                <p>Please log in</p>
+                <p className="empty-state" > Please log in</p>
             </>}
             <Modal
                 open={(open)}
