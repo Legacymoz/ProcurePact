@@ -8,6 +8,8 @@ import Time "mo:base/Time";
 import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
 import Bool "mo:base/Bool";
+import Array "mo:base/Array";
+import Escrow "canister:escrow";
 
 actor class CLM() = {
 
@@ -96,6 +98,8 @@ actor class CLM() = {
     #DeliveryNoteSubmitted;
     #Complete;
     #Active;
+    #TokenLockApproved;
+    #TokensLocked;
     #Renewed;
     #Terminated;
     #Expired;
@@ -763,8 +767,57 @@ actor class CLM() = {
     };
   };
 
-  //add delivery note. Can only happen to an active contract, changes the status to deliveryNoteSubmitted
+  //lock tokens
+  //🚩 check possibility of automatic locking once signatures are added?
+  public shared ({ caller }) func lockTokens(contractId : Nat32) : async Result.Result<Text, Text> {
+    switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
+      case (?contract) {
+        if (contract.status != #Active) {
+          return #err("Contract is not active.");
+        };
+        // Check if tokens are already locked
+        if (contract.status == #TokensLocked) {
+          return #err("Tokens are already locked for this contract.");
+        };
+        let updatedContract : Contract = {
+          name = contract.name;
+          description = contract.description;
+          createdAt = contract.createdAt;
+          updatedAt = Time.now();
+          createdBy = contract.createdBy;
+          status = #TokensLocked;
+          completionDate = contract.completionDate;
+          expiresAt = contract.expiresAt;
+          parties = contract.parties;
+          pricing = contract.pricing;
+          value = contract.value;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = contract.deliveryNote;
+        };
+        contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
 
+        // Call escrow to lock tokens
+        let escrowResult = await Escrow.lockTokens(caller, contractId, contract.value);
+        switch (escrowResult) {
+          case (#ok(message)) {
+            return #ok("Tokens locked successfully: " # Nat.toText(message));
+          };
+          case (#err(message)) {
+            return #err("Failed to lock tokens: " # message);
+          };
+        };
+      };
+      case null {
+        return #err("Contract not found.");
+      };
+    };
+  };
+
+  //add delivery note. Can only happen to an active contract, changes the status to deliveryNoteSubmitted
+  //get contract
+  //check if delivery is confirmed
+  //check payment terms
+  //switch
   //🚩 will be modified in future to allow partial performance
   public shared ({ caller }) func addDeliveryNote(contractId : Nat32, description : Text) : async Result.Result<Text, Text> {
     //add note
@@ -851,17 +904,90 @@ actor class CLM() = {
           deliveryNote = contract.deliveryNote;
         };
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
+        //🚩 needs review
+        let _ = processPayment(contractId);
         return #ok("Delivery Confirmed");
+        //process payments switch here
       };
     };
   };
+
+  public shared func processPayment(contractId : Nat32) : async Result.Result<Text, Text> {
+    switch (Trie.find(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
+      case (?contract) {
+        if (contract.status != #DeliveryConfirmed) {
+          return #err("Contract not in correct state for payment processing.");
+        };
+        switch (contract.paymentTerm) {
+          case (?#OnDelivery) {
+            //change parties trie to array and filter to get supplier principal
+            let partiesArray = Trie.toArray<Principal, Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+              contract.parties,
+              func(k, v) { { principal = k; role = v.role } },
+            );
+            //filter seller
+            let filteredParties = Array.filter<{ principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+              partiesArray,
+              func x = x.role == #Supplier,
+            );
+            if (filteredParties.size() == 0) {
+              return #err("No supplier!");
+            };
+            //should run once
+            for (party in filteredParties.vals()) {
+              switch (await Escrow.transferTokens(contractId, party.principal)) {
+                case (#ok(message)) {
+                  let updatedContract : Contract = {
+                    name = contract.name;
+                    description = contract.description;
+                    createdAt = contract.createdAt;
+                    updatedAt = Time.now();
+                    createdBy = contract.createdBy;
+                    status = #Complete;
+                    completionDate = contract.completionDate;
+                    expiresAt = contract.expiresAt;
+                    parties = contract.parties;
+                    pricing = contract.pricing;
+                    value = contract.value;
+                    paymentTerm = contract.paymentTerm;
+                    deliveryNote = contract.deliveryNote;
+                  };
+                  //update contracts
+                  contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
+                  return #ok(message);
+                };
+                case (#err(message)) {
+                  return #err(message);
+                };
+              };
+            };
+          };
+          case (?#FixedDate) {
+            return #ok("Processed");
+          };
+          case (?#Periodic) {
+            return #ok("Processed");
+          };
+          case (null) {
+            return #err("No payment terms");
+          };
+          //logic for other payment terms
+        };
+        #ok("Processed");
+      };
+      case (null) {
+        #err("Contract Not Found!!");
+      };
+    }
+
+  };
   /*
   1. Transfer tokens to escrow
-  4. Complete deal
-  5. Terminate contract
-  6. Dispute contract
-  7. Resolve dispute
-  8. Release funds
-  9. Refund
+  2. Complete deal
+  3. Terminate contract
+  4. Dispute contract
+  5. Resolve dispute
+  6. Release funds
+  7. Refund
   */
 };

@@ -12,10 +12,10 @@ Invoice generation
 Locking of assests in Escrow
 Flexible payment terms:
 1. On Delivery
-2. Periodic
-3. Milestone payments
-4. Net 60/90
-5. 7,14,30 day
+2. *Periodic
+3. *Milestone payments
+4. *Net 60/90/Custom
+5. *7,14,30 day
 6. Immediate payment
 Discounts and penalties
 Automatic asset transfer
