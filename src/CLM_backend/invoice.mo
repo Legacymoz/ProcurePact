@@ -5,6 +5,7 @@ import Result "mo:base/Result";
 import Time "mo:base/Time";
 import List "mo:base/List";
 import Ledger "canister:icrc1_ledger_canister";
+import Array "mo:base/Array";
 
 actor class Invoice() = this {
     //🚩 add featureOverdue penalty calculation
@@ -32,16 +33,10 @@ actor class Invoice() = this {
                 contractId = args.contractId;
                 issuer = args.issuer;
                 recipient = args.recipient;
-                schedule = switch (args.schedule) {
-                    case (#DueDate(dueDate)) {
-                        #DueDate(dueDate);
-                    };
-                    case (#PaymentPeriod(period)) {
-                        #PaymentPeriod(period);
-                    };
-                };
+                dueDate = args.dueDate;
                 items = args.items;
                 totalAmount = calculateTotalAmount(args.items);
+                penalty = args.penalty;
                 status = #Pending;
                 createdAt = now;
                 updatedAt = now;
@@ -105,13 +100,14 @@ actor class Invoice() = this {
                             contractId = invoice.contractId;
                             issuer = invoice.issuer;
                             recipient = invoice.recipient;
-                            schedule = invoice.schedule;
+                            dueDate = invoice.dueDate;
                             items = invoice.items;
                             totalAmount = invoice.totalAmount;
                             status = #Paid;
                             createdAt = invoice.createdAt;
                             updatedAt = Time.now();
                             notes = invoice.notes;
+                            penalty = invoice.penalty;
                         };
                         invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
                         #ok("Transferred: " #debug_show (blockIndex));
@@ -123,4 +119,57 @@ actor class Invoice() = this {
             };
         };
     };
+
+    //overdue
+    //get invoices and filter !paid and time.now() > expiryDate
+    //mark overdue
+    //calculate penalty
+    //add penalty to Totalvalue
+
+    public func handleOverdue() : async () {
+        let now = Time.now();
+        let invoicesArray = Trie.toArray<Nat32, T.Invoice, { invoiceId : Nat32; invoice : T.Invoice }>(
+            invoices,
+            func(k, v) = ({ invoiceId = k; invoice = v }),
+        );
+
+        let overdue = Array.filter<({ invoiceId : Nat32; invoice : T.Invoice })>(
+            invoicesArray,
+            func x = x.invoice.dueDate < now and x.invoice.status == #Pending,
+        );
+
+        if (overdue.size() != 0) {
+            for (item in overdue.vals()) {
+                let invoice = item.invoice;
+                let overdueDays = (now - invoice.dueDate) / (24 * 60 * 60 * 1_000_000_000);
+                let penaltyAmount = invoice.penalty * Nat32.fromIntWrap(overdueDays);
+                let updatedInvoice : T.Invoice = {
+                    contractId = invoice.contractId;
+                    issuer = invoice.issuer;
+                    recipient = invoice.recipient;
+                    dueDate = invoice.dueDate;
+                    items = invoice.items;
+                    totalAmount = invoice.totalAmount + penaltyAmount;
+                    status = #Overdue;
+                    createdAt = invoice.createdAt;
+                    updatedAt = now;
+                    notes = invoice.notes;
+                    penalty = invoice.penalty;
+                };
+                invoices := Trie.put(invoices, { key = item.invoiceId; hash = item.invoiceId }, Nat32.equal, updatedInvoice).0;
+
+            };
+        } else {
+            return;
+        };
+    };
+
+    system func heartbeat() : async () {
+        // This function is called periodically by the system
+        // to handle overdue invoices and apply penalties.
+        await handleOverdue();
+    };
+
+
+
 };

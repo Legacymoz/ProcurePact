@@ -106,6 +106,7 @@ module Types {
 
 // 🚩 Add overdue fees
     public type Invoice = {
+        penalty:Nat32;//24-hour penalty
         contractId: Nat32;
         issuer: Principal;
         recipient: Principal;
@@ -141,6 +142,7 @@ module Types {
                 end: Int; // End timestamp of the payment period
             };
         };
+        penalty: Nat32;
         notes: ?Text; // Optional notes or comments on the invoice
     };
 };
