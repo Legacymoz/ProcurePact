@@ -131,6 +131,7 @@ module Types {
 
     public type CreateInvoiceArgs = {
         contractId: Nat32;
+        issuer: Principal; // The principal creating the invoice
         recipient: Principal;
         items: List.List<Item>;
         schedule: {
