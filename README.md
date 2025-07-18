@@ -1,25 +1,45 @@
 # `CLM`
 
-This application is used in managing vendor agreements.
+**Contract Lifecycle Management (CLM)** is a web application used to manage vendor agreements.
 
-## Features
+## 🚀 Features
 
-Contract creation
-Participant invitation
-E-signing of contracts
-Delivery note generation
-Invoice generation
-Locking of assests in Escrow
-Flexible payment terms:
-1. On Delivery
-2. *Periodic
-3. *Milestone payments
-4. *Net 60/90/Custom
-5. *7,14,30 day
-6. Immediate payment
-Discounts and penalties
-Automatic asset transfer
-*Dispute resolution
+- **Contract Creation**  
+  Create and manage legally binding contracts with vendors.
+
+- **Participant Invitation**  
+  Invite all stakeholders to collaborate on the contract.
+
+- **E-signing of Contracts**  
+  Sign contracts electronically, eliminating the need for physical paperwork.
+
+- **Delivery Note Generation**  
+  Automatically generate delivery notes as proof of delivery.
+
+- **Invoice Generation**  
+  Create invoices directly from contract or delivery data.
+
+- **Locking of Assets in Escrow**  
+  Secure payment and asset exchange through escrow integration.
+
+- **Flexible Payment Terms**  
+  Supports various payment configurations:
+  1. On Delivery  
+  2. Periodic Payments*  
+  3. Milestone-based Payments*  
+  4. Net 60/90/Custom Terms*  
+  5. 7, 14, 30 Day Cycles*  
+  6. Immediate Payment
+
+- **Discounts and Penalties**  
+  Configure dynamic pricing based on early payment or late delivery.
+
+- **Automatic Asset Transfer**  
+  Transfer goods, services, or access rights automatically on contract fulfillment.
+
+- **Dispute Resolution**  
+  Built-in mechanisms to manage and resolve disputes efficiently.
+
 
 
 ## Running the project locally
