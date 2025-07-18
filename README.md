@@ -25,17 +25,17 @@
 - **Flexible Payment Terms**  
   Supports various payment configurations:
   1. On Delivery  
-  2. Periodic Payments*  
-  3. Milestone-based Payments*  
-  4. Net 60/90/Custom Terms*  
-  5. 7, 14, 30 Day Cycles*  
+  2. Periodic Payments
+  3. Milestone-based Payments
+  4. Net 60/90/Custom Terms  
+  5. 7, 14, 30 Day Cycles
   6. Immediate Payment
 
 - **Discounts and Penalties**  
   Configure dynamic pricing based on early payment or late delivery.
 
 - **Automatic Asset Transfer**  
-  Transfer goods, services, or access rights automatically on contract fulfillment.
+  Transfer funds automatically on contract fulfillment.
 
 - **Dispute Resolution**  
   Built-in mechanisms to manage and resolve disputes efficiently.
