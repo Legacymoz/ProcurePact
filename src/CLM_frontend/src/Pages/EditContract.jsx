@@ -1,43 +1,11 @@
-// import { useParams } from 'react-router-dom';
-// import { CLM_backend } from 'declarations/CLM_backend';
-// import { useEffect, useState } from 'react';
-
-
-
-// const EditContract = () => {
-//     const [contract, setContract] = useState([]);
-//     //get contract id from params
-//     let params = useParams();
-//     //fetch full contract details
-//     const fetchContractDetails = async () => {
-//         try {
-//             const response = await CLM_backend.getContractDetails(BigInt(params.id));
-//             console.log("contract details", response);
-//             setContract(response.ok);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-
-//     useEffect(() => {
-//         fetchContractDetails()
-//     }, []);
-
-//     //edit contract
-//     return (<>
-//         <div className='container-fluid'>
-//             <h1>{contract.name}</h1>
-//         </div>
-//     </>)
-// };
-// export default EditContract;
-
-
-
 import { useParams } from 'react-router-dom';
 import { CLM_backend } from 'declarations/CLM_backend';
 import { useEffect, useState } from 'react';
 import "../styles/EditContractStyles.css";
+import AddParty from '../Components/AddParty';
+import AddProducts from '../Components/AddProducts';
+import AddPayment from '../Components/AddPayment';
+import ContractExpiry from '../Components/AddContractExpiry';
 
 const EditContract = () => {
     const [contract, setContract] = useState(null);
@@ -131,29 +99,21 @@ const EditContract = () => {
     if (!contract) return <p>Loading...</p>;
 
     return (
-        <div className='editContract-container'>
-            <h1>Edit Contract: {contract.name}</h1>
+      <div className="editContract-container">
+        <h1>Edit Contract: {contract.name}</h1>
 
+        <AddParty />
+
+        <AddProducts />
+
+        <AddPayment />
+        < ContractExpiry />
+
+        {/* 
             <form onSubmit={handleSubmit} className="edit-contract-form">
-                <div className="form-group">
-                    <label>Supplier ID</label>
-                    <input
-                        value={supplierId}
-                        onChange={(e) => setSupplierId(e.target.value)}
-                        className="form-control"
-                        required
-                    />
-                </div>
 
-                <div className="form-group">
-                    <label>Buyer ID</label>
-                    <input
-                        value={buyerId}
-                        onChange={(e) => setBuyerId(e.target.value)}
-                        className="form-control"
-                        required
-                    />
-                </div>
+            
+                
 
                 <div className="form-group">
                     <label>Add Product</label>
@@ -218,8 +178,8 @@ const EditContract = () => {
                 <button type="submit" className="btn-editContract mt-3">
                     Update Contract
                 </button>
-            </form>
-        </div>
+            </form> */}
+      </div>
     );
 };
 

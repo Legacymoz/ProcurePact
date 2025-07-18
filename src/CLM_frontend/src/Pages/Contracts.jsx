@@ -4,6 +4,7 @@ import Modal from '../Components/Modal';
 import { useAuth } from "../Hooks/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/ContractStyles.css";
+import { useStore } from '../store/useStore';   
 
 
 const Contracts = () => {
@@ -12,6 +13,10 @@ const Contracts = () => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const [contracts, setContracts] = useState([]);
+
+    //states from the zustand store
+    const selectedContract = useStore((state) => state.selectedContract);
+    const setSelectedContract = useStore((state) => state.setSelectedContract);
 
     const fetchContracts = async () => {
         CLM_backend.getContracts(authClient.getIdentity().getPrincipal()).then((fetched) => {
@@ -43,6 +48,14 @@ const Contracts = () => {
         }
     }, [user]);
 
+    const handleSelection = (contractId) => {
+        setSelectedContract(contractId);
+        console.log("Selected contract ID:", contractId);
+        navigate(`/contract/${contractId}`);
+
+        
+    };
+
     return (
         <>
             <h1 className='contract-heading'>My Contracts</h1>
@@ -65,7 +78,7 @@ const Contracts = () => {
                     <tbody className='contract-tbody'>
                         {contracts.length > 0 &&
                             contracts?.map((contract) => (
-                                <tr key={contract.contractId} onClick={() => navigate(`/contract/${contract.contractId}`)}>
+                                <tr key={contract.contractId} onClick={() => handleSelection(contract.contractId)}>
                                     <td>{contract.contractId}</td>
                                     <td>{contract.name}</td>
                                     <td>
