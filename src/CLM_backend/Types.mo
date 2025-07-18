@@ -110,13 +110,7 @@ module Types {
         contractId: Nat32;
         issuer: Principal;
         recipient: Principal;
-        schedule: {
-            #DueDate: Int; // Timestamp for the due date
-            #PaymentPeriod: { //for net 30, net 60, etc.
-                start: Int; // Start timestamp of the payment period
-                end: Int; // End timestamp of the payment period
-            };
-        };
+        dueDate: Int;
         items: List.List<Item>;
         totalAmount: Nat32; // Total amount of the invoice
         status: {
@@ -135,13 +129,7 @@ module Types {
         issuer: Principal; // The principal creating the invoice
         recipient: Principal;
         items: List.List<Item>;
-        schedule: {
-            #DueDate: Int; // Timestamp for the due date
-            #PaymentPeriod: { //for net 30, net 60, etc.
-                start: Int; // Start timestamp of the payment period
-                end: Int; // End timestamp of the payment period
-            };
-        };
+        dueDate: Int;
         penalty: Nat32;
         notes: ?Text; // Optional notes or comments on the invoice
     };
