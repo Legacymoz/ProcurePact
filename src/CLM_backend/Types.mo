@@ -103,4 +103,43 @@ module Types {
         amount : Nat32;
         recipient : Principal; // the recipient of the locked tokens
     };
+
+// 🚩 Add overdue fees
+    public type Invoice = {
+        contractId: Nat32;
+        issuer: Principal;
+        recipient: Principal;
+        schedule: {
+            #DueDate: Int; // Timestamp for the due date
+            #PaymentPeriod: { //for net 30, net 60, etc.
+                start: Int; // Start timestamp of the payment period
+                end: Int; // End timestamp of the payment period
+            };
+        };
+        items: List.List<Item>;
+        totalAmount: Nat32; // Total amount of the invoice
+        status: {
+            #Pending; // Invoice is created but not yet paid
+            #Paid; // Invoice has been paid
+            #Overdue; // Payment was not made by the due date
+            #Disputed; // Invoice is under dispute
+        };
+        createdAt: Int; // Timestamp of when the invoice was created
+        updatedAt: Int; // Timestamp of the last update to the invoice
+        notes: ?Text; // Optional notes or comments on the invoice
+    };
+
+    public type CreateInvoiceArgs = {
+        contractId: Nat32;
+        recipient: Principal;
+        items: List.List<Item>;
+        schedule: {
+            #DueDate: Int; // Timestamp for the due date
+            #PaymentPeriod: { //for net 30, net 60, etc.
+                start: Int; // Start timestamp of the payment period
+                end: Int; // End timestamp of the payment period
+            };
+        };
+        notes: ?Text; // Optional notes or comments on the invoice
+    };
 };
