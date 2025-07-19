@@ -92,6 +92,7 @@ module Types {
         #Terminated;
         #Expired;
         #Disputed; //in case of a dispute
+        #TokensLocked
     };
 
     public type EscrowRecordData = {

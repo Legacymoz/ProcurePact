@@ -9,113 +9,22 @@ import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
 import Bool "mo:base/Bool";
 import Array "mo:base/Array";
+import T "Types";
 import Escrow "canister:escrow";
 
 actor class CLM() = {
 
-  type Key<K> = Trie.Key<K>;
-
-  type User = {
-    name : Text;
-    email : Text;
-    phone : Text;
-    address : Text;
-    bio : Text;
-    createdAt : Int; // Timestamp of when the user was created
-    updatedAt : Int; // Timestamp of the last update to the user profile
-    contracts : List.List<Nat32>;
-  };
-
-  type ConnectionStatus = {
-    #RequestSent;
-    #Accepted;
-    #Rejected;
-    #Invited;
-  };
-
-  type Party = {
-    status : {
-      #Accepted; //accepted invitation
-      #Pending;
-      #Rejected;
-      #Invited;
-      #Signatory //A party that has signed the contract
-    };
-    role : {
-      #Buyer;
-      #Supplier;
-      #ThirdParty;
-    };
-  };
-
-  type Item = {
-    name : Text;
-    description : Text;
-    unit_price : Nat32;
-    quantity : Nat32;
-  };
-
-  type Notification = {
-    date : Int;
-    message : Text;
-  };
-
-  type DeliveryNote = {
-    date : Int;
-    description : Text; //description of the delivery
-    items : List.List<Item>; //items delivered
-  };
-
-  type PaymentTerm = {
-    #OnDelivery;
-    #Periodic;
-    #FixedDate;
-  };
-
-  type Contract = {
-    name : Text;
-    description : Text; //short description
-    createdAt : Int; // timestamp of contract creation
-    updatedAt : Int;
-    createdBy : Principal;
-    status : ContractStatus; // e.g., "draft", "active", "completed", "cancelled"
-    completionDate : ?Int; // optional completion date
-    expiresAt : ?Int; // optional expiration date
-    parties : Trie.Trie<Principal, Party>;
-    pricing : List.List<Item>;
-    value : Nat32; //calculated fron the pricing
-    paymentTerm : ?PaymentTerm;
-    deliveryNote : ?DeliveryNote;
-    //late penalty fee
-    //comments
-  };
-
-  type ContractStatus = {
-    #Draft; //initial stage, edits being made
-    #Approved; //awaiting signatures
-    #Signed; //signatures submitted
-    #DeliveryConfirmed;
-    #DeliveryNoteSubmitted;
-    #Complete;
-    #Active;
-    #TokenLockApproved;
-    #TokensLocked;
-    #Renewed;
-    #Terminated;
-    #Expired;
-    #Disputed; //in case of a dispute
-  };
-
-  stable var users : Trie.Trie<Principal, User> = Trie.empty(); //application users
-  stable var contracts : Trie.Trie<Nat32, Contract> = Trie.empty(); // all contracts
+  
+  stable var users : Trie.Trie<Principal, T.User> = Trie.empty(); //application users
+  stable var contracts : Trie.Trie<Nat32, T.Contract> = Trie.empty(); // all contracts
   stable var nextContractId : Nat32 = 1; // to keep track of the next contract ID
 
-  func key(p : Principal) : Key<Principal> {
+  func key(p : Principal) : T.Key<Principal> {
     { hash = Principal.hash p; key = p };
   };
 
   // Adjacency list for user-user connections: principal -> list of connected principals
-  stable var connections : Trie.Trie<Principal, Trie.Trie<Principal, ConnectionStatus>> = Trie.empty();
+  stable var connections : Trie.Trie<Principal, Trie.Trie<Principal, T.ConnectionStatus>> = Trie.empty();
 
   //add user
   public shared ({ caller }) func addUser(name : Text, email : Text, phone : Text, address : Text, bio : Text) : async Result.Result<Text, Text> {
@@ -124,7 +33,7 @@ actor class CLM() = {
     };
 
     let now = Time.now();
-    let newUser : User = {
+    let newUser : T.User = {
       name = name;
       email = email;
       phone = phone;
@@ -138,7 +47,7 @@ actor class CLM() = {
     return #ok("User added successfully.");
   };
   //get user
-  public shared func getUser(principal : Principal) : async ?User {
+  public shared func getUser(principal : Principal) : async ?T.User {
     return Trie.get(users, key(principal), Principal.equal);
   };
   //update user
@@ -146,7 +55,7 @@ actor class CLM() = {
     switch (Trie.get(users, key(caller), Principal.equal)) {
       case (?user) {
         let now = Time.now();
-        let updatedUser : User = {
+        let updatedUser : T.User = {
           name = name;
           email = email;
           phone = phone;
@@ -203,7 +112,7 @@ actor class CLM() = {
 
   //get full single contract details
   // get full single contract details
-  public shared func getContractDetails(contractId : Nat32) : async Result.Result<Contract, Text> {
+  public shared func getContractDetails(contractId : Nat32) : async Result.Result<T.Contract, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
         return #ok(contract);
@@ -251,7 +160,7 @@ actor class CLM() = {
               // If 'to' has no connections yet, create a new entry
               case (null) {
                 // No connections for 'to', create a new entry
-                let newConnections = Trie.put(Trie.empty<Principal, ConnectionStatus>(), key(caller), Principal.equal, #Invited).0;
+                let newConnections = Trie.put(Trie.empty<Principal, T.ConnectionStatus>(), key(caller), Principal.equal, #Invited).0;
                 connections := Trie.put(connections, key(to), Principal.equal, newConnections).0;
               };
             };
@@ -262,10 +171,10 @@ actor class CLM() = {
       // If caller has no connections yet, create a new entry
       case (null) {
         // No connections for caller, create a new entry
-        let newConnections = Trie.put(Trie.empty<Principal, ConnectionStatus>(), key(to), Principal.equal, #RequestSent).0;
+        let newConnections = Trie.put(Trie.empty<Principal, T.ConnectionStatus>(), key(to), Principal.equal, #RequestSent).0;
         connections := Trie.put(connections, key(caller), Principal.equal, newConnections).0;
         // Also update 'to' user's connections
-        let newToConnections = Trie.put(Trie.empty<Principal, ConnectionStatus>(), key(caller), Principal.equal, #Invited).0;
+        let newToConnections = Trie.put(Trie.empty<Principal, T.ConnectionStatus>(), key(caller), Principal.equal, #Invited).0;
         connections := Trie.put(connections, key(to), Principal.equal, newToConnections).0;
         return #ok("Connection request sent to " # debug_show (to));
       };
@@ -295,7 +204,7 @@ actor class CLM() = {
                 };
                 case (null) {
                   // recover by setting back connection
-                  let newMap = Trie.put(Trie.empty<Principal, ConnectionStatus>(), key(caller), Principal.equal, #Accepted).0;
+                  let newMap = Trie.put(Trie.empty<Principal, T.ConnectionStatus>(), key(caller), Principal.equal, #Accepted).0;
                   connections := Trie.put(connections, key(from), Principal.equal, newMap).0;
                 };
               };
@@ -323,7 +232,7 @@ actor class CLM() = {
   */
 
   //helper functions
-  func updateUserContracts(user : User, contractId : Nat32) : User {
+  func updateUserContracts(user : T.User, contractId : Nat32) : T.User {
     if (List.some<Nat32>(user.contracts, func(cId : Nat32) : Bool { cId == contractId })) {
       return user;
     };
@@ -339,7 +248,7 @@ actor class CLM() = {
     };
   };
 
-  func updateContractParties(c : Contract, updatedParties : Trie.Trie<Principal, Party>) : Contract {
+  func updateContractParties(c : T.Contract, updatedParties : Trie.Trie<Principal, T.Party>) : T.Contract {
     {
       name = c.name;
       description = c.description;
@@ -365,7 +274,7 @@ actor class CLM() = {
     switch (Trie.get(users, key(caller), Principal.equal)) {
       case (?user) {
 
-        let party : Party = {
+        let party : T.Party = {
           status = #Accepted;
           role = switch (role) {
             case ("Buyer") #Buyer;
@@ -377,7 +286,7 @@ actor class CLM() = {
           };
         };
         // User exists, proceed to create contract
-        let newContract : Contract = {
+        let newContract : T.Contract = {
           name = name;
           description = description;
           createdAt = now;
@@ -386,15 +295,15 @@ actor class CLM() = {
           status = #Draft;
           completionDate = null;
           expiresAt = null;
-          pricing = List.nil<Item>();
+          pricing = List.nil<T.Item>();
           value = 0;
           paymentTerm = null;
-          parties = Trie.put(Trie.empty<Principal, Party>(), key(caller), Principal.equal, party).0;
+          parties = Trie.put(Trie.empty<Principal, T.Party>(), key(caller), Principal.equal, party).0;
           deliveryNote = null;
         };
 
         // Use helper to update user contracts
-        let updatedUser : User = updateUserContracts(user, contractId);
+        let updatedUser : T.User = updateUserContracts(user, contractId);
 
         users := Trie.put(users, key(caller), Principal.equal, updatedUser).0;
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, newContract).0;
@@ -416,7 +325,7 @@ actor class CLM() = {
           case (?party) {
             if (party.status == #Invited) {
               // Update party status to Accepted
-              let updatedParty : Party = {
+              let updatedParty : T.Party = {
                 status = #Accepted;
                 role = party.role; // keep classification same
               };
@@ -429,7 +338,7 @@ actor class CLM() = {
               // Update user's contracts
               switch (Trie.get(users, key(caller), Principal.equal)) {
                 case (?user) {
-                  let updatedUser : User = updateUserContracts(user, contractId);
+                  let updatedUser : T.User = updateUserContracts(user, contractId);
                   users := Trie.put(users, key(caller), Principal.equal, updatedUser).0;
                 };
                 case null {
@@ -482,7 +391,7 @@ actor class CLM() = {
                 };
                 case null {
                   // Add party with status Invited
-                  let invitedParty : Party = {
+                  let invitedParty : T.Party = {
                     status = #Invited;
                     role = switch (p.role) {
                       case ("Buyer") #Buyer;
@@ -494,7 +403,7 @@ actor class CLM() = {
                   updatedParties := Trie.put(updatedParties, key(p.id), Principal.equal, invitedParty).0;
 
                   // Update invitee's contracts
-                  let updatedInvitee : User = updateUserContracts(invitee, contractId);
+                  let updatedInvitee : T.User = updateUserContracts(invitee, contractId);
                   users := Trie.put(users, key(p.id), Principal.equal, updatedInvitee).0;
 
                   invitedCount += 1;
@@ -541,7 +450,7 @@ actor class CLM() = {
           case ("DeliveryNoteSubmitted") #DeliveryNoteSubmitted;
           case (_) { return #err("Invalid status provided.") };
         };
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -568,7 +477,7 @@ actor class CLM() = {
   public shared func updateContractValue(contractId : Nat32) : async Result.Result<Nat32, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
-        let total = List.foldLeft<Item, Nat32>(
+        let total = List.foldLeft<T.Item, Nat32>(
           contract.pricing,
           0,
           func(acc, item) {
@@ -577,7 +486,7 @@ actor class CLM() = {
         );
 
         // Update the contract with the new value
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -609,7 +518,7 @@ actor class CLM() = {
         if (contract.createdBy != caller) {
           return #err("Only the contract creator can update the expiry date.");
         };
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -634,16 +543,16 @@ actor class CLM() = {
   };
 
   //adds goods/services to the contract
-  public shared func addItems(contractId : Nat32, items : [Item]) : async Result.Result<Text, Text> {
+  public shared func addItems(contractId : Nat32, items : [T.Item]) : async Result.Result<Text, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
-        var updatedPricing = List.nil<Item>();
+        var updatedPricing = List.nil<T.Item>();
         //create linked list from items array
         for (item in items.vals()) {
-          updatedPricing := List.push<Item>(item, updatedPricing);
+          updatedPricing := List.push<T.Item>(item, updatedPricing);
         };
 
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -671,10 +580,10 @@ actor class CLM() = {
     };
   };
 
-  public shared func updatePayementTerms(contractId : Nat32, term : PaymentTerm) : async Result.Result<Text, Text> {
+  public shared func updatePayementTerms(contractId : Nat32, term : T.PaymentTerm) : async Result.Result<Text, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -708,7 +617,7 @@ actor class CLM() = {
             // Only parties with Accepted status can sign
             switch (party.status) {
               case (#Accepted) {
-                let updatedParty : Party = {
+                let updatedParty : T.Party = {
                   status = #Signatory;
                   role = party.role;
                 };
@@ -725,7 +634,7 @@ actor class CLM() = {
 
                 // Update contract status if all have signed
                 let newStatus = if (allSigned) #Active else contract.status;
-                let updatedContract : Contract = {
+                let updatedContract : T.Contract = {
                   name = contract.name;
                   description = contract.description;
                   createdAt = contract.createdAt;
@@ -779,7 +688,7 @@ actor class CLM() = {
         if (contract.status == #TokensLocked) {
           return #err("Tokens are already locked for this contract.");
         };
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -839,13 +748,13 @@ actor class CLM() = {
         if (contract.status != #Active) {
           return #err("Contract not in the correct state");
         };
-        let newNote : DeliveryNote = {
+        let newNote : T.DeliveryNote = {
           date = now;
           description = description;
           items = contract.pricing;
         };
 
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -888,7 +797,7 @@ actor class CLM() = {
         if (contract.status != #DeliveryNoteSubmitted) {
           return #err("Contract not in correct state!");
         };
-        let updatedContract : Contract = {
+        let updatedContract : T.Contract = {
           name = contract.name;
           description = contract.description;
           createdAt = contract.createdAt;
@@ -921,7 +830,7 @@ actor class CLM() = {
         switch (contract.paymentTerm) {
           case (?#OnDelivery) {
             //change parties trie to array and filter to get supplier principal
-            let partiesArray = Trie.toArray<Principal, Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+            let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
               contract.parties,
               func(k, v) { { principal = k; role = v.role } },
             );
@@ -937,7 +846,7 @@ actor class CLM() = {
             for (party in filteredParties.vals()) {
               switch (await Escrow.transferTokens(contractId, party.principal)) {
                 case (#ok(message)) {
-                  let updatedContract : Contract = {
+                  let updatedContract : T.Contract = {
                     name = contract.name;
                     description = contract.description;
                     createdAt = contract.createdAt;
