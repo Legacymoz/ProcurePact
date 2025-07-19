@@ -3,10 +3,11 @@ import "../styles/AddPartyStyles.css";
 import { CLM_backend } from "declarations/CLM_backend";
 import { useAuth } from "../Hooks/AuthContext";
 import { useStore } from "../store/useStore";
+import { Principal } from "@dfinity/principal";
 
 const AddParty = () => {
   const [parties, setParties] = useState([]);
-  const { user, principal } = useAuth();
+  const { principal, authClient } = useAuth();
   const selectedContract = useStore((state) => state.selectedContract);
 
   try {
@@ -46,12 +47,18 @@ const AddParty = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Parties added:", parties);
+    // Convert each party's id to a Principal
+    const partiesWithPrincipal = parties.map((party) => ({
+      ...party,
+      id: Principal.fromText(party.id),
+    }));
+
+    console.log("Parties added:", partiesWithPrincipal);
 
     try {
       const data = await CLM_backend.invitePartiesToContract(
         selectedContract,
-        parties
+        partiesWithPrincipal
       );
       console.log("Parties added successfully:", data);
     } catch (error) {
@@ -86,7 +93,7 @@ const AddParty = () => {
               >
                 <option value="">Select role</option>
                 <option value="Buyer">Buyer</option>
-                <option value="Seller">Seller</option>
+                <option value="Supplier">Seller</option>
               </select>
 
               <div className="delete-button-container">
