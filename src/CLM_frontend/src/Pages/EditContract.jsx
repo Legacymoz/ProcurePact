@@ -38,7 +38,7 @@ const EditContract = () => {
             <AddProducts currentPricing={contract.pricing}/>
 
             <AddPayment currentPaymentTerm={contract.paymentTerm}/>
-            < ContractExpiry />
+            <ContractExpiry currentExpiry={contract.expiresAt} />
 
         </div>
     );
