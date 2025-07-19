@@ -7,16 +7,16 @@
 - **Contract Creation**  
   Create and manage legally binding contracts with vendors.
 
-- **Participant Invitation**  
+- **Participant Invitation**
   Invite all stakeholders to collaborate on the contract.
 
-- **E-signing of Contracts**  
+- **E-signing of Contracts**
   Sign contracts electronically, eliminating the need for physical paperwork.
 
-- **Delivery Note Generation**  
+- **Delivery Note Generation**
   Automatically generate delivery notes as proof of delivery.
 
-- **Invoice Generation**  
+- **Invoice Generation**
   Create invoices directly from contract or delivery data.
 
 - **Locking of Assets in Escrow**  
@@ -25,11 +25,8 @@
 - **Flexible Payment Terms**  
   Supports various payment configurations:
   1. On Delivery  
-  2. Periodic Payments
-  3. Milestone-based Payments
-  4. Net 60/90/Custom Terms  
-  5. 7, 14, 30 Day Cycles
-  6. Immediate Payment
+  2. Standard payment periods: 7, 14, 30 Day, Net 60/90 
+  3. Custom payment periods
 
 - **Discounts and Penalties**  
   Configure dynamic pricing based on early payment or late delivery.
@@ -39,6 +36,9 @@
 
 - **Dispute Resolution**  
   Built-in mechanisms to manage and resolve disputes efficiently.
+
+  **Wallet Functionality**
+  Connection to crypto wallet
 
 
 
