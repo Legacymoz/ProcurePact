@@ -5,10 +5,35 @@ import { useAuth } from "../Hooks/AuthContext";
 import { useStore } from "../store/useStore";
 import { Principal } from "@dfinity/principal";
 
-const AddParty = () => {
-  const [parties, setParties] = useState([]);
+const AddParty = ({ currentParties }) => {
+  // Convert all party principals to text if they are Uint8Array objects
+  const normalizeParties = (partiesArr) =>
+    partiesArr.map((party) => {
+      let principalText = party.principal;
+      if (party.principal && party.principal._arr) {
+        try {
+          principalText = Principal.fromUint8Array(
+            new Uint8Array(party.principal._arr)
+          ).toText();
+        } catch (e) {
+          principalText = String(party.principal);
+        }
+      }
+      return { ...party, principal: principalText };
+    });
+
+  const [parties, setParties] = useState(normalizeParties(currentParties));
   const { principal, authClient } = useAuth();
   const selectedContract = useStore((state) => state.selectedContract);
+  const userPrincipal = authClient.getIdentity().getPrincipal().toText();
+
+  // Helper to extract role/status from details
+  const extractRole = (details) => Object.keys(details?.role || {})[0] || "";
+  const extractStatus = (details) => Object.keys(details?.status || {})[0] || "";
+
+  // Helper to count roles
+  const countRole = (roleName) =>
+    parties.filter((p) => extractRole(p.details) === roleName).length;
 
   try {
     CLM_backend.getContracts(principal).then((fetchedContracts) => {
@@ -26,45 +51,99 @@ const AddParty = () => {
   }, []);
 
   const addParty = () => {
-    const newParty = {
-      id: "",
-      role: "",
-    };
-    setParties([...parties, newParty]);
+    // Prevent adding more than one Buyer or Seller
+    if (countRole("Buyer") >= 1 && countRole("Supplier") >= 1) {
+      // Only allow adding ThirdParty
+      setParties([
+        ...parties,
+        {
+          principal: "",
+          details: { status: { Invited: null }, role: { ThirdParty: null } },
+        },
+      ]);
+      return;
+    }
+    if (countRole("Buyer") >= 1) {
+      setParties([
+        ...parties,
+        {
+          principal: "",
+          details: { status: { Invited: null }, role: { Supplier: null } },
+        },
+      ]);
+      return;
+    }
+    if (countRole("Supplier") >= 1) {
+      setParties([
+        ...parties,
+        {
+          principal: "",
+          details: { status: { Invited: null }, role: { Buyer: null } },
+        },
+      ]);
+      return;
+    }
+    // If neither Buyer nor Supplier exists, allow both
+    setParties([
+      ...parties,
+      {
+        principal: "",
+        details: { status: { Invited: null }, role: { Buyer: null } },
+      },
+    ]);
   };
 
   const handleInputChange = (index, field, value) => {
     const updated = [...parties];
-    updated[index][field] = value;
+    if (field === "principal") {
+      updated[index].principal = value;
+    } else if (field === "role") {
+      // Prevent selecting Buyer/Seller if already present
+      if (
+        (value === "Buyer" && countRole("Buyer") >= 1 && extractRole(updated[index].details) !== "Buyer") ||
+        (value === "Supplier" && countRole("Supplier") >= 1 && extractRole(updated[index].details) !== "Supplier")
+      ) {
+        return;
+      }
+      updated[index].details.role = { [value]: null };
+    }
     setParties(updated);
   };
 
   const removeParty = (indexToRemove) => {
-    const updatedParties = parties.filter(
-      (_, index) => index !== indexToRemove
-    );
+    // Prevent removing self
+    if (parties[indexToRemove].principal === userPrincipal) return;
+    const updatedParties = parties.filter((_, index) => index !== indexToRemove);
     setParties(updatedParties);
   };
 
   const handleSubmit = async () => {
     // Convert each party's id to a Principal
-    const partiesWithPrincipal = parties.map((party) => ({
-      ...party,
-      id: Principal.fromText(party.id),
+    const partiesToSubmit = parties.map((party) => ({
+      principal: Principal.fromText(party.principal),
+      role: extractRole(party.details),
     }));
 
-    console.log("Parties added:", partiesWithPrincipal);
+    console.log("Parties added:", partiesToSubmit);
 
     try {
       const data = await CLM_backend.invitePartiesToContract(
         selectedContract,
-        partiesWithPrincipal
+        partiesToSubmit
       );
       console.log("Parties added successfully:", data);
     } catch (error) {
       console.error("Error adding parties:", error);
     }
   };
+  useEffect(() => {
+    console.log("current parties: ", parties);
+  }, []);
+  useEffect(() => {
+    // If parties are updated from props, normalize them again
+    setParties(normalizeParties(currentParties));
+    // eslint-disable-next-line
+  }, [currentParties]);
 
   return (
     <div className="contract-section-container">
@@ -75,37 +154,51 @@ const AddParty = () => {
         <h2 className="contract-section-heading">Add Party</h2>
       </div>
 
+      {/* List fetched parties with role and status */}
       {parties.length > 0 ? (
         <div className="party-list">
-          {parties.map((party, index) => (
-            <div key={index} className="party-item">
-              <input
-                type="text"
-                placeholder="Enter party ID"
-                value={party.id}
-                onChange={(e) => handleInputChange(index, "id", e.target.value)}
-              />
-              <select
-                value={party.role}
-                onChange={(e) =>
-                  handleInputChange(index, "role", e.target.value)
-                }
-              >
-                <option value="">Select role</option>
-                <option value="Buyer">Buyer</option>
-                <option value="Supplier">Seller</option>
-              </select>
-
-              <div className="delete-button-container">
-                <button
-                  onClick={() => removeParty(index)}
-                  className="delete-button"
-                >
-                  Remove
-                </button>
+          {parties.map((party, index) => {
+            const isSelf = party.principal === userPrincipal;
+            const role = extractRole(party.details);
+            const status = extractStatus(party.details);
+            return (
+              <div key={index} className="party-item">
+                <div className="party-info">
+                  <p className="party-principal">Id: {party.principal}</p>
+                  <p className="party-role">Role: {role}</p>
+                  <p className="party-status">Status: {status}</p>
+                </div>
+                {!isSelf && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Enter party ID"
+                      value={party.principal}
+                      onChange={(e) => handleInputChange(index, "principal", e.target.value)}
+                    />
+                    <select
+                      value={role}
+                      onChange={(e) => handleInputChange(index, "role", e.target.value)}
+                    >
+                      <option value="">Select role</option>
+                      <option value="Buyer">Buyer</option>
+                      <option value="Supplier">Seller</option>
+                      <option value="ThirdParty">ThirdParty</option>
+                    </select>
+                    <div className="delete-button-container">
+                      <button
+                        onClick={() => removeParty(index)}
+                        className="delete-button"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                )}
+                {isSelf && <p className="self-label">(You)</p>}
               </div>
-            </div>
-          ))}
+            );
+          })}
           <button onClick={handleSubmit} className="submit-button">
             Save
           </button>

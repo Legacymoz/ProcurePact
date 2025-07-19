@@ -14,7 +14,6 @@ import Escrow "canister:escrow";
 
 actor class CLM() = {
 
-  
   stable var users : Trie.Trie<Principal, T.User> = Trie.empty(); //application users
   stable var contracts : Trie.Trie<Nat32, T.Contract> = Trie.empty(); // all contracts
   stable var nextContractId : Nat32 = 1; // to keep track of the next contract ID
@@ -112,10 +111,32 @@ actor class CLM() = {
 
   //get full single contract details
   // get full single contract details
-  public shared func getContractDetails(contractId : Nat32) : async Result.Result<T.Contract, Text> {
+  public shared func getContractDetails(contractId : Nat32) : async Result.Result<T.ContractDetails, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
-        return #ok(contract);
+        let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; details: T.Party }>(
+          contract.parties,
+          func(k, v) { { principal = k; details = v } },
+        );
+
+        let pricingArray = List.toArray<T.Item> (contract.pricing);
+
+        let contractDetails : T.ContractDetails = {
+          name = contract.name;
+          description = contract.description;
+          createdAt = contract.createdAt;
+          updatedAt = contract.createdAt;
+          createdBy = contract.createdBy;
+          status = contract.status;
+          completionDate = contract.completionDate;
+          expiresAt = contract.expiresAt;
+          parties = partiesArray;
+          pricing = pricingArray;
+          value = contract.value;
+          paymentTerm = contract.paymentTerm;
+          deliveryNote = contract.deliveryNote;
+        };
+        return #ok(contractDetails);
       };
       case null {
         return #err("Contract not found.");
@@ -363,7 +384,7 @@ actor class CLM() = {
   };
 
   //Editing contract
-  public shared ({ caller }) func invitePartiesToContract(contractId : Nat32, parties : [{ id : Principal; role : Text }]) : async Result.Result<Text, Text> {
+  public shared ({ caller }) func invitePartiesToContract(contractId : Nat32, parties : [{ principal : Principal; role : Text }]) : async Result.Result<Text, Text> {
     // Check if contract exists
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
@@ -377,14 +398,14 @@ actor class CLM() = {
 
         label inviteLoop for (p in parties.vals()) {
           // Check if invitee exists
-          switch (Trie.get(users, key(p.id), Principal.equal)) {
+          switch (Trie.get(users, key(p.principal), Principal.equal)) {
             case (null) {
               // Skip if user does not exist
               continue inviteLoop;
             };
             case (?invitee) {
               // Check if party already exists
-              switch (Trie.get(updatedParties, key(p.id), Principal.equal)) {
+              switch (Trie.get(updatedParties, key(p.principal), Principal.equal)) {
                 case (?_) {
                   // Already invited, skip
                   continue inviteLoop;
@@ -400,11 +421,11 @@ actor class CLM() = {
                       case (_) #ThirdParty;
                     };
                   };
-                  updatedParties := Trie.put(updatedParties, key(p.id), Principal.equal, invitedParty).0;
+                  updatedParties := Trie.put(updatedParties, key(p.principal), Principal.equal, invitedParty).0;
 
                   // Update invitee's contracts
                   let updatedInvitee : T.User = updateUserContracts(invitee, contractId);
-                  users := Trie.put(users, key(p.id), Principal.equal, updatedInvitee).0;
+                  users := Trie.put(users, key(p.principal), Principal.equal, updatedInvitee).0;
 
                   invitedCount += 1;
                 };

@@ -80,6 +80,22 @@ module Types {
         //comments
     };
 
+    public type ContractDetails = {
+        name : Text;
+        description : Text; //short description
+        createdAt : Int; // timestamp of contract creation
+        updatedAt : Int;
+        createdBy : Principal;
+        status : ContractStatus; // e.g., "draft", "active", "completed", "cancelled"
+        completionDate : ?Int; // optional completion date
+        expiresAt : ?Int; // optional expiration date
+        parties : [{ principal : Principal; details : Party }];
+        pricing : [Item];
+        value : Nat32; //calculated fron the pricing
+        paymentTerm : ?PaymentTerm;
+        deliveryNote : ?DeliveryNote;
+    };
+
     public type ContractStatus = {
         #Draft; //initial stage, edits being made
         #Approved; //awaiting signatures
@@ -92,7 +108,7 @@ module Types {
         #Terminated;
         #Expired;
         #Disputed; //in case of a dispute
-        #TokensLocked
+        #TokensLocked;
     };
 
     public type EscrowRecordData = {
@@ -105,33 +121,33 @@ module Types {
         recipient : Principal; // the recipient of the locked tokens
     };
 
-// 🚩 Add overdue fees
+    // 🚩 Add overdue fees
     public type Invoice = {
-        penalty:Nat32;//24-hour penalty
-        contractId: Nat32;
-        issuer: Principal;
-        recipient: Principal;
-        dueDate: Int;
-        items: List.List<Item>;
-        totalAmount: Nat32; // Total amount of the invoice
-        status: {
+        penalty : Nat32; //24-hour penalty
+        contractId : Nat32;
+        issuer : Principal;
+        recipient : Principal;
+        dueDate : Int;
+        items : List.List<Item>;
+        totalAmount : Nat32; // Total amount of the invoice
+        status : {
             #Pending; // Invoice is created but not yet paid
             #Paid; // Invoice has been paid
             #Overdue; // Payment was not made by the due date
             #Disputed; // Invoice is under dispute
         };
-        createdAt: Int; // Timestamp of when the invoice was created
-        updatedAt: Int; // Timestamp of the last update to the invoice
-        notes: ?Text; // Optional notes or comments on the invoice
+        createdAt : Int; // Timestamp of when the invoice was created
+        updatedAt : Int; // Timestamp of the last update to the invoice
+        notes : ?Text; // Optional notes or comments on the invoice
     };
 
     public type CreateInvoiceArgs = {
-        contractId: Nat32;
-        issuer: Principal; // The principal creating the invoice
-        recipient: Principal;
-        items: List.List<Item>;
-        dueDate: Int;
-        penalty: Nat32;
-        notes: ?Text; // Optional notes or comments on the invoice
+        contractId : Nat32;
+        issuer : Principal; // The principal creating the invoice
+        recipient : Principal;
+        items : List.List<Item>;
+        dueDate : Int;
+        penalty : Nat32;
+        notes : ?Text; // Optional notes or comments on the invoice
     };
 };
