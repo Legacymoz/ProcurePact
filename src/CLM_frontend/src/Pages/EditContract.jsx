@@ -35,7 +35,7 @@ const EditContract = () => {
 
             <AddParty currentParties={contract.parties}/>
 
-            <AddProducts />
+            <AddProducts currentPricing={contract.pricing}/>
 
             <AddPayment />
             < ContractExpiry />

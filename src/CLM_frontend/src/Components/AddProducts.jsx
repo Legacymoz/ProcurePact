@@ -1,12 +1,10 @@
-import React, { useState } from "react";
 import "../styles/AddProductStyles.css";
 import { CLM_backend } from "declarations/CLM_backend";
-import { useStore } from "../store/useStore"; 
-import { useAuth } from "../Hooks/AuthContext";
+import { useStore } from "../store/useStore";
+import { useEffect, useState } from "react";
 
-const AddProducts = () => {
-  const [products, setProducts] = useState([]);
-  const { user, principal } = useAuth();
+const AddProducts = ({currentPricing}) => {
+  const [products, setProducts] = useState(currentPricing);
   const selectedContract = useStore((state) => state.selectedContract);
 
   const addProduct = () => {
@@ -39,16 +37,20 @@ const AddProducts = () => {
     }));
     console.log("My products", productsWithBigInt);
 
-     try {
-          const data = await CLM_backend.addItems(BigInt(selectedContract), productsWithBigInt);
-          console.log("Products added successfully:", data);
-
-
-        } catch (error) {
-          console.error("Error adding products:", error);
+    try {
+      const data = await CLM_backend.addItems(BigInt(selectedContract), productsWithBigInt).then((response) => {
+        if (response.ok) {
+          alert(response.ok);
+        } else {
+          alert("Error adding items. Please try again");
+          console.error(response.err);
         }
-      };
-   
+      })
+
+    } catch (error) {
+      console.error("Error adding products:", error);
+    }
+  };
 
   return (
     <div className="contract-section-container">
