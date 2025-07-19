@@ -9,7 +9,7 @@ import { useStore } from '../store/useStore';
 
 const Contracts = () => {
     const navigate = useNavigate();
-    const { user, isAuthenticated, authClient } = useAuth();
+    const { user, isAuthenticated, authClient, } = useAuth();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const [contracts, setContracts] = useState([]);
@@ -46,6 +46,7 @@ const Contracts = () => {
         if (isAuthenticated && user?.length != 0) {
             fetchContracts();
         }
+        console.log(authClient?.getIdentity().getPrincipal().toText());
     }, [user]);
 
     const handleSelection = (contractId) => {
