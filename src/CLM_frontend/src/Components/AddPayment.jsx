@@ -12,7 +12,7 @@ const AddPayment = () => {
     console.log("Payment Terms",payment)
 
      try {
-          const data = await CLM_backend.updatePayementTerms(selectedContract, payment);
+          const data = await CLM_backend.updatePayementTerms(BigInt(selectedContract), { [payment]: null });
           console.log("Parties added successfully:", data);
     
     
