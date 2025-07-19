@@ -31,10 +31,16 @@ const AddProducts = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("My products", products);
+    // Convert unit_price and quantity to BigInt for each product
+    const productsWithBigInt = products.map((product) => ({
+      ...product,
+      unit_price: BigInt(product.unit_price),
+      quantity: BigInt(product.quantity),
+    }));
+    console.log("My products", productsWithBigInt);
 
      try {
-          const data = await CLM_backend.addItems(selectedContract, products);
+          const data = await CLM_backend.addItems(BigInt(selectedContract), productsWithBigInt);
           console.log("Products added successfully:", data);
 
 
