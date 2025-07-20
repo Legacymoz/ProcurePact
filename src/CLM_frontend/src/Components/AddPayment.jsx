@@ -1,11 +1,15 @@
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import "../styles/AddPaymentStyles.css";
 import { useStore } from '../store/useStore';
 import { CLM_backend } from "declarations/CLM_backend";
 
 
 const AddPayment = ({ currentPaymentTerm }) => {
-  const [payment, setPayment] = useState(Object.keys(currentPaymentTerm?.[0])[0]);
+  const [payment, setPayment] = useState(
+    currentPaymentTerm && currentPaymentTerm[0]
+      ? Object.keys(currentPaymentTerm[0])[0]
+      : ""
+  );
   const selectedContract = useStore((state) => state.selectedContract);
   const handleSubmit = async () => {
     console.log("Payment Terms", payment)
@@ -19,6 +23,10 @@ const AddPayment = ({ currentPaymentTerm }) => {
       console.error("Error adding parties:", error);
     }
   };
+
+  useEffect(()=>{
+    console.log("current payment term", currentPaymentTerm)
+  },[])
 
   return (
     <div className="contract-section-container">

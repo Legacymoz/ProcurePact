@@ -13,6 +13,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ReorderIcon from '@mui/icons-material/Reorder';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ListItemButton from "@mui/material/ListItemButton";
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import "../styles/LayoutStyles.css"; 
 
 const Layout = () => {
@@ -103,38 +104,16 @@ const Layout = () => {
                 </ListItem>
 
             </List>
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton component={Link} to="/connections">
+                    <ListItemIcon><PeopleAltIcon/></ListItemIcon>
+                    <ListItemText primary="Connections"/>
+                    </ListItemButton>
+                </ListItem>
+            </List>
         </Box>
     )
-
-    // return (
-    //     <>
-    //         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-    //             <Button
-
-    //                 sx={{
-    //                     minWidth: 'unset',   // Prevents the default min-width of the button
-    //                     padding: '4px',      // Reduces padding
-    //                 }}
-
-    //                 onClick={toggleDrawer(true)}>
-    //                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="black" className="bi bi-list" viewBox="0 0 16 16">
-    //                     <path fillRule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
-    //                 </svg>
-    //             </Button>
-    //             <Link className="navbar-brand" to="/">CLM</Link>
-    //             <span className="ms-auto navbar-text">
-    //                 {isAuthenticated ? `Welcome, ${!user ? principal.toText() : user.name}` : "Please log in"}
-    //             </span>
-    //             <button onClick={isAuthenticated ? logout : login} className="btn  ms-2">
-    //                 {isAuthenticated ? "Log out" : "Log in"}
-    //             </button>
-    //         </nav>
-    //         <Drawer open={open} onClose={toggleDrawer(false)}>
-    //             {DrawerList}
-    //         </Drawer>
-    //         <Outlet />
-    //     </>
-    // );
 
     return (
         <>

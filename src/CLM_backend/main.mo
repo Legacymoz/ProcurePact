@@ -30,7 +30,7 @@ actor class CLM() = {
     if (Trie.get(users, key(caller), Principal.equal) != null) {
       return #err("User already exists.");
     };
-
+    let userConnections : Trie.Trie<Principal, T.ConnectionStatus> = Trie.empty();
     let now = Time.now();
     let newUser : T.User = {
       name = name;
@@ -43,6 +43,8 @@ actor class CLM() = {
       contracts = List.nil<Nat32>();
     };
     users := Trie.put(users, key(caller), Principal.equal, newUser).0;
+    //initialize user connections
+    connections := Trie.put(connections, key(caller), Principal.equal, userConnections).0;
     return #ok("User added successfully.");
   };
   //get user
@@ -75,12 +77,12 @@ actor class CLM() = {
 
   //get contracts summary for user
   // get contracts summary for user
-  public shared func getContracts(principal : Principal) : async Result.Result<[{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int }], Text> {
+  public shared func getContracts(principal : Principal) : async Result.Result<[{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int; status : T.ContractStatus }], Text> {
     switch (Trie.get(users, key(principal), Principal.equal)) {
       case (?user) {
-        let summaries = List.foldLeft<Nat32, List.List<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int }>>(
+        let summaries = List.foldLeft<Nat32, List.List<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int; status : T.ContractStatus }>>(
           user.contracts,
-          List.nil<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int }>(),
+          List.nil<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int; status : T.ContractStatus }>(),
           func(acc, cId) {
             switch (Trie.get(contracts, { hash = cId; key = cId }, Nat32.equal)) {
               case (?contract) {
@@ -91,6 +93,7 @@ actor class CLM() = {
                     description = contract.description;
                     createdAt = contract.createdAt;
                     updatedAt = contract.updatedAt;
+                    status = contract.status;
                   },
                   acc,
                 );
@@ -114,12 +117,12 @@ actor class CLM() = {
   public shared func getContractDetails(contractId : Nat32) : async Result.Result<T.ContractDetails, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
-        let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; details: T.Party }>(
+        let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; details : T.Party }>(
           contract.parties,
           func(k, v) { { principal = k; details = v } },
         );
 
-        let pricingArray = List.toArray<T.Item> (contract.pricing);
+        let pricingArray = List.toArray<T.Item>(contract.pricing);
 
         let contractDetails : T.ContractDetails = {
           name = contract.name;
@@ -241,6 +244,21 @@ actor class CLM() = {
         };
       };
       case (null) { return #err("You have no connection requests.") };
+    };
+  };
+
+  public shared func getConnections(principal: Principal ) : async Result.Result<[{ principal : Principal; status : T.ConnectionStatus }], Text> {
+    switch (Trie.get(connections, key(principal), Principal.equal)) {
+      case (null) {
+        #err("User doesn't exist!");
+      };
+      case (?connections) {
+        let connectionsArray = Trie.toArray<Principal, T.ConnectionStatus, { principal : Principal; status : T.ConnectionStatus }>(
+          connections,
+          func(k, v) { { principal = k; status = v } },
+        );
+        return #ok(connectionsArray);
+      };
     };
   };
 

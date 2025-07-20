@@ -1,7 +1,6 @@
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
-import { CLM_backend } from 'declarations/CLM_backend';
 
 const style = {
     position: 'absolute',
@@ -32,21 +31,15 @@ export default function ModalComponent({ open, setOpen, submitNewContract }) {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            console.log(newContract);
-            await submitNewContract(newContract.name, newContract.description, newContract.role);
-            alert("Contract created successfully");
-            setNewContract({
-                name: '',
-                description: '',
-                role: ''
-            });
-            handleClose();
-        } catch (error) {
-            alert("Failed to create contract: " + error.message);
-        }
+        submitNewContract(newContract.name, newContract.description, newContract.role);
+        setNewContract({
+            name: '',
+            description: '',
+            role: ''
+        });
+        handleClose();
     }
     return (
         <Modal

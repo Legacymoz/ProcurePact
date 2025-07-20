@@ -20,10 +20,8 @@ const Contracts = () => {
 
     const fetchContracts = async () => {
         CLM_backend.getContracts(authClient.getIdentity().getPrincipal()).then((fetched) => {
-            console.log("fetched contracts", fetched)
             setContracts(fetched.ok);
         });
-        console.log("contracts", contracts)
     };
 
     const submitNewContract = async (name, description, role) => {
@@ -74,6 +72,7 @@ const Contracts = () => {
                             <th scope="col">ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody className='contract-tbody'>
@@ -89,6 +88,7 @@ const Contracts = () => {
                                                 : contract.description
                                         }
                                     </td>
+                                    <td>{Object.keys(contract.status)[0]}</td>
                                 </tr>
                             ))
                         }

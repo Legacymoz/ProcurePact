@@ -136,9 +136,7 @@ const AddParty = ({ currentParties }) => {
       console.error("Error adding parties:", error);
     }
   };
-  useEffect(() => {
-    console.log("current parties: ", parties);
-  }, []);
+ 
   useEffect(() => {
     // If parties are updated from props, normalize them again
     setParties(normalizeParties(currentParties));
