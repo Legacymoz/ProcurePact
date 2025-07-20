@@ -8,8 +8,11 @@ import Time "mo:base/Time";
 import Nat "mo:base/Nat";
 import Bool "mo:base/Bool";
 import Array "mo:base/Array";
+import Debug "mo:base/Debug";
 import T "Types";
 import Escrow "canister:escrow";
+import Ledger "canister:icrc1_ledger_canister";
+
 
 actor class CLM() = {
 
@@ -19,6 +22,62 @@ actor class CLM() = {
 
   func key(p : Principal) : T.Key<Principal> {
     { hash = Principal.hash p; key = p };
+  };
+
+  // For testing purposes only
+  //transfer tokens to all users
+  public shared ({ caller }) func transferToUsers(amount : Nat) : async Result.Result<Text, Text> {
+    let usersArray = Trie.toArray<Principal, T.User, Principal>(
+      users,
+      func(k, _v) = k,
+    );
+
+    for (userId in usersArray.vals()) {
+      let transferArgs : Ledger.TransferArg = {
+        amount = amount;
+        to = { owner = userId; subaccount = null };
+        created_at_time = null;
+        fee = null;
+        from_subaccount = null;
+        memo = null;
+      };
+
+      let transferResult = await Ledger.icrc1_transfer(transferArgs);
+
+      switch (transferResult) {
+        case (#Err(errorMessage)) {
+          //Debug.print("Failed to transfer tokens to user " # Principal.toText(userId) # ": " debug_show(errorMessage));
+          let errorText = switch (errorMessage) {
+            case (#BadFee(info)) {
+              "Bad fee error. Expected fee: " # debug_show (info.expected_fee);
+            };
+            case (#BadBurn(info)) {
+              "Bad burn error. Minimum burn amount: " # debug_show (info.min_burn_amount);
+            };
+            case (#InsufficientFunds(info)) {
+              "Insufficient funds. Current balance: " # debug_show (info.balance);
+            };
+            case (#TooOld) { "Transaction is too old" };
+            case (#CreatedInFuture(info)) {
+              "Transaction created in future. Ledger time: " # debug_show (info.ledger_time);
+            };
+            case (#Duplicate(info)) {
+              "Duplicate transaction. Duplicate of block: " # debug_show (info.duplicate_of);
+            };
+            case (#TemporarilyUnavailable) { "Service temporarily unavailable" };
+            case (#GenericError(info)) {
+              "Generic error. Code: " # debug_show (info.error_code) # ", Message: " # info.message;
+            };
+          };
+          return #err(errorText);
+        };
+        case (#Ok(blockIndex)) {
+          Debug.print("Successfully transferred tokens to user " # Principal.toText(userId) # " at block index " # Nat.toText(blockIndex));
+        };
+      };
+    };
+
+    return #ok("Transfers completed");
   };
 
   // Adjacency list for user-user connections: principal -> list of connected principals
@@ -483,7 +542,6 @@ actor class CLM() = {
         };*/
         let newStatus = switch (updatedStatus) {
           case ("Draft") #Draft;
-          case ("Approved") #Approved;
           case ("Signed") #Signed;
           case ("Active") #Active;
           case ("Renewed") #Renewed;
@@ -493,6 +551,7 @@ actor class CLM() = {
           case ("Disputed") #Disputed;
           case ("DeliveryConfirmed") #DeliveryConfirmed;
           case ("DeliveryNoteSubmitted") #DeliveryNoteSubmitted;
+          case ("TokensLocked") #TokensLocked;
           case (_) { return #err("Invalid status provided.") };
         };
         let updatedContract : T.Contract = {

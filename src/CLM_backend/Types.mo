@@ -97,7 +97,6 @@ module Types {
 
     public type ContractStatus = {
         #Draft; //initial stage, edits being made
-        #Approved; //awaiting signatures
         #Signed; //signatures submitted
         #DeliveryConfirmed;
         #DeliveryNoteSubmitted;
