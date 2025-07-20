@@ -6,6 +6,7 @@ import AddParty from '../Components/AddParty';
 import AddProducts from '../Components/AddProducts';
 import AddPayment from '../Components/AddPayment';
 import ContractExpiry from '../Components/AddContractExpiry';
+import AddSignature from '../Components/AddSignature';
 
 const EditContract = () => {
     const [contract, setContract] = useState(null);
@@ -33,13 +34,13 @@ const EditContract = () => {
         <div className="editContract-container">
             <h1>Edit Contract: {contract.name}</h1>
 
-            <AddParty currentParties={contract.parties}/>
+            <AddParty currentParties={contract.parties} />
 
-            <AddProducts currentPricing={contract.pricing}/>
+            <AddProducts currentPricing={contract.pricing} />
 
-            <AddPayment currentPaymentTerm={contract.paymentTerm}/>
+            <AddPayment currentPaymentTerm={contract.paymentTerm} />
             <ContractExpiry currentExpiry={contract.expiresAt} />
-
+            <AddSignature currentParties={contract.parties} />
         </div>
     );
 };
