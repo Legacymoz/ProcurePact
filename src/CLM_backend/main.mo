@@ -5,7 +5,6 @@ import Result "mo:base/Result";
 import List "mo:base/List";
 import Nat32 "mo:base/Nat32";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
 import Bool "mo:base/Bool";
 import Array "mo:base/Array";
@@ -77,26 +76,33 @@ actor class CLM() = {
 
   //get contracts summary for user
   // get contracts summary for user
-  public shared func getContracts(principal : Principal) : async Result.Result<[{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int; status : T.ContractStatus }], Text> {
+  public shared func getContracts(principal : Principal) : async Result.Result<[T.ContractSummary], Text> {
     switch (Trie.get(users, key(principal), Principal.equal)) {
       case (?user) {
-        let summaries = List.foldLeft<Nat32, List.List<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int; status : T.ContractStatus }>>(
+        let summaries = List.foldLeft<Nat32, List.List<{ contractId : Nat32; name : Text; description : Text; createdBy : Principal; status : T.ContractStatus; party : T.Party }>>(
           user.contracts,
-          List.nil<{ contractId : Nat32; name : Text; description : Text; createdAt : Int; updatedAt : Int; status : T.ContractStatus }>(),
+          List.nil<{ contractId : Nat32; name : Text; description : Text; createdBy : Principal; status : T.ContractStatus; party : T.Party }>(),
           func(acc, cId) {
             switch (Trie.get(contracts, { hash = cId; key = cId }, Nat32.equal)) {
               case (?contract) {
-                List.push(
-                  {
-                    contractId = cId;
-                    name = contract.name;
-                    description = contract.description;
-                    createdAt = contract.createdAt;
-                    updatedAt = contract.updatedAt;
-                    status = contract.status;
-                  },
-                  acc,
-                );
+                switch (Trie.get(contract.parties, key(principal), Principal.equal)) {
+                  case (?party) {
+                    List.push(
+                      {
+                        contractId = cId;
+                        name = contract.name;
+                        description = contract.description;
+                        createdBy = contract.createdBy;
+                        status = contract.status;
+                        party = party;
+                      },
+                      acc,
+                    );
+                  };
+                  case null {
+                    acc;
+                  };
+                };
               };
               case null {
                 acc;
@@ -104,7 +110,7 @@ actor class CLM() = {
             };
           },
         );
-        return #ok(List.toArray(List.reverse(summaries)));
+        return #ok(List.toArray<{ contractId : Nat32; name : Text; description : Text; createdBy : Principal; status : T.ContractStatus; party : T.Party }>(List.reverse(summaries)));
       };
       case (null) {
         return #err("User not found.");
@@ -247,7 +253,7 @@ actor class CLM() = {
     };
   };
 
-  public shared func getConnections(principal: Principal ) : async Result.Result<[{ principal : Principal; status : T.ConnectionStatus }], Text> {
+  public shared func getConnections(principal : Principal) : async Result.Result<[{ principal : Principal; status : T.ConnectionStatus }], Text> {
     switch (Trie.get(connections, key(principal), Principal.equal)) {
       case (null) {
         #err("User doesn't exist!");

@@ -15,8 +15,20 @@ const AddPayment = ({ currentPaymentTerm }) => {
     console.log("Payment Terms", payment)
 
     try {
-      const data = await CLM_backend.updatePayementTerms(BigInt(selectedContract), { [payment]: null });
-      console.log("Parties added successfully:", data);
+      await CLM_backend.updatePayementTerms(BigInt(selectedContract), { [payment]: null }).then((response) => {
+        if (response.ok) {
+          alert("Payment terms updated successfully!");
+        } else {
+          alert("Error updating payment terms");
+          console.log(response.err);
+        }
+      });
+      // Optionally, you can also update the zustand store or trigger a re-fetch of
+      // contracts to reflect the changes in the UI.
+      // For example:
+      // fetchContracts();
+      // Or update the store state if you have a method for that.
+      // setSelectedContract(null); // Reset the selected contract if needed
 
 
     } catch (error) {

@@ -4,7 +4,9 @@ import Modal from '../Components/Modal';
 import { useAuth } from "../Hooks/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/ContractStyles.css";
-import { useStore } from '../store/useStore';   
+import { useStore } from '../store/useStore';
+import { Principal } from "@dfinity/principal";
+
 
 
 const Contracts = () => {
@@ -49,55 +51,121 @@ const Contracts = () => {
 
     const handleSelection = (contractId) => {
         setSelectedContract(contractId);
-        console.log("Selected contract ID:", contractId);
         navigate(`/contract/${contractId}`);
 
-        
+
+    };
+
+    // Separate contracts by party status
+    const invitedContracts = contracts.filter(
+        (contract) => contract.party?.status && Object.keys(contract.party.status)[0] === "Invited"
+    );
+    const otherContracts = contracts.filter(
+        (contract) => !(contract.party?.status && Object.keys(contract.party.status)[0] === "Invited")
+    );
+
+    // Accept/Reject handlers for invitations
+    const handleAcceptInvitation = async (contractId) => {
+        // TODO: Call backend to accept invitation
+        //alert(`Accepted invitation for contract ${contractId}`);
+        //fetchContracts();
+        await CLM_backend.acceptContractInvitation(BigInt(contractId)).then((response) => {
+            if (response.ok) {
+                alert("Invitation accepted successfully!");
+            } else {
+                alert("Error accepting invitation");
+                console.error(response.err);
+            }
+        }).finally(
+            fetchContracts()
+        );
+    };
+    const handleRejectInvitation = async (contractId) => {
+        // TODO: Call backend to reject invitation
+        alert(`Rejected invitation for contract ${contractId}`);
+        fetchContracts();
     };
 
     return (
         <>
             <h1 className='contract-heading'>My Contracts</h1>
             {user != null && isAuthenticated ? <div className='contract-container'>
-            <button className='create-button' onClick={handleOpen}>Create</button>
+                <button className='create-button' onClick={handleOpen}>Create</button>
 
-                {/*
-          Map contracts to display
-          Only show ID, name and truncated Description
-          */}
 
-                <table className='contract-table'>
-                    <thead className='contract-thead'>
-                        <tr className='contract-tr'>
-                            <th scope="col">ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody className='contract-tbody'>
-                        {contracts.length > 0 &&
-                            contracts?.map((contract) => (
-                                <tr key={contract.contractId} onClick={() => handleSelection(contract.contractId)}>
-                                    <td>{contract.contractId}</td>
-                                    <td>{contract.name}</td>
-                                    <td>
-                                        {
-                                            contract.description.length > 30
-                                                ? contract.description.slice(0, 30) + '...'
-                                                : contract.description
-                                        }
-                                    </td>
-                                    <td>{Object.keys(contract.status)[0]}</td>
+
+                {/* Main Contracts Table (excluding Invited) */}
+                <div className='contract-table-container'>
+                    <h2 className='contract-table-heading'>My Contracts</h2>
+                    <table className='contract-table'>
+                        <thead className='contract-thead'>
+                            <tr className='contract-tr'>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th>
+                                <th scope='col'>Role</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className='contract-tbody'>
+                            {otherContracts.length > 0 &&
+                                otherContracts?.map((contract) => (
+                                    <tr key={contract.contractId} onClick={() => handleSelection(contract.contractId)}>
+                                        <td>{contract.contractId}</td>
+                                        <td>{contract.name}</td>
+                                        <td>
+                                            {
+                                                contract.description.length > 30
+                                                    ? contract.description.slice(0, 30) + '...'
+                                                    : contract.description
+                                            }
+                                        </td>
+                                        <td>{Object.keys(contract.party.role)[0]}</td>
+                                        <td>{Object.keys(contract.status)[0]}</td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br />
+                {/* Invited Contracts Section */}
+                {invitedContracts.length > 0 && (
+                    <div className="invited-contracts-section">
+                        <h2>Invitations</h2>
+                        <table className='contract-table'>
+                            <thead className='contract-thead'>
+                                <tr className='contract-tr'>
+                                    <th>ID</th>
+                                    <th>Contract Creator</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody className='contract-tbody'>
+                                {invitedContracts.map((contract) => (
+                                    <tr key={contract.contractId} style={{ cursor: "not-allowed", opacity: 0.7 }}>
+                                        <td>{contract.contractId}</td>
+                                        <td>{Principal.fromUint8Array(contract.createdBy._arr).toText()}</td>
+                                        <td>{contract.name}</td>
+                                        <td>{contract.description.length > 30 ? contract.description.slice(0, 30) + '...' : contract.description}</td>
+                                        <td>{Object.keys(contract.party.role)[0]}</td>
+                                        <td>
+                                            <button onClick={() => handleAcceptInvitation(contract.contractId)} className="btn btn-primary" >Accept</button>
+                                            <button onClick={() => handleRejectInvitation(contract.contractId)} className="btn btn-danger">Reject</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
 
-                : <><p  className="empty-state" >Update profile to view contracts</p></>}
+                : <><p className="empty-state" >Update profile to view contracts</p></>}
             {!isAuthenticated && <>
                 <p className="empty-state" > Please log in</p>
             </>}

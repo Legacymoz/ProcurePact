@@ -30,7 +30,7 @@ const ContractExpiry = ({ currentExpiry }) => {
       if (result.ok) {
         alert("Expiry date updated successfully")
       } else {
-        alert("Error updating expiry date")
+        alert("Error updating expiry date", result.err);
         console.log(result.err);
       }
     })

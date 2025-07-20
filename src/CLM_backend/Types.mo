@@ -26,9 +26,8 @@ module Types {
     public type Party = {
         status : {
             #Accepted; //accepted invitation
-            #Pending;
-            #Rejected;
-            #Invited;
+            #Rejected; //rejected invitation
+            #Invited; //invited to connect
             #Signatory //A party that has signed the contract
         };
         role : {
@@ -149,5 +148,14 @@ module Types {
         dueDate : Int;
         penalty : Nat32;
         notes : ?Text; // Optional notes or comments on the invoice
+    };
+
+    public type ContractSummary = {
+        contractId : Nat32;
+        name : Text;
+        description : Text;
+        createdBy: Principal;
+        status : ContractStatus;
+        party: Party; // The party details for the contract
     };
 };
