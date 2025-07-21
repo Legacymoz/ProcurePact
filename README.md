@@ -1,23 +1,46 @@
 # `CLM`
 
-Welcome to your new `CLM` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+**Contract Lifecycle Management (CLM)** is a web application used to manage vendor agreements.
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+## 🚀 Features
 
-To learn more before you start working with `CLM`, see the following documentation available online:
+- **Contract Creation**  
+  Create and manage legally binding contracts with vendors.
 
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install)
-- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/motoko/main/motoko)
-- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/motoko/main/language-manual)
+- **Participant Invitation**
+  Invite all stakeholders to collaborate on the contract.
 
-If you want to start working on your project right away, you might want to try the following commands:
+- **E-signing of Contracts**
+  Sign contracts electronically, eliminating the need for physical paperwork.
 
-```bash
-cd CLM/
-dfx help
-dfx canister --help
-```
+- **Delivery Note Generation**
+  Automatically generate delivery notes as proof of delivery.
+
+- **Invoice Generation**
+  Create invoices directly from contract or delivery data.
+
+- **Locking of Assets in Escrow**  
+  Secure payment and asset exchange through escrow integration.
+
+- **Flexible Payment Terms**  
+  Supports various payment configurations:
+  1. On Delivery  
+  2. Standard payment periods: 7, 14, 30 Day, Net 60/90 
+  3. Custom payment periods
+
+- **Discounts and Penalties**  
+  Configure dynamic pricing based on early payment or late delivery.
+
+- **Automatic Asset Transfer**  
+  Transfer funds automatically on contract fulfillment.
+
+- **Dispute Resolution**  
+  Built-in mechanisms to manage and resolve disputes efficiently.
+
+  **Wallet Functionality**
+  Connection to crypto wallet
+
+
 
 ## Running the project locally
 

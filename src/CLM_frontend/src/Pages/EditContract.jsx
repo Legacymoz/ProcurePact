@@ -1,33 +1,49 @@
 import { useParams } from 'react-router-dom';
 import { CLM_backend } from 'declarations/CLM_backend';
 import { useEffect, useState } from 'react';
-
+import "../styles/EditContractStyles.css";
+import AddParty from '../Components/AddParty';
+import AddProducts from '../Components/AddProducts';
+import AddPayment from '../Components/AddPayment';
+import ContractExpiry from '../Components/AddContractExpiry';
+import AddSignature from '../Components/AddSignature';
 
 const EditContract = () => {
-    const [contract, setContract] = useState([]);
-    //get contract id from params
-    let params = useParams();
-    //fetch full contract details
+    const [contract, setContract] = useState(null);
+
+    const params = useParams();
+
+    // Fetch contract details
     const fetchContractDetails = async () => {
         try {
             const response = await CLM_backend.getContractDetails(BigInt(params.id));
-            console.log("contract details", response);
-            setContract(response.ok);
+            const data = response.ok;
+            setContract(data);
         } catch (error) {
-            console.log(error);
+            console.error("Error fetching contract:", error);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchContractDetails()
+        fetchContractDetails();
     }, []);
 
-    //edit contract
-    return (<>
-        <div className='container-fluid'>
-            <h1>{contract.name}</h1>
+    if (!contract) return <p>Loading...</p>;
+
+    return (
+        <div className="editContract-container">
+            <h1>Edit Contract: {contract.name}</h1>
+
+            <AddParty currentParties={contract.parties} />
+
+            <AddProducts currentPricing={contract.pricing} />
+
+            <AddPayment currentPaymentTerm={contract.paymentTerm} />
+            <ContractExpiry currentExpiry={contract.expiresAt} />
+            <AddSignature currentParties={contract.parties} />
         </div>
-    </>)
+    );
 };
+
 export default EditContract;
 

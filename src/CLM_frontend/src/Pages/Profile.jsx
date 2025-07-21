@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../Hooks/AuthContext";
 import { CLM_backend } from 'declarations/CLM_backend';
 import { useNavigate } from "react-router-dom";
+import "../styles/Profile.css"
 
 
 const Profile = () => {
@@ -69,7 +70,7 @@ const Profile = () => {
     }, [user]);
 
     return <>
-        <div className="container-fluid">
+        <div className="profile-container">
             <h1>Profile</h1>
             {isAuthenticated ?
                 <>
