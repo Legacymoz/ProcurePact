@@ -55,10 +55,13 @@ module Types {
         items : List.List<Item>; //items delivered
     };
 
+    //🚩 assumes lump sum payment. Needs to be extended for installments
     public type PaymentTerm = {
         #OnDelivery;
-        #Periodic;
-        #FixedDate;
+        #Deferred : {
+            due : Int;
+            penalty : Nat32; //24-hour penalty
+        };
     };
 
     public type Contract = {
@@ -100,6 +103,7 @@ module Types {
         #Signed; //signatures submitted
         #DeliveryConfirmed;
         #DeliveryNoteSubmitted;
+        #InvoiceIssued;
         #Complete;
         #Active;
         #Renewed;
@@ -153,8 +157,8 @@ module Types {
         contractId : Nat32;
         name : Text;
         description : Text;
-        createdBy: Principal;
+        createdBy : Principal;
         status : ContractStatus;
-        party: Party; // The party details for the contract
+        party : Party; // The party details for the contract
     };
 };
