@@ -33,10 +33,10 @@ actor class Escrow() = this {
                 fee = null;
                 to = { owner = Principal.fromActor(this); subaccount = null };
                 created_at_time = null;
-            };//get contract
-    //check if delivery is confirmed
-    //check payment terms
-    //switch
+            }; //get contract
+            //check if delivery is confirmed
+            //check payment terms
+            //switch
             let transferFromResult = await Ledger.icrc2_transfer_from(transferFromArgs);
             switch (transferFromResult) {
                 case (#Err(transferError)) {

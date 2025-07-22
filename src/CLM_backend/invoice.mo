@@ -6,6 +6,7 @@ import Time "mo:base/Time";
 import List "mo:base/List";
 import Ledger "canister:icrc1_ledger_canister";
 import Array "mo:base/Array";
+import CLM_backend "canister:CLM_backend";
 
 actor class Invoice() = this {
     //🚩 add featureOverdue penalty calculation
@@ -68,11 +69,11 @@ actor class Invoice() = this {
         return balance;
     };
 
-    public shared ({ caller }) func transfer(invoiceId : Nat32) : async Result.Result<Text, Text> {
+    //pay invoice
+    public shared ({ caller }) func payInvoice(invoiceId : Nat32) : async Result.Result<Text, Text> {
         switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
             case (?invoice) {
-                //check if caller is the issuer
-                if (caller != invoice.issuer) {
+                if (caller != invoice.recipient) {
                     return #err("Not permitted!");
                 };
                 //verify recipient balance is in range
@@ -110,6 +111,8 @@ actor class Invoice() = this {
                             penalty = invoice.penalty;
                         };
                         invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
+                        //update contract status
+                        let _ = await CLM_backend.updateContractStatus(invoice.contractId, "Complete");
                         #ok("Transferred: " #debug_show (blockIndex));
                     };
                 };
@@ -169,7 +172,5 @@ actor class Invoice() = this {
         // to handle overdue invoices and apply penalties.
         await handleOverdue();
     };
-
-
 
 };
