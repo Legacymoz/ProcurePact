@@ -1,0 +1,107 @@
+Common container styling
+.lock-tokens-container {
+  border: 2px solid #4a90e2;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 500px;
+  background-color: #f5faff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Specific styles using IDs */
+#buyer-lock-tokens {
+  background-color: #e0f7fa;
+}
+
+#awaiting-lock {
+  background-color: #fff3e0;
+  text-align: center;
+}
+
+/* Headings */
+.lock-tokens-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Paragraphs */
+.lock-tokens-container p {
+  margin: 8px 0;
+  color: #555;
+}
+
+/* Button styling */
+.lock-tokens-container button {
+  padding: 10px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 1rem;
+}
+
+.lock-tokens-container button:hover {
+  background-color: #357ab8;
+}
+
+
+/* Common container styling */
+.lock-tokens-container {
+  border: 1px solid #d0d7de;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 32px auto;
+  max-width: 520px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section-specific backgrounds */
+#buyer-lock-tokens {
+  background-color: #f0f4ff;
+}
+
+#awaiting-lock {
+  background-color: #fff7e6;
+  text-align: center;
+}
+
+/* Headings */
+.lock-tokens-container h2 {
+  font-size: 1.75rem;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+/* Paragraphs */
+.lock-tokens-container p {
+  margin: 10px 0;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Button styling */
+.lock-tokens-container button {
+  padding: 12px 20px;
+  background-color: #1e88e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lock-tokens-container button:hover {
+  background-color: #1669bb;
+  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+}
