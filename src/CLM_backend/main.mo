@@ -849,7 +849,7 @@ actor class CLM() = {
       };
       case (?contract) {
         let now = Time.now();
-        if (contract.status != #Active) {
+        if (contract.status != #TokensLocked) {
           return #err("Contract not in the correct state");
         };
         let newNote : T.DeliveryNote = {
@@ -864,7 +864,7 @@ actor class CLM() = {
           createdAt = contract.createdAt;
           updatedAt = now;
           createdBy = contract.createdBy;
-          status = contract.status;
+          status = #DeliveryNoteSubmitted;
           completionDate = contract.completionDate;
           expiresAt = contract.expiresAt;
           parties = contract.parties;
