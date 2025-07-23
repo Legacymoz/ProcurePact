@@ -80,6 +80,26 @@ actor class CLM() = {
     return #ok("Transfers completed");
   };
 
+  //transfer to a particular user
+  public shared ({ caller }) func transfer(acc : Principal, amount : Nat) : async Result.Result<Text, Text> {
+    let transferResult = await Ledger.icrc1_transfer({
+      amount = amount;
+      to = { owner = acc; subaccount = null };
+      memo = null;
+      created_at_time = null;
+      fee = null;
+      from_subaccount = null;
+    });
+    switch (transferResult) {
+      case (#Err(transferError)) {
+        return #err("Transfer failed: " # debug_show (transferError));
+      };
+      case (#Ok(blockIndex)) {
+        return #ok("Tokens transferred successfully. Block index: " # debug_show (blockIndex));
+      };
+    };
+  };
+
   // Adjacency list for user-user connections: principal -> list of connected principals
   stable var connections : Trie.Trie<Principal, Trie.Trie<Principal, T.ConnectionStatus>> = Trie.empty();
 
@@ -467,6 +487,7 @@ actor class CLM() = {
   };
 
   //Editing contract
+  //🚩 need validation to ensure only one buyer and supplier can exist in a contract
   public shared ({ caller }) func invitePartiesToContract(contractId : Nat32, parties : [{ principal : Principal; role : Text }]) : async Result.Result<Text, Text> {
     // Check if contract exists
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
@@ -783,6 +804,7 @@ actor class CLM() = {
 
   //lock tokens
   //🚩 check possibility of automatic locking once signatures are added?
+  //🚩 check if buyer is the caller
   public shared ({ caller }) func lockTokens(contractId : Nat32) : async Result.Result<Text, Text> {
     switch (Trie.get(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
@@ -793,33 +815,36 @@ actor class CLM() = {
         if (contract.status == #TokensLocked) {
           return #err("Tokens are already locked for this contract.");
         };
-        let updatedContract : T.Contract = {
-          name = contract.name;
-          description = contract.description;
-          createdAt = contract.createdAt;
-          updatedAt = Time.now();
-          createdBy = contract.createdBy;
-          status = #TokensLocked;
-          completionDate = contract.completionDate;
-          expiresAt = contract.expiresAt;
-          parties = contract.parties;
-          pricing = contract.pricing;
-          value = contract.value;
-          paymentTerm = contract.paymentTerm;
-          deliveryNote = contract.deliveryNote;
-        };
-        contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
 
-        // Call escrow to lock tokens
-        let escrowResult = await Escrow.lockTokens(caller, contractId, contract.value);
-        switch (escrowResult) {
-          case (#ok(message)) {
-            return #ok("Tokens locked successfully: " # Nat.toText(message));
-          };
-          case (#err(message)) {
-            return #err("Failed to lock tokens: " # message);
+        //change parties trie to array and filter to get supplier principal
+        let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+          contract.parties,
+          func(k, v) { { principal = k; role = v.role } },
+        );
+        //filter seller
+        let filteredParties = Array.filter<{ principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+          partiesArray,
+          func x = x.role == #Supplier,
+        );
+        if (filteredParties.size() == 0) {
+          Debug.print("No supplier found for contract: " # Nat32.toText(contractId));
+          return #err("No supplier!");
+        };
+
+        // 🚩 need function to get seller or buyer
+        for (party in filteredParties.vals()) {
+          switch (await Escrow.lockTokens(caller, contractId, contract.value, party.principal)) {
+            case (#ok(recordId)) {
+              let _ = await updateContractStatus(contractId, "TokensLocked");
+              return #ok("Tokens locked successfully: " # Nat.toText(recordId));
+            };
+            case (#err(message)) {
+              return #err("Failed to lock tokens: " # message);
+            };
           };
         };
+
+        #ok("Success");
       };
       case null {
         return #err("Contract not found.");
@@ -920,7 +945,7 @@ actor class CLM() = {
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
 
         if (contract.paymentTerm == ?#OnDelivery) {
-          let _ = processPayment(contractId);
+          let _ = await processPayment(contractId);
         };
         return #ok("Delivery Confirmed");
       };
@@ -935,6 +960,9 @@ actor class CLM() = {
           return #err("Contract not in correct state for payment processing.");
         };
         if (contract.paymentTerm == ?#OnDelivery) {
+
+          Debug.print("Processing payment for contract: " # Nat32.toText(contractId));
+
           //change parties trie to array and filter to get supplier principal
           let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
             contract.parties,
@@ -946,6 +974,7 @@ actor class CLM() = {
             func x = x.role == #Supplier,
           );
           if (filteredParties.size() == 0) {
+            Debug.print("No supplier found for contract: " # Nat32.toText(contractId));
             return #err("No supplier!");
           };
           //should run once

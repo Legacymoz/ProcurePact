@@ -31,30 +31,27 @@ const Profile = () => {
         };
 
         e.preventDefault();
-        try {
-            const method = user != null ? "updateUser" : "addUser";
-            console.log(method, "method");
-            const response = await CLM_backend[method](
-                userData.name,
-                userData.email,
-                userData.phone,
-                userData.address,
-                userData.bio
-            );
-            {/*
-                Destrtructure response if needed
-                */}
-            alert(response);
-            CLM_backend.getUser
-        } catch (error) {
-            alert(error);
-        } finally {
+        const method = user != null ? "updateUser" : "addUser";
+        console.log(method, "method");
+        const response = await CLM_backend[method](
+            userData.name,
+            userData.email,
+            userData.phone,
+            userData.address,
+            userData.bio
+        ).then((response) => {
+            if (response.ok) {
+                alert(response.ok)
+            } else (
+                alert(response.err)
+            )
+        }).finally(async () => {
             await CLM_backend.getUser(principal).then((userData) => {
-                console.log(userData[0]);
                 setUser(userData[0]);
             });
             navigate("/");
-        }
+        })
+
     };
 
     useEffect(() => {

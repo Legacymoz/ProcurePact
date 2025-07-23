@@ -102,10 +102,9 @@ const LockTokens = () => {
       );
 
       // Get transfer fee
-      //Needs review
-      const transferFee = await getTransferFee();
-
+    const transferFee = await getTransferFee();
       // Approve token lock
+      //approval is charged in the user
       const result = await icrc1_ledger_canister.icrc2_approve({
         amount: BigInt(contractValue) + transferFee,
         //specify who is allowed to spend the tokens
@@ -128,6 +127,7 @@ const LockTokens = () => {
               alert("Tokens locked Successfully");
               navigate(-1)
             } else {
+              console.log(response.err)
               alert("Error Locking tokens");
             }
           }

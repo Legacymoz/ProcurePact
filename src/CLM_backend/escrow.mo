@@ -5,6 +5,7 @@ import Time "mo:base/Time";
 import Error "mo:base/Error";
 import Trie "mo:base/Trie";
 import Nat32 "mo:base/Nat32";
+import Debug "mo:base/Debug";
 import Ledger "canister:icrc1_ledger_canister";
 
 actor class Escrow() = this {
@@ -18,10 +19,11 @@ actor class Escrow() = this {
     //create storage to record locked tokens
     stable var records : Trie.Trie<Nat32, T.EscrowRecordData> = Trie.empty();
 
-    public shared func lockTokens(from : Principal, dealId : Nat32, amount : Nat32) : async Result.Result<Nat, Text> {
-        let now = Time.now();
-
+    public shared func lockTokens(from : Principal, dealId : Nat32, amount : Nat32, recipient: Principal) : async Result.Result<Nat, Text> {
         try {
+
+            Debug.print("Locking tokens for deal ID: " # debug_show(dealId) # " from: " # debug_show(from) # " amount: " # debug_show(amount) # " recipient: " # debug_show(recipient));
+            
             let transferFromArgs : Ledger.TransferFromArgs = {
                 from = {
                     owner = from;
@@ -71,10 +73,20 @@ actor class Escrow() = this {
                     };
                 };
                 case (#Ok(blockIndex)) {
+                    //add record to the escrow
+                    let record : T.EscrowRecordData = {
+                        user = from;
+                        status = #Locked;
+                        amount = amount;
+                        recipient = recipient;
+                    };
+                    records := Trie.put(records, { key = dealId; hash = dealId }, Nat32.equal, record).0;
+                    return #ok(blockIndex);
                     return #ok blockIndex;
                 };
             };
         } catch (error : Error) {
+            Debug.print(Error.message(error));
             return #err("Reject message: " # Error.message(error));
 
         };

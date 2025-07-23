@@ -22,7 +22,6 @@ const Contracts = () => {
     CLM_backend.getContracts(authClient.getIdentity().getPrincipal()).then(
       (fetched) => {
         setContracts(fetched.ok);
-        console.log("Fetched contracts:", fetched.ok);
       }
     );
   };

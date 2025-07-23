@@ -126,17 +126,19 @@ const AddParty = ({ currentParties }) => {
 
     console.log("Parties added:", partiesToSubmit);
 
-    try {
-      const data = await CLM_backend.invitePartiesToContract(
-        selectedContract,
-        partiesToSubmit
-      );
-      console.log("Parties added successfully:", data);
-    } catch (error) {
-      console.error("Error adding parties:", error);
-    }
+    await CLM_backend.invitePartiesToContract(
+      selectedContract,
+      partiesToSubmit
+    ).then((response) => {
+      if (response.ok) {
+        alert(response.ok)
+      } else {
+        alert(response.err)
+      }
+    });
+
   };
- 
+
   useEffect(() => {
     // If parties are updated from props, normalize them again
     setParties(normalizeParties(currentParties));
