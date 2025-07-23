@@ -390,6 +390,33 @@ actor class CLM() = {
     };
   };
 
+  func getPartyByRole(role : { #Buyer; #Supplier; #ThirdParty }, parties : Trie.Trie<Principal, T.Party>) : async Result.Result<[Principal], Text> {
+    var resultList = List.nil<Principal>();
+
+    let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+      parties,
+      func(k, v) { { principal = k; role = v.role } },
+    );
+
+    let filteredParties = Array.filter<{ principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
+      partiesArray,
+      func x = x.role == role,
+    );
+
+    if (filteredParties.size() == 0) {
+      return #err("Not found!");
+    };
+
+    for (party in filteredParties.vals()) {
+      resultList := List.push<Principal>(party.principal, resultList);
+    };
+
+    let resultArray = List.toArray<Principal>(resultList);
+
+    return #ok(resultArray);
+
+  };
+
   public shared ({ caller }) func createContract(name : Text, description : Text, role : Text) : async Result.Result<Text, Text> {
     let contractId = nextContractId;
     let now = Time.now();
@@ -485,7 +512,6 @@ actor class CLM() = {
       };
     };
   };
-
   //Editing contract
   //🚩 need validation to ensure only one buyer and supplier can exist in a contract
   public shared ({ caller }) func invitePartiesToContract(contractId : Nat32, parties : [{ principal : Principal; role : Text }]) : async Result.Result<Text, Text> {
@@ -859,15 +885,7 @@ actor class CLM() = {
   //switch
   //🚩 will be modified in future to allow partial performance
   public shared ({ caller }) func addDeliveryNote(contractId : Nat32, description : Text) : async Result.Result<Text, Text> {
-    //add note
-    let contractOpt = Trie.find(
-      contracts,
-      {
-        hash = contractId;
-        key = contractId;
-      },
-      Nat32.equal,
-    );
+    let contractOpt = Trie.find(contracts, { hash = contractId; key = contractId }, Nat32.equal);
 
     switch (contractOpt) {
       case (null) {
@@ -899,24 +917,14 @@ actor class CLM() = {
           paymentTerm = contract.paymentTerm;
           deliveryNote = ?newNote;
         };
-
         contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
-        //update contracts
-
         return #ok("Delivery Note added!");
       };
     };
   };
 
   public shared ({ caller }) func confirmDelivery(contractId : Nat32) : async Result.Result<Text, Text> {
-    let contractOpt = Trie.find(
-      contracts,
-      {
-        hash = contractId;
-        key = contractId;
-      },
-      Nat32.equal,
-    );
+    let contractOpt = Trie.find(contracts, { hash = contractId; key = contractId }, Nat32.equal);
 
     switch (contractOpt) {
       case (null) {
@@ -927,22 +935,8 @@ actor class CLM() = {
         if (contract.status != #DeliveryNoteSubmitted) {
           return #err("Contract not in correct state!");
         };
-        let updatedContract : T.Contract = {
-          name = contract.name;
-          description = contract.description;
-          createdAt = contract.createdAt;
-          updatedAt = Time.now();
-          createdBy = contract.createdBy;
-          status = #DeliveryConfirmed;
-          completionDate = contract.completionDate;
-          expiresAt = contract.expiresAt;
-          parties = contract.parties;
-          pricing = contract.pricing;
-          value = contract.value;
-          paymentTerm = contract.paymentTerm;
-          deliveryNote = contract.deliveryNote;
-        };
-        contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
+
+        let _ = await updateContractStatus(contractId, "DeliveryConfirmed");
 
         if (contract.paymentTerm == ?#OnDelivery) {
           let _ = await processPayment(contractId);
@@ -955,66 +949,37 @@ actor class CLM() = {
   //processes on-delivery
   public shared func processPayment(contractId : Nat32) : async Result.Result<Text, Text> {
     switch (Trie.find(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
+      case (null) {
+        #err("Contract Not Found!!");
+      };
+
       case (?contract) {
         if (contract.status != #DeliveryConfirmed) {
           return #err("Contract not in correct state for payment processing.");
         };
+
         if (contract.paymentTerm == ?#OnDelivery) {
-
-          Debug.print("Processing payment for contract: " # Nat32.toText(contractId));
-
-          //change parties trie to array and filter to get supplier principal
-          let partiesArray = Trie.toArray<Principal, T.Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
-            contract.parties,
-            func(k, v) { { principal = k; role = v.role } },
-          );
-          //filter seller
-          let filteredParties = Array.filter<{ principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
-            partiesArray,
-            func x = x.role == #Supplier,
-          );
-          if (filteredParties.size() == 0) {
-            Debug.print("No supplier found for contract: " # Nat32.toText(contractId));
-            return #err("No supplier!");
-          };
-          //should run once
-          for (party in filteredParties.vals()) {
-            switch (await Escrow.transferTokens(contractId, party.principal)) {
-              case (#ok(message)) {
-                let updatedContract : T.Contract = {
-                  name = contract.name;
-                  description = contract.description;
-                  createdAt = contract.createdAt;
-                  updatedAt = Time.now();
-                  createdBy = contract.createdBy;
-                  status = #Complete;
-                  completionDate = contract.completionDate;
-                  expiresAt = contract.expiresAt;
-                  parties = contract.parties;
-                  pricing = contract.pricing;
-                  value = contract.value;
-                  paymentTerm = contract.paymentTerm;
-                  deliveryNote = contract.deliveryNote;
+          switch (await getPartyByRole(#Supplier, contract.parties)) {
+            case (#err(message)) {
+              return (#err(message));
+            };
+            case (#ok(sellerParty)) {
+              switch (await Escrow.transferTokens(contractId, sellerParty[0])) {
+                case (#ok(message)) {
+                  let _ = await updateContractStatus(contractId, "Complete");
+                  return #ok(message);
                 };
-                //update contracts
-                contracts := Trie.put(contracts, { hash = contractId; key = contractId }, Nat32.equal, updatedContract).0;
-                return #ok(message);
-              };
-              case (#err(message)) {
-                return #err("Escrow transfer failed: " # message);
+                case (#err(message)) {
+                  return #err("Escrow transfer failed: " # message);
+                };
               };
             };
           };
-          #ok("Processed!");
         } else {
           #err("Wrong payment terms!");
         };
       };
-      case (null) {
-        #err("Contract Not Found!!");
-      };
-    }
-
+    };
   };
 
   //defferred payments
@@ -1030,35 +995,27 @@ actor class CLM() = {
           return #err("Invoice can only be created for deferred payment terms!");
         };
 
-        switch (Trie.find(contract.parties, key(caller), Principal.equal)) {
-          case (null) {
-            return #err("Party Not found!");
+        switch (await getPartyByRole(#Supplier, contract.parties)) {
+          case (#err(message)) {
+            return #err(message);
           };
-          case (?party) {
-            if (party.role != #Supplier) {
+          case (#ok(supplierParty)) {
+            if (supplierParty[0] != caller) {
               return #err("Only the supplier can create an invoice!");
             };
 
-            //get buyer
-            let buyerOpt = Array.find<{ principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
-              Trie.toArray<Principal, T.Party, { principal : Principal; role : { #Buyer; #Supplier; #ThirdParty } }>(
-                contract.parties,
-                func(k, v) { { principal = k; role = v.role } },
-              ),
-              func x = x.role == #Buyer,
-            );
-            switch (buyerOpt) {
-              case null {
-                return #err("No buyer found in contract parties!");
+            switch (await getPartyByRole(#Buyer, contract.parties)) {
+              case (#err(message)) {
+                return #err(message);
               };
-              case (?buyerParty) {
+              case (#ok(buyerParty)) {
                 switch (contract.paymentTerm) {
                   case (?term) {
 
                     let args : T.CreateInvoiceArgs = {
                       contractId = contractId;
                       issuer = caller;
-                      recipient = buyerParty.principal;
+                      recipient = buyerParty[0];
                       items = contract.pricing;
 
                       dueDate = switch term {
