@@ -1,0 +1,45 @@
+.delivery-note-container {
+   padding: 2rem;
+  margin: 2rem auto;
+  max-width: 900px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+ 
+}
+
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  
+}
+
+.pricing-table th,
+.pricing-table td {
+  border: 1px solid #ccc;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.pricing-table th {
+  background-color: #eee;
+  font-weight: 600;
+}
+
+.add-delivery-note-btn {
+  padding: 10px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.add-delivery-note-btn:hover {
+  background-color: #218838;
+}
