@@ -136,7 +136,7 @@ const Layout = () => {
 
           <div className="logo">
             <Link className="navbar-brand" to="/">
-              CLM
+              ProcurePact
             </Link>
           </div>
 

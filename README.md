@@ -1,6 +1,4 @@
-# `CLM`
-
-**Contract Lifecycle Management (CLM)** is a web application used to manage vendor agreements.
+# `ProcurePact`
 
 ## 🚀 Features
 
@@ -19,22 +17,22 @@
 - **Invoice Generation**
   Create invoices directly from contract or delivery data.
 
-- **Locking of Assets in Escrow**  
+- **Locking of Assets in Escrow**
   Secure payment and asset exchange through escrow integration.
 
-- **Flexible Payment Terms**  
+- **Flexible Payment Terms**
   Supports various payment configurations:
   1. On Delivery  
   2. Standard payment periods: 7, 14, 30 Day, Net 60/90 
   3. Custom payment periods
 
-- **Discounts and Penalties**  
+- **Discounts and Penalties**
   Configure dynamic pricing based on early payment or late delivery.
 
-- **Automatic Asset Transfer**  
+- **Automatic Asset Transfer**
   Transfer funds automatically on contract fulfillment.
 
-- **Dispute Resolution**  
+- **Dispute Resolution**
   Built-in mechanisms to manage and resolve disputes efficiently.
 
   **Wallet Functionality**
