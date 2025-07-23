@@ -6,11 +6,9 @@ import Time "mo:base/Time";
 import List "mo:base/List";
 import Ledger "canister:icrc1_ledger_canister";
 import Array "mo:base/Array";
-import CLM_backend "canister:CLM_backend";
+import Error "mo:base/Error";
 
 actor class Invoice() = this {
-    //🚩 add featureOverdue penalty calculation
-    //calculated via system heartbeat
 
     stable var nextInvoiceId : Nat32 = 1;
     stable var invoices : Trie.Trie<Nat32, T.Invoice> = Trie.empty();
@@ -46,19 +44,12 @@ actor class Invoice() = this {
             invoices := Trie.put(invoices, { hash = invoiceId; key = invoiceId }, Nat32.equal, invoice).0;
             #ok(invoiceId);
         } catch (err : Error) {
-            return #err("Failed to create invoice");
+            return #err(Error.message(err));
         };
     };
 
-    public shared func getInvoice(invoiceId : Nat32) : async Result.Result<T.Invoice, Text> {
-        switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
-            case (?invoice) {
-                #ok(invoice);
-            };
-            case (null) {
-                #err("Invoice not found");
-            };
-        };
+    public shared func getInvoice(invoiceId : Nat32) : async ?T.Invoice{
+        return Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal);
     };
 
     public func getBalance(userId : Principal) : async Nat {
@@ -111,8 +102,6 @@ actor class Invoice() = this {
                             penalty = invoice.penalty;
                         };
                         invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
-                        //update contract status
-                        let _ = await CLM_backend.updateContractStatus(invoice.contractId, "Complete");
                         #ok("Transferred: " #debug_show (blockIndex));
                     };
                 };

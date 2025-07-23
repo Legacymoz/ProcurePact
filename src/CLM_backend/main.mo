@@ -983,7 +983,7 @@ actor class CLM() = {
   };
 
   //defferred payments
-  // 🚩 penalty should be extracted from contract terms
+  //create invoice
   public shared ({ caller }) func createInvoice(contractId : Nat32, notes : ?Text) : async Result.Result<Nat32, Text> {
     switch (Trie.find(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
       case (?contract) {
@@ -1054,14 +1054,69 @@ actor class CLM() = {
       };
     };
   };
+  //pay invoice lumpsum
+  //invoice id corresponds to contract id
+  public shared ({ caller }) func payInvoice(contractId : Nat32) : async Result.Result<Text, Text> {
+    //make sure its the buyer
+    //pay invoice
+    switch (Trie.find(contracts, { hash = contractId; key = contractId }, Nat32.equal)) {
+      case (null) {
+        #err("Contract Not Found!!");
+      };
+      case (?contract) {
+        if (contract.status != #InvoiceIssued) {
+          return #err("Contract not in correct state!");
+        };
 
-  /*
-  1. Transfer tokens to escrow
-  2. Complete deal
-  3. Terminate contract
-  4. Dispute contract
-  5. Resolve dispute
-  6. Release funds
-  7. Refund
-  */
+        switch (await getPartyByRole(#Buyer, contract.parties)) {
+          case (#err(message)) {
+            return #err(message);
+          };
+          case (#ok(buyerParty)) {
+            if (buyerParty[0] != caller) {
+              return #err("Only buyer can pay invoice");
+            };
+          };
+        };
+
+        switch (await Invoice.payInvoice(contractId)) {
+          case (#ok(message)) {
+            let _ = await updateContractStatus(contractId, "Complete");
+            return #ok(message);
+          };
+          case (#err(message)) {
+            return #err(message);
+          };
+        }
+
+      };
+    };
+  };
+
+  //get invoices
+  public shared func getInvoices(principal : Principal) : async Result.Result<[T.Invoice], Text> {
+    var invoicesList = List.nil<T.Invoice>();
+    switch (await getUser(principal)) {
+      case (null) {
+        return #err("User not found");
+      };
+      case (?user) {
+        let userContracts = List.toArray<Nat32>(user.contracts);
+        for (contractId in userContracts.vals()) {
+          switch (await Invoice.getInvoice(contractId)) {
+            case (?invoice) {
+              invoicesList := List.push<T.Invoice>(invoice, invoicesList);
+            };
+            case (null) {
+              // Do nothing
+            };
+          };
+        };
+      };
+    };
+
+    let invoicesArray = List.toArray<T.Invoice>(invoicesList);
+    return #ok(invoicesArray);
+  };
+
 };

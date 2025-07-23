@@ -127,8 +127,8 @@ module Types {
     public type Invoice = {
         penalty : Nat32; //24-hour penalty
         contractId : Nat32;
-        issuer : Principal;
-        recipient : Principal;
+        issuer : Principal; //supplier
+        recipient : Principal; // buyer
         dueDate : Int;
         items : List.List<Item>;
         totalAmount : Nat32; // Total amount of the invoice
