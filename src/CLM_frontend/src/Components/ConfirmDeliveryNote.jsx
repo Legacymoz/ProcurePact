@@ -68,7 +68,6 @@ const ConfirmDeliveryNote = () => {
   };
 
   const handleSubmit = async () => {
-    alert("Delivery Note Confirmed");
     try {
       const response = await CLM_backend.confirmDelivery(selectedContract);
       if (response.ok) {
