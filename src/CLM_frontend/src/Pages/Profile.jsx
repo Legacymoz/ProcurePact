@@ -73,7 +73,7 @@ const Profile = () => {
                 <>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="name">Name</label>
+                            <label htmlFor="name">Company Name</label>
                             <input
                                 name="name"
                                 id="name"
