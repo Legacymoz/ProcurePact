@@ -24,7 +24,7 @@ actor class CLM() = {
     { hash = Principal.hash p; key = p };
   };
 
-  //🚩 For testing purposes only
+  //🚩Functions or testing purposes only
   //transfer tokens to all users
   public shared ({ caller }) func transferToUsers(amount : Nat) : async Result.Result<Text, Text> {
     let usersArray = Trie.toArray<Principal, T.User, Principal>(
@@ -99,6 +99,7 @@ actor class CLM() = {
       };
     };
   };
+  //end of testing functions
 
   // Adjacency list for user-user connections: principal -> list of connected principals
   stable var connections : Trie.Trie<Principal, Trie.Trie<Principal, T.ConnectionStatus>> = Trie.empty();
