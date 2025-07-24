@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/AddPaymentStyles.css";
 import { useStore } from '../store/useStore';
 import { CLM_backend } from "declarations/CLM_backend";
@@ -10,12 +10,23 @@ const AddPayment = ({ currentPaymentTerm }) => {
       ? Object.keys(currentPaymentTerm[0])[0]
       : ""
   );
+  const [deferredPayment, setDeferredPayment] = useState({
+    due: "",
+    penalty: ""
+  });
+
+  // Convert YYYY-MM-DD to nanoseconds
+  const timestamp = (date) => { return BigInt(new Date(date).getTime()) * 1000000n };
+
+
   const selectedContract = useStore((state) => state.selectedContract);
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     console.log("Payment Terms", payment)
 
     try {
-      await CLM_backend.updatePayementTerms(BigInt(selectedContract), { [payment]: null }).then((response) => {
+      await CLM_backend.updatePayementTerms(BigInt(selectedContract), payment === "OnDelivery" ? { [payment]: null } : { [payment]: { due: timestamp(deferredPayment.due), penalty: BigInt(deferredPayment.penalty) } }).then((response) => {
         if (response.ok) {
           alert("Payment terms updated successfully!");
         } else {
@@ -23,33 +34,49 @@ const AddPayment = ({ currentPaymentTerm }) => {
           console.log(response.err);
         }
       });
-      // Optionally, you can also update the zustand store or trigger a re-fetch of
-      // contracts to reflect the changes in the UI.
-      // For example:
-      // fetchContracts();
-      // Or update the store state if you have a method for that.
-      // setSelectedContract(null); // Reset the selected contract if needed
-
-
     } catch (error) {
       console.error("Error adding parties:", error);
     }
   };
 
-  useEffect(()=>{
-    console.log("current payment term", currentPaymentTerm)
-  },[])
+  useEffect(() => {
+    if (currentPaymentTerm && currentPaymentTerm[0]) {
+      const termKey = Object.keys(currentPaymentTerm[0])[0]; // e.g. "Deferred"
+      setPayment(termKey);
+
+      if (termKey === "Deferred") {
+        const { due, penalty } = currentPaymentTerm[0].Deferred;
+
+        // Convert due from nanoseconds to YYYY-MM-DD
+        const dueDate = new Date(Number(due / 1000000n)).toISOString().split("T")[0];
+
+        setDeferredPayment({
+          due: dueDate,
+          penalty: penalty.toString()
+        });
+      }
+    }
+  }, [currentPaymentTerm])
 
   return (
     <div className="contract-section-container">
       <h2 className="contract-section-heading">Payment Details</h2>
-      <select value={payment} onChange={(e) => setPayment(e.target.value)}>
-        <option value="">Choose your Option</option>
-        <option value="OnDelivery">On Delivery </option>
-      </select>
-      <button onClick={handleSubmit} className="submit-button">
-        Save
-      </button>
+      <form onSubmit={handleSubmit}>
+        <select value={payment} onChange={(e) => setPayment(e.target.value)}>
+          <option value="">Choose your Option</option>
+          <option value="OnDelivery">On Delivery </option>
+          <option value="Deferred">Deferred</option>
+        </select>
+        {payment === "Deferred" && <>
+          <label htmlFor="due">Invoice due date</label>
+          <input type="date" name="due" id="due" value={deferredPayment.due} onChange={(e) => { setDeferredPayment({ ...deferredPayment, due: e.target.value }) }} required className="form-control" />
+          <label htmlFor="penalty">24-hour Penalty</label>
+          <input name="penalty" id="penalty" value={deferredPayment.penalty} onChange={(e) => { setDeferredPayment({ ...deferredPayment, penalty: e.target.value }) }} required className="form-control" />
+        </>}
+        <button type="submit" className="submit-button">
+          Save
+        </button>
+      </form>
     </div>
   );
 };
