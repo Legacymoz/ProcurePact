@@ -59,33 +59,33 @@ const Contracts = () => {
       console.error("Contract not found:", contractId);
       return;
     }
-    console.log("Selected contract:", contract);
 
-    const statusKey = Object.keys(contract.status)[0];
+    const statusKey = Object.keys(contract?.status || {})[0] || "";
+    const paymentTerm = Object.keys(contract?.paymentTerm[0] || {})[0] || "";
 
     if (statusKey === "Draft") {
-      // Do something when the contract is Draft
+      //edit contract
       navigate(`/contract/${contractId}`);
     } else if (statusKey === "Active") {
-
-      navigate(`/contract/lock-tokens/${contractId}`);
-    // navigate(`/contract/delivery-note/${contractId}`);
-    //  navigate(`/contract/confirm-delivery-note/${contractId}`);
-
-
-    } else if (statusKey === "TokensLocked") {
-
-      navigate(`/contract/delivery-note/${contractId}`);
-
+      if (paymentTerm === "OnDelivery") {
+        navigate(`/contract/lock-tokens/${contractId}`)
+      } else if (paymentTerm == "Deferred") {
+        navigate(`/contract/delivery-note/${contractId}`)
+      }
     } else if (statusKey === "DeliveryNoteSubmitted") {
-        navigate(`/contract/confirm-delivery-note/${contractId}`);
-
+      navigate(`/contract/confirm-delivery-note/${contractId}`);
     } else if (statusKey === "DeliveryConfirmed") {
-      // Do something when the contract is complete
-      
+      if (paymentTerm === "Deferred") {
+        navigate(`/contract/invoice/${contractId}`)
+      } else if (paymentTerm === "OnDelivery") {
+        //delay in auto settling payment
+      }
+    } else if (statusKey === "InvoiceIssued") {
+      navigate(`/contract/settle-invoice/${contractId}`)
+    } else if (statusKey === "TokensLocked") {
+      navigate(`/contract/delivery-note/${contractId}`)
     }
 
-    
   };
 
   // Separate contracts by party status
