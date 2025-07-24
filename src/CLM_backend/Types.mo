@@ -160,5 +160,6 @@ module Types {
         createdBy : Principal;
         status : ContractStatus;
         party : Party; // The party details for the contract
+        paymentTerm : ?PaymentTerm;
     };
 };

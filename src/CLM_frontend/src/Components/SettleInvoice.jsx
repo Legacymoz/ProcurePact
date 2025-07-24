@@ -1,4 +1,3 @@
-import { invoice } from "declarations/invoice"
 import { useStore } from "../store/useStore";
 import { CLM_backend } from "declarations/CLM_backend";
 import { useEffect, useState } from "react";
@@ -6,6 +5,7 @@ import { useAuth } from "../Hooks/AuthContext";
 import { Principal } from "@dfinity/principal";
 import { useNavigate } from "react-router-dom";
 import "../styles/Invoice.css";
+import { Actor } from "@dfinity/agent";
 import { icrc1_ledger_canister } from "declarations/icrc1_ledger_canister";
 
 const SettleInvoice = () => {
@@ -15,7 +15,7 @@ const SettleInvoice = () => {
     const [supplier, setSupplier] = useState([])
     const [userRole, setUserRole] = useState("");
     const [userBalance, setUserBalance] = useState(0);
-    const { principal, user } = useAuth();
+    const { principal, user, authClient } = useAuth();
 
     //flatten items linked list
     function flattenItems(nestedArray) {
@@ -56,18 +56,61 @@ const SettleInvoice = () => {
         }
     };
 
+    //get transfer fee
+    const getTransferFee = async () => {
+        return await icrc1_ledger_canister.icrc1_fee();
+    };
+
     //pay invoice
-    const handleSubmit = async () => {
-        await CLM_backend.payInvoice(selectedContract).then((response) => {
-            if (response.ok) {
-                alert("Payment Successful")
-            } else {
-                alert("Error making payment")
-                console.log(response.err)
+    const handleSubmit = async (totalAmount) => {
+        try {
+            if (!authClient || !authClient.isAuthenticated()) {
+                alert("Please login to lock tokens");
+                return;
             }
-        }).finally(
-            navigate(-1)
-        )
+
+            // Use authenticated identity
+            Actor.agentOf(icrc1_ledger_canister).replaceIdentity(
+                authClient.getIdentity()
+            );
+
+            // Get transfer fee
+            const transferFee = await getTransferFee();
+            // Approve token lock
+            //approval is charged in the user
+            const result = await icrc1_ledger_canister.icrc2_approve({
+                amount: BigInt(totalAmount) + transferFee,
+                //specify who is allowed to spend the tokens
+                spender: {
+                    owner: Principal.fromText(process.env.CANISTER_ID_CLM_BACKEND),
+                    subaccount: [],
+                },
+                created_at_time: [],
+                expected_allowance: [],
+                expires_at: [],
+                memo: [],
+                fee: [],
+                from_subaccount: [],
+            });
+            if (result.Ok) {
+                await CLM_backend.payInvoice(selectedContract).then((response) => {
+                    if (response.ok) {
+                        alert("Payment Successful")
+                    } else {
+                        alert("An error occurred while processing your payment!")
+                        console.log(response.err)
+                    }
+                }).finally(
+                    navigate(`/`)
+                );
+            } else {
+                alert("An error occurred while processing your payment!");
+                console.error(result.Err);
+            }
+        } catch (error) {
+            console.log(error);
+            alert("An error occurred while processing your payment!");
+        }
     };
 
     const fetchSupplierDetails = async (principal) => {
@@ -78,7 +121,7 @@ const SettleInvoice = () => {
 
     useEffect(() => {
         (async () => {
-            const response = await invoice.getInvoice(BigInt(selectedContract));
+            const response = await CLM_backend.getInvoice(BigInt(selectedContract));
             const invoiceData = response[0];
             setfetchedInvoice(invoiceData);
             fetchSupplierDetails(Principal.fromUint8Array(invoiceData.issuer._arr));
@@ -175,7 +218,7 @@ const SettleInvoice = () => {
                 <section className="invoice-section">
                     <h3>Pay Invoice</h3>
                     <p>Available wallet balance: ${userBalance}</p>
-                    <button className="btn btn-primary" onClick={handleSubmit}>
+                    <button className="btn btn-primary" onClick={()=>handleSubmit(fetchedInvoice?.totalAmount)}>
                         Pay
                     </button>
                 </section>

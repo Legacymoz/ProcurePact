@@ -1,4 +1,5 @@
 import { CLM_backend } from "declarations/CLM_backend";
+import { icrc1_ledger_canister } from "declarations/icrc1_ledger_canister";
 import { useEffect, useState } from "react";
 import Modal from "../Components/Modal";
 import { useAuth } from "../Hooks/AuthContext";
@@ -9,10 +10,11 @@ import { Principal } from "@dfinity/principal";
 
 const Contracts = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, authClient } = useAuth();
+  const { user, isAuthenticated, authClient , principal} = useAuth();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [contracts, setContracts] = useState([]);
+  const [userBalance, setUserBalance] = useState(0);
 
   //states from the zustand store
   const selectedContract = useStore((state) => state.selectedContract);
@@ -25,6 +27,19 @@ const Contracts = () => {
       }
     );
   };
+
+  const getUserBalance = async () => {
+    try {
+      const result = await icrc1_ledger_canister.icrc1_balance_of({
+        owner: principal,
+        subaccount: [], // or: undefined if not using subaccounts
+      });
+      setUserBalance(result);
+    } catch (error) {
+      console.error("Error fetching user balance:", error);
+    }
+  };
+
 
   const submitNewContract = async (name, description, role) => {
     try {
@@ -44,13 +59,6 @@ const Contracts = () => {
         🚩Implement logic to reduce number of contract fetch
         */
   }
-  useEffect(() => {
-    if (isAuthenticated && user?.length != 0) {
-      fetchContracts();
-    }
-    console.log(authClient?.getIdentity().getPrincipal().toText());
-  }, [user]);
-
   const handleSelection = (contractId) => {
 
     setSelectedContract(contractId);
@@ -85,7 +93,6 @@ const Contracts = () => {
     } else if (statusKey === "TokensLocked") {
       navigate(`/contract/delivery-note/${contractId}`)
     }
-
   };
 
   // Separate contracts by party status
@@ -124,11 +131,19 @@ const Contracts = () => {
     fetchContracts();
   };
 
+   useEffect(() => {
+      if (isAuthenticated && user?.length != 0) {
+        fetchContracts();
+        getUserBalance();
+      }
+      console.log(authClient?.getIdentity().getPrincipal().toText());
+    }, [user]);
+
   return (
     <>
-      <h1 className="contract-heading">My Contracts</h1>
       {user != null && isAuthenticated ? (
         <div className="contract-container">
+          <h2>Wallet Bal: {userBalance}</h2>
           <button className="create-button" onClick={handleOpen}>
             Create
           </button>
@@ -136,6 +151,9 @@ const Contracts = () => {
           {/* Main Contracts Table (excluding Invited) */}
           <div className="contract-table-container">
             <h2 className="contract-table-heading">My Contracts</h2>
+            <button onClick={fetchContracts} className="btn btn-secondary mb-3">
+              Refresh
+            </button>
             <table className="contract-table">
               <thead className="contract-thead">
                 <tr className="contract-tr">

@@ -38,10 +38,6 @@
     "escrow": {
       "main": "src/CLM_backend/escrow.mo",
       "type": "motoko"
-    },
-    "invoice": {
-      "main": "src/CLM_backend/invoice.mo",
-      "type": "motoko"
     }
   },
   "defaults": {
