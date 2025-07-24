@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "../store/useStore";
 import { CLM_backend } from "declarations/CLM_backend";
 import { useAuth } from "../Hooks/AuthContext";
-import { icrc1_ledger_canister } from "declarations/icrc1_ledger_canister";
-import { Principal } from "@dfinity/principal";
 import "../styles/DeliveryNote.css";
 import { useNavigate } from "react-router-dom";
 
