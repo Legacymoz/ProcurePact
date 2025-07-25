@@ -1,6 +1,7 @@
 # `ProcurePact`
+Smart vendor agreements!
 
-## 🚀 Features
+## 🚀 Current Features
 
 - **Contract Creation**  
   Create and manage legally binding vendor agreements.
@@ -25,17 +26,21 @@
   1. On Delivery  
   2. Custom payment periods
 
-- **Discounts and Penalties**
-  Configure dynamic pricing based on early payment or late delivery.
+- **Late Penalties**
+  Configure dynamic pricing based on edelivery date.
 
 - **Automatic Asset Transfer**
   Transfer funds automatically on contract fulfillment. (On Delivery payment term)
 
+## 🚀 Future Features
+
 - **Dispute Resolution**
   Built-in mechanisms to manage and resolve disputes efficiently.
 
-  **Wallet Functionality**
+  **Wallet Functionality**🚀
   Connection to crypto wallet
+
+  **Early Discounts**
 
 
 ## 🚀 Running locally
