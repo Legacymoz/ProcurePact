@@ -1,7 +1,7 @@
 # `ProcurePact`
 ProcurePact delivers end-to-end Contract Lifecycle Management (CLM) for vendor agreements, from contract creation to final settlement.
 
-This project addresses the liquidity challenges faced by Micro, Small, and Medium Enterprises (MSMEs) by enabling instant payments for fulfilled contracts and providing easy access to short-term credit—helping businesses maintain healthy cash flow and grow sustainably.
+This project addresses the liquidity challenges faced by Micro, Small, and Medium Enterprises (MSMEs) by enabling instant payments for fulfilled contracts and providing easy access to short-term credit, helping businesses maintain healthy cash flow and grow sustainably.
 
 ## 🚀 Current Features
 
