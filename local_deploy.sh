@@ -1,10 +1,10 @@
-# Set principal variables
-DEFAULT=$(dfx identity get-principal --identity default)
-MINTER=$(dfx identity get-principal --identity minter)
-CONTROLLER=$(dfx identity get-principal --identity archive_controller)
-
 dfx stop
 dfx start --clean --background
+
+#create new identities
+dfx identity new minter
+dfx identity new archive_controller
+
 # Set principal variables
 DEFAULT=$(dfx identity get-principal --identity default)
 MINTER=$(dfx identity get-principal --identity minter)
@@ -44,3 +44,8 @@ dfx deploy icrc1_index_canister --argument "(opt variant { Init = record { ledge
 dfx deploy escrow
 dfx deploy internet_identity
 dfx deploy CLM_frontend
+
+#fund escrow canister with operating tokens
+ESCROW=$(dfx canister id escrow)
+
+dfx canister call CLM_backend transfer "(principal \"$ESCROW\", 1000000)"

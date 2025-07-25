@@ -45,12 +45,4 @@ git clone <repo-url>
 cd <repo-url>
 ```
 2. **Deploy**
-Run local_deploy.sh script. This will create identities and deploy all canisters.
-
-In the CLM_backend candid interface:
-
-1. Fund escrow canister. Transfer dummy tokens to escrow canister using ```transfer``` function. These will be used to cover transfer fees for operations.
-
-2. Once users are created in the frontend, use the ```transferToUsers``` function to allocate dummy tokens to user accounts.
-
-This enables users to participate in transactions.
+Run local_deploy.sh script. This will create new identities and deploy all canisters.

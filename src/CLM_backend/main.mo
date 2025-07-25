@@ -25,61 +25,6 @@ actor class CLM() = {
   };
 
   //🚩Functions or testing purposes only
-  //transfer tokens to all users
-  public shared ({ caller }) func transferToUsers(amount : Nat) : async Result.Result<Text, Text> {
-    let usersArray = Trie.toArray<Principal, T.User, Principal>(
-      users,
-      func(k, _v) = k,
-    );
-
-    for (userId in usersArray.vals()) {
-      let transferArgs : Ledger.TransferArg = {
-        amount = amount;
-        to = { owner = userId; subaccount = null };
-        created_at_time = null;
-        fee = null;
-        from_subaccount = null;
-        memo = null;
-      };
-
-      let transferResult = await Ledger.icrc1_transfer(transferArgs);
-
-      switch (transferResult) {
-        case (#Err(errorMessage)) {
-          //Debug.print("Failed to transfer tokens to user " # Principal.toText(userId) # ": " debug_show(errorMessage));
-          let errorText = switch (errorMessage) {
-            case (#BadFee(info)) {
-              "Bad fee error. Expected fee: " # debug_show (info.expected_fee);
-            };
-            case (#BadBurn(info)) {
-              "Bad burn error. Minimum burn amount: " # debug_show (info.min_burn_amount);
-            };
-            case (#InsufficientFunds(info)) {
-              "Insufficient funds. Current balance: " # debug_show (info.balance);
-            };
-            case (#TooOld) { "Transaction is too old" };
-            case (#CreatedInFuture(info)) {
-              "Transaction created in future. Ledger time: " # debug_show (info.ledger_time);
-            };
-            case (#Duplicate(info)) {
-              "Duplicate transaction. Duplicate of block: " # debug_show (info.duplicate_of);
-            };
-            case (#TemporarilyUnavailable) { "Service temporarily unavailable" };
-            case (#GenericError(info)) {
-              "Generic error. Code: " # debug_show (info.error_code) # ", Message: " # info.message;
-            };
-          };
-          return #err(errorText);
-        };
-        case (#Ok(blockIndex)) {
-          Debug.print("Successfully transferred tokens to user " # Principal.toText(userId) # " at block index " # Nat.toText(blockIndex));
-        };
-      };
-    };
-
-    return #ok("Transfers completed");
-  };
-
   //transfer to a particular user
   public shared ({ caller }) func transfer(acc : Principal, amount : Nat) : async Result.Result<Text, Text> {
     let transferResult = await Ledger.icrc1_transfer({
@@ -124,6 +69,10 @@ actor class CLM() = {
     users := Trie.put(users, key(caller), Principal.equal, newUser).0;
     //initialize user connections
     connections := Trie.put(connections, key(caller), Principal.equal, userConnections).0;
+
+    //🚩 for testing only
+    //inittialize user with tokens
+    let _ = await transfer(caller, 5000000);
     return #ok("User added successfully.");
   };
   //get user
@@ -1126,34 +1075,34 @@ actor class CLM() = {
             switch (transferFromResult) {
               case (#Err(transferError)) {
                 switch (transferError) {
-                        case (#BadFee(info)) {
-                            return #err("Bad fee error. Expected fee: " # debug_show (info.expected_fee));
-                        };
-                        case (#BadBurn(info)) {
-                            return #err("Bad burn error. Minimum burn amount: " # debug_show (info.min_burn_amount));
-                        };
-                        case (#InsufficientFunds(info)) {
-                            return #err("Insufficient funds. Current balance: " # debug_show (info.balance));
-                        };
-                        case (#TooOld) {
-                            return #err("Transaction is too old");
-                        };
-                        case (#CreatedInFuture(info)) {
-                            return #err("Transaction created in future. Ledger time: " # debug_show (info.ledger_time));
-                        };
-                        case (#Duplicate(info)) {
-                            return #err("Duplicate transaction. Duplicate of block: " # debug_show (info.duplicate_of));
-                        };
-                        case (#TemporarilyUnavailable) {
-                            return #err("Service temporarily unavailable");
-                        };
-                        case (#GenericError(info)) {
-                            return #err("Generic error. Code: " # debug_show (info.error_code) # ", Message: " # info.message);
-                        };
-                        case (#InsufficientAllowance(info)) {
-                            return #err("Insufficient allowance. Allowance: " # debug_show (info.allowance));
-                        };
-                    };
+                  case (#BadFee(info)) {
+                    return #err("Bad fee error. Expected fee: " # debug_show (info.expected_fee));
+                  };
+                  case (#BadBurn(info)) {
+                    return #err("Bad burn error. Minimum burn amount: " # debug_show (info.min_burn_amount));
+                  };
+                  case (#InsufficientFunds(info)) {
+                    return #err("Insufficient funds. Current balance: " # debug_show (info.balance));
+                  };
+                  case (#TooOld) {
+                    return #err("Transaction is too old");
+                  };
+                  case (#CreatedInFuture(info)) {
+                    return #err("Transaction created in future. Ledger time: " # debug_show (info.ledger_time));
+                  };
+                  case (#Duplicate(info)) {
+                    return #err("Duplicate transaction. Duplicate of block: " # debug_show (info.duplicate_of));
+                  };
+                  case (#TemporarilyUnavailable) {
+                    return #err("Service temporarily unavailable");
+                  };
+                  case (#GenericError(info)) {
+                    return #err("Generic error. Code: " # debug_show (info.error_code) # ", Message: " # info.message);
+                  };
+                  case (#InsufficientAllowance(info)) {
+                    return #err("Insufficient allowance. Allowance: " # debug_show (info.allowance));
+                  };
+                };
               };
               case (#Ok(blockIndex)) {
                 // Update the invoice status to Transferred
