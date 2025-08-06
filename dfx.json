@@ -1,18 +1,18 @@
 {
   "canisters": {
-    "CLM_backend": {
-      "main": "src/CLM_backend/main.mo",
+    "ProcurePact_backend": {
+      "main": "src/ProcurePact_backend/main.mo",
       "type": "motoko"
     },
-    "CLM_frontend": {
+    "ProcurePact_frontend": {
       "dependencies": [
-        "CLM_backend"
+        "ProcurePact_backend"
       ],
       "source": [
-        "src/CLM_frontend/dist"
+        "src/ProcurePact_frontend/dist"
       ],
       "type": "assets",
-      "workspace": "CLM_frontend"
+      "workspace": "ProcurePact_frontend"
     },
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
@@ -36,7 +36,11 @@
       "candid": "https://raw.githubusercontent.com/dfinity/ic/3ae3649a2366aaca83404b692fc58e4c6e604a25/rs/ledger_suite/icrc1/index-ng/index-ng.did"
     },
     "escrow": {
-      "main": "src/CLM_backend/escrow.mo",
+      "main": "src/ProcurePact_backend/escrow.mo",
+      "type": "motoko"
+    },
+    "invoice": {
+      "main": "src/ProcurePact_backend/invoice.mo",
       "type": "motoko"
     }
   },

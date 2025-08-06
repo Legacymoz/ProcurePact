@@ -10,8 +10,8 @@ DEFAULT=$(dfx identity get-principal --identity default)
 MINTER=$(dfx identity get-principal --identity minter)
 CONTROLLER=$(dfx identity get-principal --identity archive_controller)
 
-dfx deploy CLM_backend
-BACKEND=$(dfx canister id CLM_backend)
+dfx deploy ProcurePact_backend
+BACKEND=$(dfx canister id ProcurePact_backend)
 
 # Deploy the ICRC-1 ledger canister
 dfx deploy icrc1_ledger_canister --argument "(variant { Init = record {
@@ -42,10 +42,11 @@ dfx deploy icrc1_index_canister --argument "(opt variant { Init = record { ledge
 
 # Deploy other canisters
 dfx deploy escrow
+dfx deploy invoice
 dfx deploy internet_identity
-dfx deploy CLM_frontend
+dfx deploy ProcurePact_frontend
 
 #fund escrow canister with operating tokens
 ESCROW=$(dfx canister id escrow)
 
-dfx canister call CLM_backend transfer "(principal \"$ESCROW\", 1000000)"
+dfx canister call ProcurePact_backend transfer "(principal \"$ESCROW\", 1000000)"
