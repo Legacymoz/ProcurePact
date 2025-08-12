@@ -10,7 +10,6 @@ import Error "mo:base/Error";
 
 actor class Invoice() = this {
 
-  stable var nextInvoiceId : Nat32 = 1;
   stable var invoices : Trie.Trie<Nat32, T.Invoice> = Trie.empty();
 
   func calculateTotalAmount(items : List.List<T.Item>) : Nat32 {
@@ -25,7 +24,6 @@ actor class Invoice() = this {
   };
 
   public shared func createInvoice(args : T.CreateInvoiceArgs) : async Result.Result<Nat32, Text> {
-    let invoiceId = nextInvoiceId;
     let now = Time.now();
     try {
       let invoice : T.Invoice = {
@@ -41,8 +39,8 @@ actor class Invoice() = this {
         updatedAt = now;
         notes = args.notes;
       };
-      invoices := Trie.put(invoices, { hash = invoiceId; key = invoiceId }, Nat32.equal, invoice).0;
-      #ok(invoiceId);
+      invoices := Trie.put(invoices, { hash = args.contractId; key = args.contractId }, Nat32.equal, invoice).0;
+      #ok(args.contractId);
     } catch (err : Error) {
       return #err(Error.message(err));
     };
