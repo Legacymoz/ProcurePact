@@ -42,6 +42,10 @@
     "invoice": {
       "main": "src/ProcurePact_backend/invoice.mo",
       "type": "motoko"
+    },
+    "credit": {
+      "main": "src/ProcurePact_backend/credit.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

@@ -1096,4 +1096,7 @@ actor class CLM() = {
     return #ok(invoicesArray);
   };
 
+  //credit
+  //apply for credit
+
 };

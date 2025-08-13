@@ -38,6 +38,7 @@ actor class Invoice() = this {
         createdAt = now;
         updatedAt = now;
         notes = args.notes;
+        collateralized = false;
       };
       invoices := Trie.put(invoices, { hash = args.contractId; key = args.contractId }, Nat32.equal, invoice).0;
       #ok(args.contractId);
@@ -70,42 +71,92 @@ actor class Invoice() = this {
         if (issuerBal < Nat32.toNat(invoice.totalAmount)) {
           return #err("Insufficient Balance");
         };
-        //
-        let transferFromArgs : Ledger.TransferFromArgs = {
-          from = {
-            owner = invoice.recipient;
-            subaccount = null;
-          };
-          memo = null;
-          amount = Nat32.toNat(invoice.totalAmount);
-          spender_subaccount = null;
-          fee = null;
-          to = { owner = invoice.issuer; subaccount = null };
-          created_at_time = null;
-        };
-
-        //transfer
-        switch (await Ledger.icrc2_transfer_from(transferFromArgs)) {
-          case (#Err(transferError)) {
-            return #err("Transfer failed: " # debug_show (transferError));
-          };
-          case (#Ok(blockIndex)) {
-            // Update the invoice status to Transferred
-            let updatedInvoice : T.Invoice = {
-              contractId = invoice.contractId;
-              issuer = invoice.issuer;
-              recipient = invoice.recipient;
-              dueDate = invoice.dueDate;
-              items = invoice.items;
-              totalAmount = invoice.totalAmount;
-              status = #Paid;
-              createdAt = invoice.createdAt;
-              updatedAt = Time.now();
-              notes = invoice.notes;
-              penalty = invoice.penalty;
+        //handle invoice if collateralized
+        if (invoice.collateralized) {
+          // Payment is made to the credit canister
+          let creditCanisterPrincipal = Credit.Principal; // Use imported canister reference
+          let transferFromArgs : Ledger.TransferFromArgs = {
+            from = {
+              owner = invoice.recipient;
+              subaccount = null;
             };
-            invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
-            #ok("Transferred: " #debug_show (blockIndex));
+            memo = null;
+            amount = Nat32.toNat(invoice.totalAmount);
+            spender_subaccount = null;
+            fee = null;
+            to = { owner = creditCanisterPrincipal; subaccount = null };
+            created_at_time = null;
+          };
+          switch (await Ledger.icrc2_transfer_from(transferFromArgs)) {
+            case (#Err(transferError)) {
+              return #err("Transfer to credit canister failed: " # debug_show (transferError));
+            };
+            case (#Ok(blockIndex)) {
+              // After payment to credit canister, collect the debt
+              let collectResult = await Credit.collect(invoiceId);
+              switch (collectResult) {
+                case (#ok(msg)) {
+                  // Mark invoice as paid
+                  let updatedInvoice : T.Invoice = {
+                    contractId = invoice.contractId;
+                    issuer = invoice.issuer;
+                    recipient = invoice.recipient;
+                    dueDate = invoice.dueDate;
+                    items = invoice.items;
+                    totalAmount = invoice.totalAmount;
+                    status = #Paid;
+                    createdAt = invoice.createdAt;
+                    updatedAt = Time.now();
+                    notes = invoice.notes;
+                    penalty = invoice.penalty;
+                    collateralized = invoice.collateralized;
+                  };
+                  invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
+                  #ok("Transferred to credit canister and collected: " # debug_show (blockIndex) # ", " # msg);
+                };
+                case (#err(e)) {
+                  return #err("Debt collection failed: " # e);
+                };
+              };
+            };
+          };
+        } else {
+          // Not collateralized, payment is made to the issuer
+          let transferFromArgs : Ledger.TransferFromArgs = {
+            from = {
+              owner = invoice.recipient;
+              subaccount = null;
+            };
+            memo = null;
+            amount = Nat32.toNat(invoice.totalAmount);
+            spender_subaccount = null;
+            fee = null;
+            to = { owner = invoice.issuer; subaccount = null };
+            created_at_time = null;
+          };
+          switch (await Ledger.icrc2_transfer_from(transferFromArgs)) {
+            case (#Err(transferError)) {
+              return #err("Transfer failed: " # debug_show (transferError));
+            };
+            case (#Ok(blockIndex)) {
+              // Update the invoice status to Paid
+              let updatedInvoice : T.Invoice = {
+                contractId = invoice.contractId;
+                issuer = invoice.issuer;
+                recipient = invoice.recipient;
+                dueDate = invoice.dueDate;
+                items = invoice.items;
+                totalAmount = invoice.totalAmount;
+                status = #Paid;
+                createdAt = invoice.createdAt;
+                updatedAt = Time.now();
+                notes = invoice.notes;
+                penalty = invoice.penalty;
+                collateralized = invoice.collateralized;
+              };
+              invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
+              #ok("Transferred: " #debug_show (blockIndex));
+            };
           };
         };
       };
@@ -114,12 +165,6 @@ actor class Invoice() = this {
       };
     };
   };
-
-  //overdue
-  //get invoices and filter !paid and time.now() > expiryDate
-  //mark overdue
-  //calculate penalty
-  //add penalty to Totalvalue
 
   func handleOverdue() : async () {
     let now = Time.now();
@@ -150,6 +195,7 @@ actor class Invoice() = this {
           updatedAt = now;
           notes = invoice.notes;
           penalty = invoice.penalty;
+          collateralized = invoice.collateralized;
         };
         invoices := Trie.put(invoices, { key = item.invoiceId; hash = item.invoiceId }, Nat32.equal, updatedInvoice).0;
 

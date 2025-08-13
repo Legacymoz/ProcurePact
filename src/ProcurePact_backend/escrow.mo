@@ -17,7 +17,7 @@ actor class Escrow() = this {
 */
 
     //create storage to record locked tokens
-    stable var records : Trie.Trie<Nat32, T.EscrowRecordData> = Trie.empty();
+    stable var records : Trie.Trie<Nat32, T.EscrowRecord> = Trie.empty();
 
     public shared func lockTokens(from : Principal, dealId : Nat32, amount : Nat32, recipient: Principal) : async Result.Result<Nat, Text> {
         try {
@@ -74,7 +74,7 @@ actor class Escrow() = this {
                 };
                 case (#Ok(blockIndex)) {
                     //add record to the escrow
-                    let record : T.EscrowRecordData = {
+                    let record : T.EscrowRecord = {
                         user = from;
                         status = #Locked;
                         amount = amount;
@@ -110,7 +110,7 @@ actor class Escrow() = this {
                         };
                         case (#Ok(blockIndex)) {
                             // Update the record status to Transferred
-                            let updatedRecord : T.EscrowRecordData = {
+                            let updatedRecord : T.EscrowRecord = {
                                 user = record.user;
                                 status = #Transferred;
                                 amount = record.amount;
