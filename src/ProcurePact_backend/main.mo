@@ -1095,8 +1095,4 @@ actor class CLM() = {
     let invoicesArray = List.toArray<T.Invoice>(invoicesList);
     return #ok(invoicesArray);
   };
-
-  //credit
-  //apply for credit
-
 };

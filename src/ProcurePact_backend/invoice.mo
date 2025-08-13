@@ -60,7 +60,6 @@ actor class Invoice() = this {
   };
 
   //pay invoice
-  // 🚩 use transfer from args
   // 🚩 validate that the backend canister is calling this
   public shared ({ caller }) func payInvoice(invoiceId : Nat32) : async Result.Result<Text, Text> {
     switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
@@ -162,6 +161,32 @@ actor class Invoice() = this {
       };
       case (null) {
         #err("Invoice not found");
+      };
+    };
+  };
+
+  //marks an invoice as collateralized
+  public shared ({ caller }) func collateralize(invoiceId : Nat32) : () {
+    switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
+      case (?invoice) {
+        let updatedInvoice : T.Invoice = {
+          contractId = invoice.contractId;
+          issuer = invoice.issuer;
+          recipient = invoice.recipient;
+          dueDate = invoice.dueDate;
+          items = invoice.items;
+          totalAmount = invoice.totalAmount;
+          status = invoice.status;
+          createdAt = invoice.createdAt;
+          updatedAt = Time.now();
+          notes = invoice.notes;
+          penalty = invoice.penalty;
+          collateralized = true;
+        };
+        invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
+      };
+      case (null) {
+        // Optionally handle invoice not found
       };
     };
   };
