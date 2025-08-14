@@ -144,23 +144,6 @@ module Types {
     collateralized : Bool;
   };
 
-  // Records the issuance and collection of credit between parties
-  public type CreditRecord = {
-    creditId : Nat32; // Unique identifier for the credit record
-    contractId : Nat32; // Associated contract
-    issuer : Principal; // The party issuing the credit
-    recipient : Principal; // The party receiving the credit
-    amount : Nat32; // Credit amount
-    issuedAt : Int; // Timestamp when credit was issued
-    collectedAt : ?Int; // Timestamp when credit was collected (None if not yet collected)
-    status : {
-      #Issued; // Credit has been issued but not yet collected
-      #Collected; // Credit has been collected
-      #Cancelled; // Credit was cancelled
-    };
-    notes : ?Text; // Optional notes or comments
-  };
-
   public type CreateInvoiceArgs = {
     contractId : Nat32;
     issuer : Principal; // The principal creating the invoice
@@ -169,6 +152,22 @@ module Types {
     dueDate : Int;
     penalty : Nat32;
     notes : ?Text; // Optional notes or comments on the invoice
+  };
+
+  public type CreditRecord = {
+    creditId : Nat32;
+    contractId : Nat32;
+    issuer : Principal;
+    recipient : Principal;
+    amount : Nat32;
+    issuedAt : Int;
+    collectedAt : ?Int; // Timestamp of when the credit was collected
+    status : {
+      #Issued; // Credit has been issued but not yet collected
+      #Collected; // Credit has been collected
+      #Cancelled; // Credit has been cancelled
+    };
+    notes : ?Text; // Optional notes or comments on the credit record
   };
 
   public type ContractSummary = {
