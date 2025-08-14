@@ -13,13 +13,14 @@ import T "Types";
 import Escrow "canister:escrow";
 import Ledger "canister:icrc1_ledger_canister";
 import Invoice "canister:invoice";
+import Credit "canister:credit";
 
-actor class CLM() = {
+persistent actor class CLM() = {
 
-  stable var users : Trie.Trie<Principal, T.User> = Trie.empty(); //application users
-  stable var contracts : Trie.Trie<Nat32, T.Contract> = Trie.empty(); // all contracts
-  stable var nextContractId : Nat32 = 1; // to keep track of the next contract ID
-  stable var connections : Trie.Trie<Principal, Trie.Trie<Principal, T.ConnectionStatus>> = Trie.empty(); // Adjacency list for graph that manages user connections: principal -> list of connected principals
+  var users : Trie.Trie<Principal, T.User> = Trie.empty(); //application users
+  var contracts : Trie.Trie<Nat32, T.Contract> = Trie.empty(); // all contracts
+  var nextContractId : Nat32 = 1; // to keep track of the next contract ID
+  var connections : Trie.Trie<Principal, Trie.Trie<Principal, T.ConnectionStatus>> = Trie.empty(); // Adjacency list for graph that manages user connections: principal -> list of connected principals
 
   func key(p : Principal) : T.Key<Principal> {
     { hash = Principal.hash p; key = p };
@@ -1033,7 +1034,7 @@ actor class CLM() = {
       };
     };
   };
-  
+
   //pay invoice lumpsum
   //invoice id corresponds to contract id
   public shared ({ caller }) func payInvoice(contractId : Nat32) : async Result.Result<Text, Text> {
@@ -1057,16 +1058,59 @@ actor class CLM() = {
           };
         };
 
-        switch (await Invoice.payInvoice(contractId)) {
-          case (#ok(message)) {
-            let _ = await updateContractStatus(contractId, "Complete");
-            return #ok(message);
+        // Get the invoice and check if collateralized
+        let invoiceOpt = await Invoice.getInvoice(contractId);
+        switch (invoiceOpt) {
+          case null {
+            return #err("Invoice not found");
           };
-          case (#err(message)) {
-            return #err(message);
+          case (?invoice) {
+            if (invoice.collateralized) {
+              // Transfer tokens to the credit canister principal
+              let transferFromArgs : LT.TransferFromArgs = {
+                from = {
+                  owner = invoice.recipient;
+                  subaccount = null;
+                };
+                memo = null;
+                amount = Nat32.toNat(invoice.totalAmount);
+                spender_subaccount = null;
+                fee = null;
+                to = { owner = Principal.fromActor(Credit); subaccount = null };
+                created_at_time = null;
+              };
+              switch (await LT.Actor.icrc2_transfer_from(transferFromArgs)) {
+                case (#Err(transferError)) {
+                  return #err("Transfer to credit canister failed: " # debug_show (transferError));
+                };
+                case (#Ok(blockIndex)) {
+                  // After payment to credit canister, collect the debt
+                  let collectResult = await Credit.collect(contractId);
+                  switch (collectResult) {
+                    case (#ok(msg)) {
+                      let _ = await updateContractStatus(contractId, "Complete");
+                      return #ok("Transferred to credit canister and collected: " # debug_show (blockIndex) # ", " # msg);
+                    };
+                    case (#err(e)) {
+                      return #err("Debt collection failed: " # e);
+                    };
+                  };
+                };
+              };
+            } else {
+              // Not collateralized, use the regular invoice payment logic
+              switch (await Invoice.payInvoice(contractId)) {
+                case (#ok(message)) {
+                  let _ = await updateContractStatus(contractId, "Complete");
+                  return #ok(message);
+                };
+                case (#err(message)) {
+                  return #err(message);
+                };
+              };
+            };
           };
-        }
-
+        };
       };
     };
   };

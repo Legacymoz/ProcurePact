@@ -8,9 +8,9 @@ import Ledger "canister:icrc1_ledger_canister";
 import Array "mo:base/Array";
 import Error "mo:base/Error";
 
-actor class Invoice() = this {
+persistent actor class Invoice() = this {
 
-  stable var invoices : Trie.Trie<Nat32, T.Invoice> = Trie.empty();
+  var invoices : Trie.Trie<Nat32, T.Invoice> = Trie.empty();
 
   func calculateTotalAmount(items : List.List<T.Item>) : Nat32 {
     let total = List.foldLeft<T.Item, Nat32>(
@@ -70,55 +70,10 @@ actor class Invoice() = this {
         if (issuerBal < Nat32.toNat(invoice.totalAmount)) {
           return #err("Insufficient Balance");
         };
-        //handle invoice if collateralized
         if (invoice.collateralized) {
-          // Payment is made to the credit canister
-          let creditCanisterPrincipal = Credit.Principal; // Use imported canister reference
-          let transferFromArgs : Ledger.TransferFromArgs = {
-            from = {
-              owner = invoice.recipient;
-              subaccount = null;
-            };
-            memo = null;
-            amount = Nat32.toNat(invoice.totalAmount);
-            spender_subaccount = null;
-            fee = null;
-            to = { owner = creditCanisterPrincipal; subaccount = null };
-            created_at_time = null;
-          };
-          switch (await Ledger.icrc2_transfer_from(transferFromArgs)) {
-            case (#Err(transferError)) {
-              return #err("Transfer to credit canister failed: " # debug_show (transferError));
-            };
-            case (#Ok(blockIndex)) {
-              // After payment to credit canister, collect the debt
-              let collectResult = await Credit.collect(invoiceId);
-              switch (collectResult) {
-                case (#ok(msg)) {
-                  // Mark invoice as paid
-                  let updatedInvoice : T.Invoice = {
-                    contractId = invoice.contractId;
-                    issuer = invoice.issuer;
-                    recipient = invoice.recipient;
-                    dueDate = invoice.dueDate;
-                    items = invoice.items;
-                    totalAmount = invoice.totalAmount;
-                    status = #Paid;
-                    createdAt = invoice.createdAt;
-                    updatedAt = Time.now();
-                    notes = invoice.notes;
-                    penalty = invoice.penalty;
-                    collateralized = invoice.collateralized;
-                  };
-                  invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
-                  #ok("Transferred to credit canister and collected: " # debug_show (blockIndex) # ", " # msg);
-                };
-                case (#err(e)) {
-                  return #err("Debt collection failed: " # e);
-                };
-              };
-            };
-          };
+          // Collateralized invoices are handled externally (e.g., in main.mo)
+          // Return a special result to indicate this
+          return #err("CollateralizedInvoice");
         } else {
           // Not collateralized, payment is made to the issuer
           let transferFromArgs : Ledger.TransferFromArgs = {
