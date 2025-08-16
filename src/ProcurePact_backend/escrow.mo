@@ -8,16 +8,9 @@ import Nat32 "mo:base/Nat32";
 import Debug "mo:base/Debug";
 import Ledger "canister:icrc1_ledger_canister";
 
-actor class Escrow() = this {
-    //will handle escrow functionality
-    //handle onDelivery Payments
-    /*
-1. Lock tokens
-2. Complete deal
-*/
-
+persistent actor class Escrow() = this {
     //create storage to record locked tokens
-    stable var records : Trie.Trie<Nat32, T.EscrowRecord> = Trie.empty();
+    var records : Trie.Trie<Nat32, T.EscrowRecord> = Trie.empty();
 
     public shared func lockTokens(from : Principal, dealId : Nat32, amount : Nat32, recipient: Principal) : async Result.Result<Nat, Text> {
         try {
