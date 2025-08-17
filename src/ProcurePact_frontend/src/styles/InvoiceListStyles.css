@@ -1,0 +1,88 @@
+.table-wrapper {
+  overflow-x: auto;
+  background: transparent;
+  border-radius: 12px;
+}
+
+.invoice-table {
+  border-collapse: collapse;
+  width: 100%;
+  background: transparent;
+}
+
+.invoice-table thead {
+  background: none; /* No background for header */
+  color: #222;
+}
+
+.invoice-table th {
+  padding: 12px;
+  font-weight: 600;
+  background: none;
+}
+
+.invoice-table td {
+  padding: 12px;
+  border: none;
+  text-align: left;
+  
+  
+}
+
+/* Zebra striping for rows */
+.invoice-table tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+.invoice-table tbody tr:nth-child(odd) {
+  background: #e5e5e5;
+  
+} 
+
+.error-text {
+  color: red;
+}
+
+.invoice-table td.recipient-cell {
+  max-width: 180px;
+  overflow-x: auto;
+  white-space: nowrap;
+  
+  scrollbar-width: none; /* Hide scrollbar by default (Firefox) */
+
+}
+/* Show scrollbar on hover (Firefox) */
+.invoice-table td.recipient-cell:hover {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e5e5 #fff;
+}
+/* For Webkit browsers */
+.invoice-table td.recipient-cell::-webkit-scrollbar {
+  height: 6px;
+  background: #fff;
+}
+
+.invoice-table td.recipient-cell::-webkit-scrollbar-thumb {
+  background: #e5e5e5;
+  border-radius: 4px;
+}
+
+.invoice-table td button {
+  background: #ff8800;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(255,136,0,0.08);
+}
+
+.invoice-table td button:hover,
+.invoice-table td button:focus {
+  background: #e86c00;
+  box-shadow: 0 4px 16px rgba(255,136,0,0.15);
+  outline: none;
+}

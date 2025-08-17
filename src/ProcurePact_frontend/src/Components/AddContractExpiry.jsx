@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ProcurePact_backend } from 'declarations/ProcurePact_backend';
 import { useStore } from '../store/useStore';
+import "../styles/AddExpiryStyles.css"; // Import the CSS file
 
 // Helper to convert nanoseconds to YYYY-MM-DD
 function nsToDateString(ns) {
@@ -37,7 +38,7 @@ const ContractExpiry = ({ currentExpiry }) => {
   };
 
   return (
-    <div className="contract-section-container">
+    <div className="contract-expiry-container">
       <h2 className="contract-section-heading">Contract Expiry Date</h2>
       <input
         type="date"

@@ -59,7 +59,7 @@ const AddPayment = ({ currentPaymentTerm }) => {
   }, [currentPaymentTerm])
 
   return (
-    <div className="contract-section-container">
+    <div className="contract-payment-container">
       <h2 className="contract-section-heading">Payment Details</h2>
       <form onSubmit={handleSubmit}>
         <select value={payment} onChange={(e) => setPayment(e.target.value)}>

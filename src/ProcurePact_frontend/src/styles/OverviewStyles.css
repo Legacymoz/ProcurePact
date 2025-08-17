@@ -1,0 +1,98 @@
+.main-overview-container {
+  width: 100%;
+  
+  margin: 2rem ;
+  padding: 1.5rem 0rem;
+}
+
+.overview-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 2rem;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+.overview-cards-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.overview-card {
+  display: flex;
+  align-items: center;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+  padding: 1.5rem 1.2rem;
+  min-height: 120px;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+
+.overview-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+}
+
+.overview-card-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.2rem;
+}
+
+.overview-icon-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
+  background: rgba(255,255,255,0.18);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.overview-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  flex: 1;
+}
+
+.overview-card-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.overview-card-label {
+  font-size: 1.08rem;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0.85;
+  letter-spacing: 0.2px;
+}
+
+@media (max-width: 900px) {
+  .overview-cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+  .overview-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .overview-cards-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .main-overview-container {
+    padding: 1rem 0.2rem;
+  }
+}

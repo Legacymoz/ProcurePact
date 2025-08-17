@@ -1,0 +1,67 @@
+.invoicesDue {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff; /* White background */
+    max-width: 100%;
+    height: 100%;
+}
+
+.invoicesDue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.invoicesDue-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333; /* Dark grey for the title */
+}
+
+.invoicesDue-filter {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9; /* Light grey background */
+    cursor: pointer;
+}
+
+.invoicesDue-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff; /* White background */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.invoicesDue-table th, .invoicesDue-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.invoicesDue-table th {
+    background-color: #f4f4f4; /* Light grey for header */
+    font-weight: bold;
+    color: #555; /* Medium grey for text */
+}
+
+.invoicesDue-table tr:hover {
+    background-color: #fff7e6; /* Light orange on hover */
+}
+
+.invoicesDue-viewButton {
+    padding: 6px 12px;
+    background-color: #28a745; /* Green button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.invoicesDue-viewButton:hover {
+    background-color: #218838; /* Darker green on hover */
+}

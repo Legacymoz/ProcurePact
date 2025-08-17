@@ -2,6 +2,7 @@ import Modal from "@mui/material/Modal";
 import Box from '@mui/material/Box';
 import { useState } from "react";
 import { Principal } from "@dfinity/principal";
+import "../styles/RequestModalStyles.css";
 
 const style = {
     position: 'absolute',
@@ -27,22 +28,45 @@ export default function RequestModal({ open, setOpen, requestConnection }) {
     };
 
     return (
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-            <Box sx={style}>
-                <h2 id="modal-modal-title">Request Connection</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="principal" className="form-label">Connection Principal</label>
-                        <input type="text" name="principal" className="form-control" placeholder="Enter connection principal" onChange={(e) => setPrincipal(e.target.value)} />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Send Request</button>
-                </form>
-            </Box>
-
-        </Modal>
-    )
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="request-modal-title"
+        aria-describedby="request-modal-description"
+      >
+        <div className="request-modal-outer" onClick={handleClose}>
+          <div
+            className="request-modal-box"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="close-modal-x"
+              type="button"
+              aria-label="Close"
+              onClick={handleClose}
+            >
+              &times;
+            </button>
+            <h2 id="request-modal-title">Request Connection</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="principal" className="form-label">
+                  Connection Principal
+                </label>
+                <input
+                  type="text"
+                  name="principal"
+                  className="form-control"
+                  placeholder="Enter connection principal"
+                  onChange={(e) => setPrincipal(e.target.value)}
+                />
+              </div>
+              <button type="submit" className="submit-button">
+                Send Request
+              </button>
+            </form>
+          </div>
+        </div>
+      </Modal>
+    );
 }

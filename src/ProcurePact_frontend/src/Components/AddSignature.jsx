@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore';
 import { Principal } from "@dfinity/principal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/AddSignatureStyles.css"; // Import the CSS file
 
 
 const AddSignature = ({ currentParties }) => {
@@ -62,7 +63,7 @@ const AddSignature = ({ currentParties }) => {
     }, []);
 
     return (
-        <div className="contract-section-container">
+        <div className="contract-signature-container">
             <h2 className="contract-section-heading">Signature</h2>
             {!isSignatory ? <>
                 <p>In signing this Agreement, the party confirms their familiarity with the conditions of operating with the Client, and pledges to adhere to these terms at all times. </p>
@@ -77,7 +78,7 @@ const AddSignature = ({ currentParties }) => {
                             onChange={(e) => e.target.value === user.name ? setCanSign(true) : setCanSign(false)}
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary" disabled={!canSign}>Sign Contract</button>
+                    <button type="submit" className="submit-button" disabled={!canSign}>Sign Contract</button>
                 </form>
             </> : <>
                 <p>You are already a signatory to this contract</p>

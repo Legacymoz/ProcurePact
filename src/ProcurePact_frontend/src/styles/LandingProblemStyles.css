@@ -1,0 +1,70 @@
+.problemSection {
+  padding: 60px 40px;
+  background-color: #fafafa;
+  font-family: Arial, sans-serif;
+}
+
+.problemSection h2 {
+  font-size: 28px;
+  color: #1d3557;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contentContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.problemText {
+  flex: 1;
+  min-width: 300px;
+}
+
+.problemText p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.tumainiStory {
+  background-color: #fff5e6;
+  padding: 15px;
+  border-left: 5px solid orange;
+  border-radius: 8px;
+}
+
+.problemImage {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 300px;
+}
+
+.problemImage img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .contentContainer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .problemSection h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .tumainiStory {
+    text-align: left;
+  }
+}

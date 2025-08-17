@@ -1,0 +1,73 @@
+.create-contract-modal-box {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  padding: 32px;
+  width: 400px;
+  max-width: 95vw;
+  outline: none;
+  border: none;
+  position: relative;
+}
+
+.create-contract-modal-title {
+  margin-bottom: 24px;
+  font-size: 1.5em;
+  color: #ff8800;
+  font-weight: 700;
+  text-align: center;
+}
+
+.create-contract-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.create-contract-form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.create-contract-form-label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #222;
+}
+
+.create-contract-form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  font-size: 1em;
+  background: #f9f8f6;
+  color: #222;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+
+.create-contract-form-control:focus {
+  border-color: #ff8800;
+  outline: none;
+}
+
+.create-contract-submit-btn {
+  background: #ff8800;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.create-contract-submit-btn:hover,
+.create-contract-submit-btn:focus {
+  background: #e86c00;
+  outline: none;
+}

@@ -1,0 +1,97 @@
+.main-invoice-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    min-height: 70vh;
+
+}
+
+.main-invoice-container .sub-invoice-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    padding: 50px;
+    background-color: #f9f8f6;
+    border-radius: 20px;
+}
+
+.sub-invoice-container .header {
+
+   margin-bottom: 20px;
+   background: none;
+}
+
+.sub-invoice-container .header h1 {
+    font-size: 30px;
+    color: #222;
+    text-align: left;
+}   
+
+/* Container for the filter tabs */
+.sub-invoice-container .filter-container {
+  display: flex;
+  gap: 30px;
+  border-bottom: 2px solid #e5e5e5; /* subtle gray line under all tabs */
+  background: none;
+  padding-bottom: 0.5em;
+  margin-bottom: 10px
+}
+
+/* Tab button styles */
+.filter-container button {
+  background: none;
+  border: none;
+  outline: none;
+  color: #222;
+  font-size: 1.05em;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+/* Default underline (gray) for all tabs */
+.filter-container button::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #e5e5e5;
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  transition: background 0.2s;
+}
+
+/* Active tab: orange underline and orange text */
+.filter-container button.active
+ {
+  color: #ff8800;
+}
+
+.filter-container button.active::after {
+  background: #ff8800;
+}
+
+/* Minimal hover effect */
+.filter-container button:hover {
+  color: #ff8800;
+}
+.sub-invoice-container .invoice-container{
+    background:none ;
+    padding: 0;
+    min-width: 100%;
+    border: none;
+    
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 600px) {
+  .filter-container {
+    gap: 1em;
+    font-size: 0.95em;
+  }
+}

@@ -1,0 +1,44 @@
+.editContract-container {
+  max-width: 100%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.editContract-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.party-container, .products-container, .signature-container {
+  width: 100%;
+  margin: 2rem 0;
+  
+}
+
+.container-2 {
+  display: flex;
+  justify-content: space-between;
+  gap: 5rem;
+  max-width: 100%;
+  width: 1150px;
+  background-color: #ffffff;  
+}
+
+
+.container-2 > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 800px) {
+  .container-2 {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}

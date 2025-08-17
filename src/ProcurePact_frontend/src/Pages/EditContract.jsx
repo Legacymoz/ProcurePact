@@ -31,17 +31,26 @@ const EditContract = () => {
     if (!contract) return <p>Loading...</p>;
 
     return (
-        <div className="editContract-container">
-            <h1>Edit Contract: {contract.name}</h1>
+      <div className="editContract-container">
+        <h1>Edit Contract: {contract.name}</h1>
 
-            <AddParty currentParties={contract.parties} />
-
-            <AddProducts currentPricing={contract.pricing} />
-
-            <AddPayment currentPaymentTerm={contract.paymentTerm} />
-            <ContractExpiry currentExpiry={contract.expiresAt} />
-            <AddSignature currentParties={contract.parties} />
+        <div className="party-container">
+          <AddParty currentParties={contract.parties} />
         </div>
+
+        <div className="products-container">
+            <AddProducts currentPricing={contract.pricing} />
+        </div>
+
+        <div className="container-2">
+          <AddPayment currentPaymentTerm={contract.paymentTerm} />
+          <ContractExpiry currentExpiry={contract.expiresAt} />
+        </div>
+
+        <div className="signature-container">
+          <AddSignature currentParties={contract.parties} />
+        </div>
+      </div>
     );
 };
 
