@@ -1,74 +1,14 @@
-.contract-section-container {
-  max-width: 600px;
+.add-party-container {
+  max-width: 90%;
   margin: 2rem auto;
   padding: 2rem;
   background-color: #fdfdfd;
   border-radius: 12px;
+  border: 1px solid #e0e0e0;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
 }
 
-.contract-section-heading {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  color: #333;
-}
-
-
-.party-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.party-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  
-  border-radius: 8px;
-  border: 1px solid #dcdfe4;
-}
-
-.party-item input,
-.party-item select {
-  padding: 0.5rem 0.75rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
-}
-
-.party-item input:focus,
-.party-item select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-}
-/* .add-button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
-.add-button {
-  background-color: #28a745;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background 0.3s ease;
- 
-} */
-
-.contract-header {
+.add-party-container .contract-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -95,7 +35,104 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s ease;
-  margin: 0; /* reset margin if needed */
+  margin: 0;
+}
+
+/* .party-grid-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+} */
+
+.party-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.party-accordion-panel {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #dcdfe4;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+  min-height: 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+.party-accordion-panel.expanded {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+   height: auto;
+  overflow: hidden;
+} 
+.party-accordion-panel:not(.expanded) {
+  height: 70px; /* collapsed height */
+} 
+.party-accordion-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.party-principal-short {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  flex: 1;
+  letter-spacing: 0.5px;
+}
+
+.party-role-badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.25em 0.7em;
+  border-radius: 12px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.party-accordion-details {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: #f9f8f6;
+}
+
+.party-principal-full {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 0.2rem;
+}
+
+.party-status {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 0.2rem;
+}
+
+.party-input,
+.party-select {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.party-input:focus,
+.party-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
 .delete-button {
@@ -107,24 +144,23 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-
   transition: background 0.3s ease;
+  margin-top: 0.5rem;
 }
 
-button:hover {
+.delete-button:hover {
   opacity: 0.9;
 }
 
-button:active {
-  transform: scale(0.98);
+.self-label {
+  font-size: 0.95rem;
+  color: #007bff;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }
 
-button:focus {
-  outline: none;
-}
-
-.submit-button {
-  background-color: #007bff;
+.add-party-sub-container .submit-button {
+  background-color:  #ff8800;
   color: white;
   align-self: flex-start;
   padding: 0.6rem 1.2rem;
@@ -133,8 +169,12 @@ button:focus {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
 }
 
 .empty-state {
@@ -144,3 +184,14 @@ button:focus {
   margin-top: 1rem;
 }
 
+/* Responsive grid for mobile */
+@media (max-width: 900px) {
+  .party-grid-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .party-grid-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,75 @@
+.featuresSection {
+  padding: 60px 40px;
+  background-color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+.featuresSection h2 {
+  text-align: center;
+  font-size: 28px;
+  color: #1d3557;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.featuresSection h2::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -10px;
+  width: 60px;
+  height: 3px;
+  background-color: orange;
+  border-radius: 2px;
+}
+
+.featuresContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.featureCard {
+  background: #f7f9fc; /* light neutral background */
+  flex: 1 1 calc(50% - 30px);
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e6ed;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 140, 0, 0.2); /* subtle orange hover glow */
+}
+
+.featureImage {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.featureCard h3 {
+  font-size: 18px;
+  color: #e67e22; /* orange accent for titles */
+  margin-bottom: 10px;
+}
+
+.featureCard p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .featureCard {
+    flex: 1 1 100%;
+  }
+}

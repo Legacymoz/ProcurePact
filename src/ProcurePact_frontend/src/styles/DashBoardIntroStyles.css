@@ -1,0 +1,88 @@
+.main-intro-container {
+  width: 100%;
+  max-height: 170px;
+  background: linear-gradient(90deg, #ff8800 0%, #ff6a00 60%, #ff5100 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow:visible
+}
+
+.info-container {
+  flex: 1 1 0;
+  color: #270606;
+  z-index: 2;
+}
+
+.info-container h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.info-container p {
+  font-size: 1.15rem;
+  font-weight: 400;
+  margin-bottom: 0;
+  letter-spacing: 0.2px;
+}
+
+.info-container .principal {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #100c0c;
+  font-style: italic;
+  
+  
+  border-radius: 10px;
+  display: inline-block;
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+}
+
+.image-container {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: 100%;
+  z-index: 2;
+}
+
+.image-container img {
+  height: 350px;
+  width: auto;
+  object-fit: contain;
+  margin-left: 2rem;
+  margin-bottom: 0;
+  position: relative; /* Allows positioning relative to its normal position */
+  left: 30px; /* Moves the image 20px to the right */
+  
+}
+
+@media (max-width: 900px) {
+  .main-intro-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+  }
+  .image-container {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .image-container img {
+    height: 120px;
+    margin-left: 0;
+  }
+  .info-container h1 {
+    font-size: 1.5rem;
+  }
+  .info-container p {
+    font-size: 1rem;
+  }
+}

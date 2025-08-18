@@ -1,0 +1,37 @@
+.main-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2rem;
+  width: 100%;
+  overflow-y: auto; /* Enables vertical scrolling */
+  height: 100%; /* Ensures it takes the full height of the parent */
+}
+
+
+.intro-dash-container {
+  width: 100%;
+  margin-bottom: 1rem; /* Adds spacing below the intro section */
+  box-sizing: border-box; /* Ensures padding is included in width/height */
+}
+
+.main-dashboard-container .sub-container-3 {
+  display: flex;
+  width: 100%;
+  height: 300px;
+}
+
+.sub-container-3 .invoice-container {
+  flex: 2;
+  margin-right: 1rem;
+  border-radius: 20px;
+  padding: 5px;
+  height: 100%;
+}
+
+.sub-container-3 .contract-container {
+  flex: 1;
+  margin-left: 1rem;
+  border-radius: 20px;
+}
