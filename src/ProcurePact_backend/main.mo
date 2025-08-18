@@ -1067,7 +1067,7 @@ persistent actor class CLM() = {
           case (?invoice) {
             if (invoice.collateralized) {
               // Transfer tokens to the credit canister principal
-              let transferFromArgs : LT.TransferFromArgs = {
+              let transferFromArgs : Ledger.TransferFromArgs = {
                 from = {
                   owner = invoice.recipient;
                   subaccount = null;
@@ -1079,7 +1079,7 @@ persistent actor class CLM() = {
                 to = { owner = Principal.fromActor(Credit); subaccount = null };
                 created_at_time = null;
               };
-              switch (await LT.Actor.icrc2_transfer_from(transferFromArgs)) {
+              switch (await Ledger.icrc2_transfer_from(transferFromArgs)) {
                 case (#Err(transferError)) {
                   return #err("Transfer to credit canister failed: " # debug_show (transferError));
                 };

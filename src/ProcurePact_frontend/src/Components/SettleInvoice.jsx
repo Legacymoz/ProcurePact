@@ -1,5 +1,6 @@
 import { useStore } from "../store/useStore";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
+import {invoice} from "declarations/invoice";
 import { useEffect, useState } from "react";
 import { useAuth } from "../Hooks/AuthContext";
 import { Principal } from "@dfinity/principal";
@@ -121,7 +122,7 @@ const SettleInvoice = () => {
 
     useEffect(() => {
         (async () => {
-            const response = await ProcurePact_backend.getInvoice(BigInt(selectedContract));
+            const response = await invoice.getInvoice(BigInt(selectedContract));
             const invoiceData = response[0];
             setfetchedInvoice(invoiceData);
             fetchSupplierDetails(Principal.fromUint8Array(invoiceData.issuer._arr));
