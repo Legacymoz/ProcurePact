@@ -3,7 +3,7 @@ import "../styles/FinalCTAStyles.css";
 
 const FinalCTA = () => {
   return (
-    <section className="finalCtaSection">
+    <section className="finalCtaSection" id="contact">
       <div className="ctaContent">
         <h2>Ready to Secure Your Trade and Unlock Your Growth?</h2>
         <p>

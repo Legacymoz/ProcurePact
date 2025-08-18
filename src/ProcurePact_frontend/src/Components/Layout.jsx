@@ -2,16 +2,20 @@
 import "../styles/LayoutStyles.css";
 import MainNavbar from "./MainNavbar";
 import { Outlet } from "react-router-dom";
+import MainSideNavbar from "./MainSideNavbar";
 
 const Layout = () => {
   return (
-    <>
-      <MainNavbar />
+    <div className="layout-container">
+      <div className="navigation">
+        {/* <MainNavbar /> */}
+        <MainSideNavbar />
+      </div>
 
-      <main className="main-content">
+      <div className="main-content">
         <Outlet />
-      </main>
-    </>
+      </div>
+    </div>
   );
 };
 

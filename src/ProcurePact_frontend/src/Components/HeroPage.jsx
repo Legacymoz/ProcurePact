@@ -1,9 +1,12 @@
 import React from "react";
 import "../styles/HeroPageStyles.css";
+import { useNavigate } from "react-router-dom";
 
 const HeroPage = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="heroContainer">
+    <div className="heroContainer" id="home">
       {/* Top heading */}
       <div className="heroHeading">
         <h1>
@@ -21,7 +24,9 @@ const HeroPage = () => {
             ensure reliable payments, unlock instant liquidity, and streamline
             trade operations.
           </p>
-          <button className="heroButton">Get Started</button>
+          <button className="heroButton" onClick={() => navigate("/")}>
+            Get Started
+          </button>
         </div>
 
         <div className="imageContainer">

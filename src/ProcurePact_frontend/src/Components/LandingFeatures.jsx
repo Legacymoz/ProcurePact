@@ -3,7 +3,7 @@ import "../styles/LandingFeaturesStyles.css";
 
 const LandingFeatures = () => {
   return (
-    <section className="featuresSection">
+    <section className="featuresSection" id="features">
       <h2>Features That Power Your Growth</h2>
 
       <div className="featuresContainer">

@@ -151,6 +151,8 @@ import RequestModal from "../Components/RequestModal";
 import { Principal } from "@dfinity/principal";
 import "../styles/ConnectionStyles.css";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
+import { useStore } from "../store/useStore";
+
 
 const tabOptions = [
   { label: "Mutual", key: "mutual" },
@@ -164,29 +166,39 @@ const Connections = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("mutual");
   const handleOpen = () => setOpen(true);
-  
 
-  //   const getConnections = async (principal) => {
-  //     await ProcurePact_backend.getConnections(principal).then((response) => {
-  //       if (response.ok) {
-  //         setConnections(normalizeConnections(response.ok));
-  //         getUser(principal);
-  //       } else console.log(response.err);
-  //     });
-  //   };
+  const { myConnections, getConnections } = useStore();
 
-  const getConnections = async (principal) => {
-    await ProcurePact_backend.getConnections(principal).then(
-      async (response) => {
-        if (response.ok) {
-          const normalized = await normalizeConnections(response.ok);
-          console.log("Normalized Connections:", normalized);
-          setConnections(normalized);
-          
-        } else console.log(response.err);
+  useEffect(() => {
+    const fetchConnections = async () => {
+      try {
+        await getConnections(principal); // Call your async function here
+        const normalized = await normalizeConnections(myConnections);
+        console.log("Normalized Connections:", normalized);
+        setConnections(normalized);
+      } catch (error) {
+        console.error("Error fetching connections:", error);
       }
-    );
-  };
+    };
+
+    if (principal) {
+      fetchConnections(); // Call the async function
+    }
+  }, [principal, getConnections]);
+
+  // const getConnections = async (principal) => {
+  //   await ProcurePact_backend.getConnections(principal).then(
+  //     async (response) => {
+  //       if (response.ok) {
+  //         console.log("Raw Connections", response.ok)
+  //         const normalized = await normalizeConnections(response.ok);
+  //         console.log("Normalized Connections:", normalized);
+  //         setConnections(normalized);
+          
+  //       } else console.log(response.err);
+  //     }
+  //   );
+  // };
 
   const request = async (principal) => {
     await ProcurePact_backend.requestConnection(principal)
@@ -260,10 +272,7 @@ const Connections = () => {
     return normalized;
   };
 
-  useEffect(() => {
-    getConnections(principal);
-    
-  }, []);
+ 
 
   // Tab content filter logic
   const getTabConnections = () => {

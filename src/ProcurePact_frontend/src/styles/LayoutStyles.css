@@ -1,9 +1,38 @@
+* {
+  box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  display: none; /* Hiding the scroll Bar For Chrome, Safari, and Opera */
+}
+
+
+.layout-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* Full viewport height */
+  width: 100%; /* Full width */
+  overflow-y: auto;
+  background-color: #ffffff; /* Light background color */
+}
+
+.navigation {
+  width: 35vh; /* Fixed width for navigation */
+  height: 100vh; /* Full height */
+  background-color: #ffffff; /* Matches the sidebar color */
+  
+  
+  overflow: hidden; /* Prevents child overflow */
+}
 
 .main-content {
-  padding: 0;
-  background: #f9f8f6;
-  min-height: 70vh;
+  flex: 1; /* Takes the remaining space */
+  padding: 16px;
+  background: #f6f5f2;
+  overflow-y: auto; /* Allows scrolling for content */
   box-sizing: border-box;
+  border-radius: 20px;
+  margin: 15px 10px 15px 0;
+ 
 }
 
 @media (max-width: 700px) {
@@ -11,4 +40,3 @@
     padding: 16px;
   }
 }
-

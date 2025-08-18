@@ -9,9 +9,13 @@ import ContractsOverview from '../Components/ContractsOverview'
 const Dashboard = () => {
   return (
     <div className="main-dashboard-container">
-      <DashBoardIntro />
-      <Overview />
-      <div className="sub-container-2">
+      <div className="intro-dash-container">
+        <DashBoardIntro />
+      </div>
+      <div className="overview-dash-container">
+        <Overview />
+      </div>
+      <div className="sub-container-3">
         <div className="invoice-container">
           <InvoicesDue />
         </div>

@@ -83,15 +83,16 @@
 .contractsOverview .header {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 20px;
     
 }
 
 .contractsOverview .header h1 {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     color: #333; /* Dark grey for the title */
+    text-align: left;
 }
 .contractsOverview .contract-info-container {
     display: grid;
@@ -100,17 +101,8 @@
     justify-items: center;
 }
 
-/* .info {
-    display: flex;
-    align-items: center;
-    background-color: #f9f9f9; 
-    border-radius: 12px;
-    padding: 10px;
-    width: 100%;
-    height: 80px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-} */
+
+
  .info {
     display: flex;
     align-items: center;
@@ -132,34 +124,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
 }
 
-/* .info-icon {
-    font-size: 1.5rem; 
-    margin-right: 10px;
-    color: #fff;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-
-.info.draft .info-icon {
-    background-color: #6c63ff;
-}
-
-.info.active .info-icon {
-    background-color: #00bcd4;
-}
-
-.info.invoice .info-icon {
-    background-color: #ff9800; 
-}
-
-.info.completed .info-icon {
-    background-color: #4caf50; 
-} */
 
 .info.draft {
     background: linear-gradient(

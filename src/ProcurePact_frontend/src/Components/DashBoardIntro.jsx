@@ -1,11 +1,15 @@
 import React from "react";
 import "../styles/DashBoardIntroStyles.css";
+import { useAuth } from "../Hooks/AuthContext";
 
 const DashBoardIntro = () => {
+  const { user, principal } = useAuth();
+
   return (
     <div className="main-intro-container">
       <div className="info-container">
-        <h1>Hi, Maestro</h1>
+        <h1>Welcome, {user?.name || "User"}!</h1>
+        <p className="principal">Principal: {principal?.toText() || "N/A"}</p>
         <p>Ready to manage your contracts and parties?</p>
       </div>
       <div className="image-container">

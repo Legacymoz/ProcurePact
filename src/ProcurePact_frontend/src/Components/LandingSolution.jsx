@@ -3,7 +3,7 @@ import "../styles/LandingSolutionStyles.css";
 
 const LandingSolution = () => {
   return (
-    <section className="solutionSection">
+    <section className="solutionSection" id="solution">
       <h2>ProcurePact: The Trusted Online Platform for Seamless Trade</h2>
       <p className="solutionIntro">
         ProcurePact is a single, trusted platform designed to solve the biggest

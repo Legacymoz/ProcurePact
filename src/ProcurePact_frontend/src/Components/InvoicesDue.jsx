@@ -8,6 +8,9 @@ function formatNanoDate(nano) {
   return new Date(Number(nano) / 1_000_000).toLocaleDateString();
 }
 
+
+
+
 const InvoicesDue = () => {
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [invoices, setInvoices] = useState([]);
@@ -44,34 +47,36 @@ const InvoicesDue = () => {
     let filtered = invoices;
 
     if (value === "today") {
+      const startOfDay = new Date(now);
+      startOfDay.setHours(0, 0, 0, 0); // Set to the start of today
+      const endOfDay = new Date(now);
+      endOfDay.setHours(23, 59, 59, 999); // Set to the end of today
+
       filtered = invoices.filter((invoice) => {
         const dueDate = new Date(invoice.dueDate);
-        return dueDate.toDateString() === now.toDateString();
+        return dueDate >= startOfDay && dueDate <= endOfDay;
       });
     } else if (value === "thisWeek") {
-      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+      const startOfWeek = new Date(now);
+      startOfWeek.setHours(0, 0, 0, 0); // Start from today at midnight
       const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setDate(startOfWeek.getDate() + 7); // Extend to the next 7 days
+      endOfWeek.setHours(23, 59, 59, 999); // End of the 7th day
 
       filtered = invoices.filter((invoice) => {
         const dueDate = new Date(invoice.dueDate);
         return dueDate >= startOfWeek && dueDate <= endOfWeek;
       });
-    } else if (value === "twoWeeks") {
-      const twoWeeksFromNow = new Date(now);
-      twoWeeksFromNow.setDate(now.getDate() + 14);
-
-      filtered = invoices.filter((invoice) => {
-        const dueDate = new Date(invoice.dueDate);
-        return dueDate >= now && dueDate <= twoWeeksFromNow;
-      });
     } else if (value === "month") {
-      const endOfMonth = new Date(now);
-      endOfMonth.setMonth(now.getMonth() + 1);
+      const startOfMonth = new Date(now);
+      startOfMonth.setHours(0, 0, 0, 0); // Start from today at midnight
+      const endOfMonth = new Date(startOfMonth);
+      endOfMonth.setMonth(startOfMonth.getMonth() + 1); // Extend to the next month
+      endOfMonth.setHours(23, 59, 59, 999); // End of the last day of the month
 
       filtered = invoices.filter((invoice) => {
         const dueDate = new Date(invoice.dueDate);
-        return dueDate >= now && dueDate <= endOfMonth;
+        return dueDate >= startOfMonth && dueDate <= endOfMonth;
       });
     }
 
@@ -89,7 +94,6 @@ const InvoicesDue = () => {
         >
           <option value="today">Today</option>
           <option value="thisWeek">This Week</option>
-          <option value="twoWeeks">Two Weeks</option>
           <option value="month">This Month</option>
         </select>
       </div>
@@ -99,16 +103,16 @@ const InvoicesDue = () => {
       ) : error ? (
         <p>{error}</p>
       ) : (
-        <table className="invoicesDue-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Due Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            
+        <div className="invoicesDue-table-container">
+          <table className="invoicesDue-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Due Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
               {filteredInvoices.map((invoice) => (
                 <tr key={invoice.contractId}>
                   <td>{invoice.contractId}</td>
@@ -118,9 +122,9 @@ const InvoicesDue = () => {
                   </td>
                 </tr>
               ))}
-            
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

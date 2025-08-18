@@ -1,0 +1,25 @@
+/* General container for the landing page */
+.landingPage-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5; /* Light background for contrast */
+  font-family: "Arial", sans-serif;
+}
+
+/* Navbar section */
+.myNavbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 10vh;
+}
+
+/* Content section */
+.content {
+  flex-grow: 1; /* Allow content to grow and occupy remaining space */
+  margin-top: 60px; /* Match the navbar height */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+}

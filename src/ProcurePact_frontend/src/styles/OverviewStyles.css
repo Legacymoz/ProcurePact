@@ -1,8 +1,8 @@
 .main-overview-container {
   width: 100%;
-  
-  margin: 2rem ;
+  margin: 2rem 0;
   padding: 1.5rem 0rem;
+ 
 }
 
 .overview-title {
@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   border-radius: 18px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
   padding: 1.5rem 1.2rem;
   min-height: 120px;
   transition: box-shadow 0.2s;
@@ -32,7 +32,7 @@
 }
 
 .overview-card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13);
 }
 
 .overview-card-left {
@@ -49,8 +49,8 @@
   border-radius: 50%;
   width: 54px;
   height: 54px;
-  background: rgba(255,255,255,0.18);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 }
 
 .overview-card-right {
@@ -66,7 +66,7 @@
   font-weight: 700;
   color: #fff;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .overview-card-label {

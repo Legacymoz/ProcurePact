@@ -1,67 +1,96 @@
 .invoicesDue {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #fff; /* White background */
-    max-width: 100%;
-    height: 100%;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #fff; /* White background */
+  max-width: 100%;
+  height: 100%;
 }
 
 .invoicesDue-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .invoicesDue-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333; /* Dark grey for the title */
+  font-size: 24px;
+  font-weight: bold;
+  color: #333; /* Dark grey for the title */
 }
 
 .invoicesDue-filter {
-    padding: 8px 12px;
+    padding: 10px 20px; /* Adjust padding for better spacing */
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 25px; /* Makes the dropdown more rounded */
     background-color: #f9f9f9; /* Light grey background */
     cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none; /* Removes default dropdown arrow styling */
+    position: relative; /* Allows positioning of the dropdown list */
+    z-index: 1; /* Ensures the dropdown stays above the list */
+}
+
+.invoicesDue-filter:focus {
+    outline: none;
+    border-bottom-left-radius: 0; /* Removes bottom border radius when clicked */
+    border-bottom-right-radius: 0; /* Removes bottom border radius when clicked */
+    background-color: #e6e6e6; /* Matches the list's hover background */
+}
+
+.invoicesDue-filter option {
+    position: absolute;
+    top: 50%; /* Aligns the list to pass through the middle of the dropdown */
+    transform: translateY(-50%); /* Centers the list vertically */
+    z-index: -1; /* Ensures the list appears below the dropdown */
+    background-color: #e6e6e6; /* Matches the dropdown's focus background */
+    border: none; /* Removes borders for a seamless look */
+    padding: 10px; /* Adds spacing for better appearance */
+    cursor: pointer;
+}
+
+.invoicesDue-table-container {
+  max-height: 75%; /* Ensures it respects the parent container's height */
+  overflow-y: auto; /* Enables vertical scrolling */
+  overflow-x: hidden; /* Hides horizontal overflow */
 }
 
 .invoicesDue-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff; /* White background */
-    border-radius: 8px;
-    overflow: hidden;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff; /* White background */
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.invoicesDue-table th, .invoicesDue-table td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+.invoicesDue-table th,
+.invoicesDue-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 .invoicesDue-table th {
-    background-color: #f4f4f4; /* Light grey for header */
-    font-weight: bold;
-    color: #555; /* Medium grey for text */
+  background-color: #f4f4f4; /* Light grey for header */
+  font-weight: bold;
+  color: #555; /* Medium grey for text */
 }
 
 .invoicesDue-table tr:hover {
-    background-color: #fff7e6; /* Light orange on hover */
+  background-color: #fff7e6; /* Light orange on hover */
 }
 
 .invoicesDue-viewButton {
-    padding: 6px 12px;
-    background-color: #28a745; /* Green button */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  padding: 6px 12px;
+  background-color: #28a745; /* Green button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .invoicesDue-viewButton:hover {
-    background-color: #218838; /* Darker green on hover */
+  background-color: #218838; /* Darker green on hover */
 }

@@ -4,7 +4,7 @@ import "../styles/LandingProblemStyles.css"
 
 const LandingProblem = () => {
   return (
-    <section className="problemSection">
+    <section className="problemSection" id="problem">
       <h2>Are you a small business struggling with cash flow?</h2>
       <div className="contentContainer">
         <div className="problemText">

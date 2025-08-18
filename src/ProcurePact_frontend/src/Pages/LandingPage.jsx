@@ -6,19 +6,26 @@ import LandingFeatures from '../Components/LandingFeatures'
 import SocialProof from '../Components/SocialProof'
 import FinalCTA from '../Components/FinalCTA'
 import Footer from '../Components/LandingFooter'
+import '../styles/LandingPageStyles.css'
+import LandingPageNavbar from '../Components/LandingPageNavbar'
 
 const LandingPage = () => {
   return (
-    <div>
+    <div className='landingPage-container'>
+      <div className="myNavbar">
+        <LandingPageNavbar />
+      </div>
+      <div className="content">
         <HeroPage />
         <LandingProblem />
         <LandingSolution />
         <LandingFeatures />
         <SocialProof />
         <FinalCTA />
-        <Footer/>
+        <Footer />
+      </div>
     </div>
-  )
+  );
 }
 
 export default LandingPage
