@@ -121,9 +121,9 @@
 
 
 
-import "../styles/AddProductStyles.css";
+import "../../styles/AddProductStyles.css";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { useStore } from "../store/useStore";
+import { useStore } from "../../store/useStore";
 import { useState } from "react";
 
 const initialProduct = {

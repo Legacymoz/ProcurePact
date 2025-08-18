@@ -213,10 +213,10 @@
 // export default AddParty;
 
 import { useEffect, useState } from "react";
-import "../styles/AddPartyStyles.css";
+import "../../styles/AddPartyStyles.css";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { useAuth } from "../Hooks/AuthContext";
-import { useStore } from "../store/useStore";
+import { useAuth } from "../../Hooks/AuthContext";
+import { useStore } from "../../store/useStore";
 import { Principal } from "@dfinity/principal";
 
 const ROLE_COLORS = {
@@ -322,6 +322,8 @@ const AddParty = ({ currentParties }) => {
       principal: Principal.fromText(party.principal),
       role: extractRole(party.details),
     }));
+
+    console.log(partiesToSubmit)
 
     await ProcurePact_backend.invitePartiesToContract(
       selectedContract,

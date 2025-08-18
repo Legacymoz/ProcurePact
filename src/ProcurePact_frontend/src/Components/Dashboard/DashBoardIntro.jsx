@@ -1,6 +1,6 @@
 import React from "react";
-import "../styles/DashBoardIntroStyles.css";
-import { useAuth } from "../Hooks/AuthContext";
+import "../../styles/DashBoardIntroStyles.css";
+import { useAuth } from "../../Hooks/AuthContext";
 
 const DashBoardIntro = () => {
   const { user, principal } = useAuth();

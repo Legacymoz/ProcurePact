@@ -1,15 +1,16 @@
 import { useStore } from "../store/useStore";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import {invoice} from "declarations/invoice";
+import { invoice } from "declarations/invoice";
 import { useEffect, useState } from "react";
 import { useAuth } from "../Hooks/AuthContext";
 import { Principal } from "@dfinity/principal";
 import { useNavigate } from "react-router-dom";
 import "../styles/Invoice.css";
 import { Actor } from "@dfinity/agent";
-import { icrc1_ledger_canister } from "declarations/icrc1_ledger_canister";
+import { ledgerStore } from "../store/ledgerStore";
 
 const SettleInvoice = () => {
+    const { ledger, agent, canister } = ledgerStore();
     const selectedContract = useStore((state) => state.selectedContract);
     const navigate = useNavigate();
     const [fetchedInvoice, setfetchedInvoice] = useState({});
@@ -47,11 +48,11 @@ const SettleInvoice = () => {
 
     const getUserBalance = async () => {
         try {
-            const result = await icrc1_ledger_canister.icrc1_balance_of({
+            const bal = await ledger.balance({
                 owner: principal,
                 subaccount: [], // or: undefined if not using subaccounts
             });
-            setUserBalance(result);
+            setUserBalance(Number(bal));
         } catch (error) {
             console.error("Error fetching user balance:", error);
         }
@@ -59,7 +60,10 @@ const SettleInvoice = () => {
 
     //get transfer fee
     const getTransferFee = async () => {
-        return await icrc1_ledger_canister.icrc1_fee();
+        return await ledger.transactionFee(
+            agent,
+            canister
+        );
     };
 
     //pay invoice
@@ -70,30 +74,25 @@ const SettleInvoice = () => {
                 return;
             }
 
-            // Use authenticated identity
-            Actor.agentOf(icrc1_ledger_canister).replaceIdentity(
-                authClient.getIdentity()
-            );
-
             // Get transfer fee
             const transferFee = await getTransferFee();
             // Approve token lock
             //approval is charged in the user
-            const result = await icrc1_ledger_canister.icrc2_approve({
+            const result = await ledger.approve({
                 amount: BigInt(totalAmount) + transferFee,
                 //specify who is allowed to spend the tokens
                 spender: {
                     owner: Principal.fromText(process.env.CANISTER_ID_ProcurePact_backend),
                     subaccount: [],
                 },
-                created_at_time: [],
-                expected_allowance: [],
-                expires_at: [],
-                memo: [],
-                fee: [],
-                from_subaccount: [],
+                created_at_time: null,
+                expected_allowance: null,
+                expires_at: null,
+                memo: null,
+                fee: null,
+                from_subaccount: null,
             });
-            if (result.Ok) {
+            if (typeof(result)=="bigint") {
                 await ProcurePact_backend.payInvoice(selectedContract).then((response) => {
                     if (response.ok) {
                         alert("Payment Successful")
@@ -106,7 +105,6 @@ const SettleInvoice = () => {
                 );
             } else {
                 alert("An error occurred while processing your payment!");
-                console.error(result.Err);
             }
         } catch (error) {
             console.log(error);
@@ -219,7 +217,7 @@ const SettleInvoice = () => {
                 <section className="invoice-section">
                     <h3>Pay Invoice</h3>
                     <p>Available wallet balance: ${userBalance}</p>
-                    <button className="btn btn-primary" onClick={()=>handleSubmit(fetchedInvoice?.totalAmount)}>
+                    <button className="btn btn-primary" onClick={() => handleSubmit(fetchedInvoice?.totalAmount)}>
                         Pay
                     </button>
                 </section>

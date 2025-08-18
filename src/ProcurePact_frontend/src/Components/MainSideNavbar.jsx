@@ -1,6 +1,10 @@
-import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../Hooks/AuthContext";
+//OISY wallet imports
+import { IcrcWallet } from '@dfinity/oisy-wallet-signer/icrc-wallet'
+import { ledgerStore } from "../store/ledgerStore";
+//End of OISY imports
 import {
   FaHome,
   FaFileContract,
@@ -10,19 +14,22 @@ import {
   FaSignOutAlt,
   FaSignInAlt,
 } from "react-icons/fa";
+import OisyIcon from "./OISY/OisyIcon";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
 import "../styles/MainSideNavbarStyles.css";
 
 const MainSideNavbar = () => {
+  const { createLedger } = ledgerStore();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [wallet, setWallet] = useState(null);
+  //test
+  const [metadata, setMetadata] = useState(null);
   let navigate = useNavigate();
   const {
     authClient,
     onIdentityUpdate,
     createAuthClient,
     isAuthenticated,
-    principal,
-    user,
     setUser,
   } = useAuth();
   const location = useLocation(); // Get the current location
@@ -72,6 +79,7 @@ const MainSideNavbar = () => {
   const logout = async () => {
     await authClient.logout();
     await onIdentityUpdate();
+    disconnectWallet();
     navigate("/");
   };
 
@@ -81,9 +89,51 @@ const MainSideNavbar = () => {
     }
   }, []);
 
+  const canisterProvider = () => {
+    if (process.env.DFX_NETWORK === "local") {
+      return process.env.CANISTER_ID_ICRC1_LEDGER_CANISTER;
+    } else if (process.env.DFX_NETWORK === "ic") {
+      //ckUSDT ledger
+      return "cefgz-dyaaa-aaaar-qag5a-cai"
+    }
+  };
+
+  const hostProvider = () => {
+    if (process.env.DFX_NETWORK === "local") {
+      return 'http://localhost:4943'
+    } else if (process.env.DFX_NETWORK === "ic") {
+      return null;
+    }
+  }
+  //handle ledger connection
+  useEffect(() => {
+    if (authClient?.isAuthenticated()) {
+      createLedger(authClient?.getIdentity(), canisterProvider(), hostProvider())
+    }
+  }, [authClient]);
+
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
+
+  //OISY Wallet Stuff
+  const connectWallet = async () => {
+    try {
+      const wallet = await IcrcWallet.connect({
+        url: 'https://staging.oisy.com/sign',
+        host: 'http://localhost:4943'
+      });
+      setWallet(wallet);
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  const disconnectWallet = () => {
+    wallet?.disconnect();
+  };
+
+  //end of Oisy stuff
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
@@ -91,6 +141,7 @@ const MainSideNavbar = () => {
     { name: "Profile", icon: <FaUser />, path: "/profile" },
     { name: "Connections", icon: <FaUsers />, path: "/connections" },
     { name: "Invoices", icon: <FaFileInvoice />, path: "/invoices" },
+    { name: "OISY Wallet", icon: <OisyIcon /> }
   ];
 
   return (
@@ -106,10 +157,9 @@ const MainSideNavbar = () => {
         {menuItems.map((item, index) => (
           <div
             key={index}
-            className={`menu-item ${
-              location.pathname === item.path ? "active" : ""
-            }`} // Use location.pathname to check active path
-            onClick={() => navigate(item.path)} // Use navigate for navigation
+            className={`menu-item ${location.pathname === item.path ? "active" : ""
+              }`} // Use location.pathname to check active path
+            onClick={item.name !== "OISY Wallet" ? () => navigate(item.path) : () => connectWallet()} // Use navigate for navigation
           >
             {item.icon}
             <span>{item.name}</span>

@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/LandingSolutionStyles.css";
+import "../../styles/LandingSolutionStyles.css";
 
 const LandingSolution = () => {
   return (

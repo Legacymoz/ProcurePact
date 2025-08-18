@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { useAuth } from "../Hooks/AuthContext";
-import "../styles/InvoicesDue.css";
+import { useAuth } from "../../Hooks/AuthContext";
+import "../../styles/InvoicesDue.css";
 
 function formatNanoDate(nano) {
   if (!nano) return "-";
