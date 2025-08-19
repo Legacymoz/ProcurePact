@@ -2,11 +2,11 @@ import { useParams } from 'react-router-dom';
 import { ProcurePact_backend } from 'declarations/ProcurePact_backend';
 import { useEffect, useState } from 'react';
 import "../styles/EditContractStyles.css";
-import AddParty from '../Components/AddParty';
-import AddProducts from '../Components/AddProducts';
-import AddPayment from '../Components/AddPayment';
-import ContractExpiry from '../Components/AddContractExpiry';
-import AddSignature from '../Components/AddSignature';
+import AddParty from '../Components/EditContract/AddParty';
+import AddProducts from '../Components/EditContract/AddProducts';
+import AddPayment from '../Components/EditContract/AddPayment';
+import ContractExpiry from '../Components/EditContract/AddContractExpiry';
+import AddSignature from '../Components/EditContract/AddSignature';
 
 const EditContract = () => {
     const [contract, setContract] = useState(null);

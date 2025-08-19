@@ -7,21 +7,9 @@ import { invoice } from "declarations/invoice";
 export const useStore = create((set) => ({
   selectedContract: "",
   setSelectedContract: (contractId) =>
-    set(() => ({ selectedContract: contractId })),
-
-  //Token Balance for User
-  userBalance: 0,
-  getUserBalance: async (principal) => {
-    try {
-      const result = await icrc1_ledger_canister.icrc1_balance_of({
-        owner: principal,
-        subaccount: [],
-      });
-      set({ userBalance: result });
-    } catch (error) {
-      console.error("Error fetching user balance:", error);
-    }
-  },
+    set(() => ({
+      selectedContract: contractId
+    })),
 
   //Function to get a users Contracts
   myContracts: [],
@@ -29,7 +17,9 @@ export const useStore = create((set) => ({
     try {
       const result = await ProcurePact_backend.getContracts(principal);
       if (result.ok) {
-        set({ myContracts: result.ok });
+        set({
+          myContracts: result.ok
+        });
         console.log("Contracts fetched successfully", result.ok);
       }
     } catch (err) {
@@ -44,7 +34,9 @@ export const useStore = create((set) => ({
     try {
       const result = await ProcurePact_backend.getInvoices(principal);
       if (result.ok) {
-        set({ myInvoices: result.ok });
+        set({
+          myInvoices: result.ok
+        });
         console.log("Invoices fetched successfully", result.ok);
       }
     } catch (err) {
@@ -58,7 +50,9 @@ export const useStore = create((set) => ({
     try {
       const result = await ProcurePact_backend.getConnections(principal);
       if (result.ok) {
-        set({ myConnections: result.ok });
+        set({
+          myConnections: result.ok
+        });
         console.log("Connections fetched successfully", result.ok);
       }
     } catch (err) {

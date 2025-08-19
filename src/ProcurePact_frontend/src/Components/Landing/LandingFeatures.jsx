@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/LandingFeaturesStyles.css";
+import "../../styles/LandingFeaturesStyles.css";
 
 const LandingFeatures = () => {
   return (

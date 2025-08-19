@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "../styles/AddPaymentStyles.css";
-import { useStore } from '../store/useStore';
+import "../../styles/AddPaymentStyles.css";
+import { useStore } from '../../store/useStore';
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
 
 

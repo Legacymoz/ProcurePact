@@ -6,14 +6,14 @@ import "../styles/ContractStyles.css";
 import { useStore } from "../store/useStore";
 import { Principal } from "@dfinity/principal";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { icrc1_ledger_canister } from "declarations/icrc1_ledger_canister";
-
+import { ledgerStore } from "../store/ledgerStore";
 const tabOptions = [
   { label: "My Contracts", key: "myContracts" },
   { label: "Invitations", key: "invitations" },
 ];
 
 const Contracts = () => {
+  const { ledger } = ledgerStore();
   const navigate = useNavigate();
   const { user, isAuthenticated, authClient, principal } = useAuth();
   const [open, setOpen] = useState(false);
@@ -36,7 +36,7 @@ const Contracts = () => {
 
   const getUserBalance = async () => {
     try {
-      const result = await icrc1_ledger_canister.icrc1_balance_of({
+      const result = await ledger.balance({
         owner: principal,
         subaccount: [],
       });
@@ -91,7 +91,7 @@ const Contracts = () => {
   };
 
   // Separate contracts by party status
-  const invitedContracts = contracts.filter(
+  const invitedContracts = contracts?.filter(
     (contract) =>
       contract.party?.status &&
       Object.keys(contract.party.status)[0] === "Invited"
@@ -149,9 +149,8 @@ const Contracts = () => {
             {tabOptions.map((tab) => (
               <button
                 key={tab.key}
-                className={`contracts-tab-btn${
-                  activeTab === tab.key ? " active" : ""
-                }`}
+                className={`contracts-tab-btn${activeTab === tab.key ? " active" : ""
+                  }`}
                 onClick={() => setActiveTab(tab.key)}
               >
                 {tab.label}
@@ -232,7 +231,7 @@ const Contracts = () => {
                       {invitedContracts.map((contract) => (
                         <tr
                           key={contract.contractId}
-                          
+
                         >
                           <td>{contract.contractId}</td>
                           <td>

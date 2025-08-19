@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/LandingProblemStyles.css"
+import "../../styles/LandingProblemStyles.css"
 
 
 const LandingProblem = () => {

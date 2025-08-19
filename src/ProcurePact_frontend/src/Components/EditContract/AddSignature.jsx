@@ -1,10 +1,10 @@
-import { useAuth } from "../Hooks/AuthContext";
+import { useAuth } from "../../Hooks/AuthContext";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { useStore } from '../store/useStore';
+import { useStore } from '../../store/useStore';
 import { Principal } from "@dfinity/principal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/AddSignatureStyles.css"; // Import the CSS file
+import "../../styles/AddSignatureStyles.css"; // Import the CSS file
 
 
 const AddSignature = ({ currentParties }) => {
