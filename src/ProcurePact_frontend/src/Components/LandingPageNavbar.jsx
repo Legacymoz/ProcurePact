@@ -19,11 +19,11 @@ const Navbar = () => {
       <ul className="navLinks">
         <li onClick={() => handleScroll("home")}>Home</li>
         <li onClick={() => handleScroll("problem")}>Problem</li>
-        <li onClick={() => handleScroll("features")}>Features</li>
         <li onClick={() => handleScroll("solution")}>Solution</li>
+        <li onClick={() => handleScroll("features")}>Features</li>
         <li onClick={() => handleScroll("contact")}>Contact</li>
       </ul>
-      <button className="getStartedButton" onClick={() => navigate("/")}>Get Started</button>
+      <button className="getStartedButton" onClick={() => navigate("/app")}>Get Started</button>
     </nav>
   );
 };

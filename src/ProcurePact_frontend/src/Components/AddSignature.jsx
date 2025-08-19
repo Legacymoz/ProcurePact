@@ -54,7 +54,7 @@ const AddSignature = ({ currentParties }) => {
                 alert("Error signning contrat. Please try again");
             }
         }).finally(
-            navigate("/")
+            navigate("/app/contracts")
         )
     };
 

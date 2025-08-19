@@ -86,11 +86,11 @@ const MainSideNavbar = () => {
   };
 
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
-    { name: "Contracts", icon: <FaFileContract />, path: "/contracts" },
-    { name: "Profile", icon: <FaUser />, path: "/profile" },
-    { name: "Connections", icon: <FaUsers />, path: "/connections" },
-    { name: "Invoices", icon: <FaFileInvoice />, path: "/invoices" },
+    { name: "Dashboard", icon: <FaHome />, path: "/app/dashboard" },
+    { name: "Contracts", icon: <FaFileContract />, path: "/app/contracts" },
+    { name: "Profile", icon: <FaUser />, path: "/app/profile" },
+    { name: "Connections", icon: <FaUsers />, path: "/app/connections" },
+    { name: "Invoices", icon: <FaFileInvoice />, path: "/app/invoices" },
   ];
 
   return (

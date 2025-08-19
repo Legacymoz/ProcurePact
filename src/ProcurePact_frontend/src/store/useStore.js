@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { icrc1_ledger_canister } from "declarations/icrc1_ledger_canister";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
+import { invoice } from "declarations/invoice";
 
 
 export const useStore = create((set) => ({
@@ -69,12 +70,61 @@ export const useStore = create((set) => ({
   getUserInfo: async (principal) => {
     try {
       const result = await ProcurePact_backend.getUser(principal);
-      if (result.ok) {
-        set({ userInfo: result.ok });
-        console.log("User info fetched successfully", result.ok);
+      if (result[0]) {
+        set({ userInfo: result[0] });
+        console.log("User info fetched successfully", result[0]);
       }
     } catch (err) {
       console.error("Error fetching user info:", err);
+    }
+  },
+
+  //its the same function as the above, bh this returns a value
+  getUserInfoandReturn: async (principal) => {
+    try {
+      const result = await ProcurePact_backend.getUser(principal);
+      console.log("Result in getInfoandReturn", result);
+      if (result[0]) {
+        set({ userInfo: result[0] });
+        console.log("User info fetched successfully", result[0]);
+        return result[0]; // 👈 return the value
+      }
+    } catch (err) {
+      console.error("Error fetching user info:", err);
+    }
+  },
+
+  //Setting the selected invoice ID
+  selectedInvoiceID: "",
+  setSelectedInvoiceID: (invoiceId) =>
+    set(() => ({ selectedInvoiceID: invoiceId })),
+  clearSelectedInvoiceID: () => set(() => ({ selectedInvoiceID: "" })),
+
+  //Fetching the selected Invoice Data
+  invoiceData: null,
+  fetchInvoiceData: async (invoiceId) => {
+    try {
+      const result = await invoice.getInvoice(BigInt(invoiceId));
+      if (result[0]) {
+        set({ invoiceData: result[0] });
+        console.log("Invoice data fetched successfully", result[0]);
+      }
+    } catch (err) {
+      console.error("Error fetching invoice data:", err);
+    }
+  },
+
+  //Fetching all invoices
+  allInvoices: [],
+  fetchAllInvoices: async (principal) => {
+    try {
+      const result = await ProcurePact_backend.getInvoices(principal);
+      if (result.ok) {
+        set({ allInvoices: result.ok });
+        console.log("All invoices fetched successfully", result.ok);
+      }
+    } catch (err) {
+      console.error("Error fetching all invoices:", err);
     }
   },
 }));

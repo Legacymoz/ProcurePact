@@ -1,20 +1,35 @@
 import React, { useEffect, useState } from "react";
 import "../styles/InvoiceListStyles.css"; // Import the CSS file
-
+import { useNavigate } from "react-router-dom";
+import { useStore } from "../store/useStore";
 
 function formatNanoDate(nano) {
   if (!nano) return "-";
   return new Date(Number(nano) / 1_000_000).toLocaleDateString();
 }
 
-const InvoiceList = ({invoices}) => {
-  
+const InvoiceList = ({ invoices }) => {
+  const navigate = useNavigate();
+  const setSelectedInvoiceID = useStore((state) => state.setSelectedInvoiceID);
+  const selectedInvoiceID = useStore((state) => state.selectedInvoiceID);
+
   const [error, setError] = useState("");
-  console.log("Invoices......", invoices)
-  
-    return (
-    invoices && invoices.length > 0 ? (
-      <div className="table-wrapper">
+  console.log("Invoices......", invoices);
+
+  const handleClick = (id) => {
+    setSelectedInvoiceID(id);
+    console.log("Selected Invoice ID:", id);
+    navigate(`/app/viewInvoice`);
+  };
+
+  useEffect(() => {
+    if (selectedInvoiceID) {
+      console.log("Selected Invoice ID:", selectedInvoiceID);
+    }
+  }, [selectedInvoiceID]);
+
+  return invoices && invoices.length > 0 ? (
+    <div className="table-wrapper">
       <table className="invoice-table">
         <thead>
           <tr>
@@ -31,24 +46,25 @@ const InvoiceList = ({invoices}) => {
           {invoices.map((invoice, index) => (
             <tr key={index}>
               <td>{invoice.contractId}</td>
-              <td className="recipient-cell" >{invoice.recipient.toText()}</td>
+              <td className="recipient-cell">{invoice.recipient.toText()}</td>
               <td>{formatNanoDate(invoice.createdAt)}</td>
               <td>{formatNanoDate(invoice.dueDate)}</td>
               <td>{invoice.totalAmount}</td>
               <td>{Object.keys(invoice.status)[0]}</td>
               <td>
-                <button>View</button>
+                <button onClick={() => handleClick(invoice.contractId)}>
+                  View
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-    ) : (
-      <div className="no-invoices">
-        <p>No invoices available</p>
-      </div>
-    )
+  ) : (
+    <div className="no-invoices">
+      <p>No invoices available</p>
+    </div>
   );
 };
 
