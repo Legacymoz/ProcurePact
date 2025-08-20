@@ -48,7 +48,7 @@ const Profile = () => {
         await ProcurePact_backend.getUser(principal).then((userData) => {
           setUser(userData[0]);
         });
-        navigate("/");
+        navigate("/app/dashboard");
       });
   };
 

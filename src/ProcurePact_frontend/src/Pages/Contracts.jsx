@@ -70,23 +70,23 @@ const Contracts = () => {
     const paymentTerm = Object.keys(contract?.paymentTerm[0] || {})[0] || "";
 
     if (statusKey === "Draft") {
-      navigate(`/contract/${contractId}`);
+      navigate(`/app/contract/${contractId}`);
     } else if (statusKey === "Active") {
       if (paymentTerm === "OnDelivery") {
-        navigate(`/contract/lock-tokens/${contractId}`);
+        navigate(`/app/contract/lock-tokens/${contractId}`);
       } else if (paymentTerm == "Deferred") {
-        navigate(`/contract/delivery-note/${contractId}`);
+        navigate(`/app/contract/delivery-note/${contractId}`);
       }
     } else if (statusKey === "DeliveryNoteSubmitted") {
-      navigate(`/contract/confirm-delivery-note/${contractId}`);
+      navigate(`/app/contract/confirm-delivery-note/${contractId}`);
     } else if (statusKey === "DeliveryConfirmed") {
       if (paymentTerm === "Deferred") {
-        navigate(`/contract/invoice/${contractId}`);
+        navigate(`/app/contract/invoice/${contractId}`);
       }
     } else if (statusKey === "InvoiceIssued") {
-      navigate(`/contract/settle-invoice/${contractId}`);
+      navigate(`/app/contract/settle-invoice/${contractId}`);
     } else if (statusKey === "TokensLocked") {
-      navigate(`/contract/delivery-note/${contractId}`);
+      navigate(`/app/contract/delivery-note/${contractId}`);
     }
   };
 

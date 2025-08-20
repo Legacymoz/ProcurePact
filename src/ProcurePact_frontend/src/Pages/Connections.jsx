@@ -173,6 +173,7 @@ const Connections = () => {
     const fetchConnections = async () => {
       try {
         await getConnections(principal); // Call your async function here
+        console.log("Coonections before normalizing", myConnections);
         const normalized = await normalizeConnections(myConnections);
         console.log("Normalized Connections:", normalized);
         setConnections(normalized);
@@ -186,19 +187,6 @@ const Connections = () => {
     }
   }, [principal, getConnections]);
 
-  // const getConnections = async (principal) => {
-  //   await ProcurePact_backend.getConnections(principal).then(
-  //     async (response) => {
-  //       if (response.ok) {
-  //         console.log("Raw Connections", response.ok)
-  //         const normalized = await normalizeConnections(response.ok);
-  //         console.log("Normalized Connections:", normalized);
-  //         setConnections(normalized);
-          
-  //       } else console.log(response.err);
-  //     }
-  //   );
-  // };
 
   const request = async (principal) => {
     await ProcurePact_backend.requestConnection(principal)
@@ -229,15 +217,6 @@ const Connections = () => {
 
  
 
-  //   const normalizeConnections = (connectionsArr) => {
-  //     return connectionsArr.map((connection) => {
-  //       let principalText = Principal.fromUint8Array(
-  //         connection.principal._arr
-  //       ).toText();
-  //       let status = Object.keys(connection.status)[0];
-  //       return { ...connection, principal: principalText, status: status };
-  //     });
-  //   };
 
   const normalizeConnections = async (connectionsArr) => {
     // Fetch user details for each connection

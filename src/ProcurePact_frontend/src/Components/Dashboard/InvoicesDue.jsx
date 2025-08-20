@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { useAuth } from "../../Hooks/AuthContext";
-import "../../styles/InvoicesDue.css";
+import { useAuth } from "../Hooks/AuthContext";
+import "../styles/InvoicesDue.css";
+import InvoiceModelView from "./InvoiceModelView";
+import { useStore } from "../store/useStore";
 
 function formatNanoDate(nano) {
   if (!nano) return "-";
@@ -17,6 +19,10 @@ const InvoicesDue = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("today");
+  const { setSelectedInvoiceID, clearSelectedInvoiceID, selectedInvoiceID } =
+    useStore();
+  const [modalOpen, setModalOpen] = useState(false);
+
 
   const { user, isAuthenticated, authClient, principal } = useAuth();
 
@@ -38,6 +44,16 @@ const InvoicesDue = () => {
 
     fetchInvoices();
   }, [principal]);
+
+   const openModal = (contractId) => {
+     setSelectedInvoiceID(contractId);
+     setModalOpen(true);
+   };
+
+   const closeModal = () => {
+     clearSelectedInvoiceID();
+     setModalOpen(false);
+   };
 
   const handleFilterChange = (e) => {
     const value = e.target.value;
@@ -118,12 +134,18 @@ const InvoicesDue = () => {
                   <td>{invoice.contractId}</td>
                   <td>{formatNanoDate(invoice.dueDate)}</td>
                   <td>
-                    <button className="invoicesDue-viewButton">View</button>
+                    <button
+                      className="invoicesDue-viewButton"
+                      onClick={() => openModal(invoice.contractId)}
+                    >
+                      View
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <InvoiceModelView isOpen={modalOpen} onClose={closeModal} />
         </div>
       )}
     </div>

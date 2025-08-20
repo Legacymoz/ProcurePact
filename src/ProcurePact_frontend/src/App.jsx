@@ -13,6 +13,9 @@ import SettleInvoice from "./Components/SettleInvoice";
 import LandingPage from "./Pages/LandingPage";
 import InvoiceList from "./Pages/InvoiceListPage";
 import Dashboard from "./Pages/Dashboard";
+import InvoiceImage from "./Components/InvoiceImage";
+import InvoiceViewPage from "./Pages/InvoiceViewPage";
+
 
 const App = () => {
   return (
@@ -20,7 +23,9 @@ const App = () => {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Layout />}>
+            <Route path="/" element={<LandingPage />} />
+
+            <Route path="/app" element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="contracts" element={<Contracts />} />
               <Route path="profile" element={<Profile />} />
@@ -43,9 +48,8 @@ const App = () => {
 
               <Route path="invoices" element={<InvoiceList />} />
               <Route path="dashboard" element={<Dashboard />} />
+              <Route path="viewInvoice" element={<InvoiceViewPage />} />
             </Route>
-
-            <Route path="/landingPage" element={<LandingPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
