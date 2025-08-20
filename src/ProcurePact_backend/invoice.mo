@@ -121,9 +121,12 @@ persistent actor class Invoice() = this {
   };
 
   //marks an invoice as collateralized
-  public shared ({ caller }) func collateralize(invoiceId : Nat32) : () {
+  public shared ({ caller }) func collateralize(invoiceId : Nat32) : async Result.Result<Text, Text> {
     switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
       case (?invoice) {
+        if (invoice.collateralized) {
+          return #err("Invoice is already collateralized!");
+        };
         let updatedInvoice : T.Invoice = {
           contractId = invoice.contractId;
           issuer = invoice.issuer;
@@ -139,9 +142,10 @@ persistent actor class Invoice() = this {
           collateralized = true;
         };
         invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
+        return #ok("Successfully collateralized invoice!")
       };
       case (null) {
-        // Optionally handle invoice not found
+        return #err("Invoice not found!")
       };
     };
   };
