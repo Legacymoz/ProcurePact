@@ -141,30 +141,21 @@ const SettleInvoice = () => {
     
                     <p>Status:{Object.keys(fetchedInvoice.status || [])[0] || ""}</p>
     */}
-        {userRole === "Buyer" && fetchedInvoice && (
-          <div className="invoice-container mb-3">
-            {/* Header */}
-            <header className="invoice-header">
-              <div>
-                <h1>{supplier?.name}</h1>
-                <p>Address: {supplier?.address}</p>
-                <p>
-                  Email: {supplier?.email} | Phone: {supplier?.phone}
-                </p>
-              </div>
-              <div>
-                <h2>INVOICE</h2>
-                <p>
-                  <strong>Invoice ID:</strong> {selectedContract}
-                </p>
-                <p>
-                  <strong>Date Issued:</strong>{" "}
-                  {new Date(
-                    Math.floor(Number(fetchedInvoice?.createdAt)) / 1_000_000
-                  ).toDateString()}
-                </p>
-              </div>
-            </header>
+        {userRole === "Buyer" && fetchedInvoice &&
+            <div className="invoice-container mb-3">
+                {/* Header */}
+                <header className="invoice-header">
+                    <div>
+                        <h1>{supplier?.name}</h1>
+                        <p>Address: {supplier?.address}</p>
+                        <p>Email: {supplier?.email} | Phone: {supplier?.phone}</p>
+                    </div>
+                    <div>
+                        <h2>INVOICE</h2>
+                        <p><strong>Invoice ID:</strong> {selectedContract}</p>
+                        <p><strong>Date Issued:</strong> {new Date(Math.floor(Number(fetchedInvoice?.createdAt)) / 1_000_000).toDateString()}</p>
+                    </div>
+                </header>
 
             <section className="invoice-section">
               <h3>Bill To</h3>
@@ -239,31 +230,29 @@ const SettleInvoice = () => {
               </p>
             </section>
 
-            <section className="invoice-section">
-              <h3>Addtional notes by Supplier</h3>
-              <p>{fetchedInvoice?.notes}</p>
-            </section>
-            <section className="invoice-section">
-              <h3>Pay Invoice</h3>
-              <p>Available wallet balance: ${userBalance.toLocaleString()}</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => handleSubmit(fetchedInvoice?.totalAmount)}
-              >
-                Pay
-              </button>
-            </section>
-          </div>
-        )}
+                <section className="invoice-section">
+                    <h3>Addtional notes by Supplier</h3>
+                    <p>{fetchedInvoice?.notes}</p>
+                </section>
+                <section className="invoice-section">
+                    <h3>Pay Invoice</h3>
+                    <p>Available wallet balance: ${userBalance}</p>
+                    <button className="btn btn-primary" onClick={() => handleSubmit(fetchedInvoice?.totalAmount)}>
+                        Pay
+                    </button>
+                </section>
 
-        {userRole === "Supplier" && fetchedInvoice && (
-          <>
-            <h1>Contract ID: {selectedContract}</h1>
-            <h2>Waiting for buyer to pay invoice</h2>
-          </>
-        )}
-      </>
-    );
+            </div>
+        }
+
+        {
+            userRole === "Supplier" && fetchedInvoice && <>
+                <h1>Contract ID: {selectedContract}</h1>
+                <h2>Waiting for buyer to pay invoice</h2>
+            </>
+        }
+
+    </>)
 }
 
 export default SettleInvoice;
