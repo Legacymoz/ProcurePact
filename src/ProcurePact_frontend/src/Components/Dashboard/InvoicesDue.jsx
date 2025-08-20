@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
-import { useAuth } from "../Hooks/AuthContext";
-import "../styles/InvoicesDue.css";
-import InvoiceModelView from "./InvoiceModelView";
-import { useStore } from "../store/useStore";
+import { useAuth } from "../../Hooks/AuthContext";
+import "../../styles/InvoicesDue.css";
+import InvoiceModelView from "../InvoiceModelView";
+import { useStore } from "../../store/useStore";
 
 function formatNanoDate(nano) {
   if (!nano) return "-";
