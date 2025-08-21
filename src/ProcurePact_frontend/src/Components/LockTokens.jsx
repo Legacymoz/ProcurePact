@@ -6,6 +6,7 @@ import { ledgerStore } from "../store/ledgerStore";
 import { Principal } from "@dfinity/principal";
 import "../styles/LockTokens.css";
 import { useNavigate } from "react-router-dom";
+import { IcrcTransferError } from "@dfinity/ledger-icrc";
 
 const LockTokens = () => {
   const { ledger, canister, agent } = ledgerStore();
@@ -88,11 +89,14 @@ const LockTokens = () => {
 
 
   const handleLockTokens = async () => {
-    // Logic to lock tokens goes here
-
     try {
       if (!authClient || !authClient.isAuthenticated()) {
         alert("Please login to lock tokens");
+        return;
+      }
+
+      if (!ledger) {
+        alert("Ledger is not ready. Please try again in a moment.");
         return;
       }
 
@@ -115,14 +119,14 @@ const LockTokens = () => {
         from_subaccount: null,
       });
 
-      if (typeof (result) === "bigint") {
+      if (typeof result === "bigint") {
         await ProcurePact_backend.lockTokens(BigInt(selectedContract)).then(
           (response) => {
             if (response.ok) {
               alert("Tokens locked Successfully");
-              navigate(-1)
+              navigate(-1);
             } else {
-              console.log(response.err)
+              console.log(response.err);
               alert("Error Locking tokens");
             }
           }
@@ -132,6 +136,9 @@ const LockTokens = () => {
       }
     } catch (error) {
       console.log(error);
+      if (error instanceof IcrcTransferError) {
+        console.error(error.errorType);
+      }
       alert("An error occurred while locking tokens");
     }
   };
