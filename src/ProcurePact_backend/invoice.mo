@@ -64,10 +64,14 @@ persistent actor class Invoice() = this {
   public shared ({ caller }) func payInvoice(invoiceId : Nat32) : async Result.Result<Text, Text> {
     switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
       case (?invoice) {
+        //only recipent can pay invoice
+        if (caller != invoice.recipient) {
+          return #err("Not allowed!");
+        };
         //verify recipient balance is in range
         //consider transfer fees
-        let issuerBal = await getBalance(invoice.issuer);
-        if (issuerBal < Nat32.toNat(invoice.totalAmount)) {
+        let recipientBal = await getBalance(invoice.recipient);
+        if (recipientBal < Nat32.toNat(invoice.totalAmount)) {
           return #err("Insufficient Balance");
         };
         if (invoice.collateralized) {
