@@ -49,5 +49,9 @@ dfx deploy ProcurePact_frontend
 
 #fund escrow canister with operating tokens
 ESCROW=$(dfx canister id escrow)
+CREDIT=$(dfx canister id credit)
 
 dfx canister call ProcurePact_backend transfer "(principal \"$ESCROW\", 1000000)"
+
+#fund credit canister
+dfx canister call ProcurePact_backend transfer "(principal \"$CREDIT\", 1000000)"
