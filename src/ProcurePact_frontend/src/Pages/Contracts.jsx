@@ -19,7 +19,6 @@ const Contracts = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [contracts, setContracts] = useState([]);
-  const [userBalance, setUserBalance] = useState(0);
   const [activeTab, setActiveTab] = useState("myContracts");
 
   // states from the zustand store
@@ -32,18 +31,6 @@ const Contracts = () => {
     ).then((fetched) => {
       setContracts(fetched.ok);
     });
-  };
-
-  const getUserBalance = async () => {
-    try {
-      const result = await ledger.balance({
-        owner: principal,
-        subaccount: [],
-      });
-      setUserBalance(result);
-    } catch (error) {
-      console.error("Error fetching user balance:", error);
-    }
   };
 
   const submitNewContract = async (name, description, role) => {
@@ -124,7 +111,6 @@ const Contracts = () => {
   useEffect(() => {
     if (isAuthenticated && user?.length !== 0) {
       fetchContracts();
-      getUserBalance();
     }
   }, [user]);
 
