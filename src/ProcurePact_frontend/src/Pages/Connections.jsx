@@ -126,9 +126,10 @@ const fetchConnections = async () => {
 
   }
 
+  /*
   if (!connections || connections.length === 0) {
     return <div> Loading..... </div>;
-  }
+  }*/
 
 
 
