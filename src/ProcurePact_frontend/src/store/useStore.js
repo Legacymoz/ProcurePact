@@ -45,7 +45,7 @@ export const useStore = create((set) => ({
   },
 
   //Functions to get Users Connections
-  myConnections: [],
+  myConnections: null,
   getConnections: async (principal) => {
     try {
       const result = await ProcurePact_backend.getConnections(principal);

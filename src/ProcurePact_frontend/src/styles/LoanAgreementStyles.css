@@ -1,0 +1,67 @@
+.loan-agreement-popup {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  padding: 32px 24px;
+  width: 90%;
+  max-width: 420px;
+  margin: 32px auto;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loan-agreement-popup .invoice-charge,
+.loan-agreement-popup .loan-amount,
+.loan-agreement-popup .service-charge {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  color: #000000;
+  font-weight: 600;
+}
+
+.loan-agreement-popup .service-charge {
+  color: #000000; /* Deep orange */
+}
+
+.loan-agreement-popup .loan-details {
+  background: #fff3e0;
+  border-radius: 10px;
+  padding: 14px 12px;
+  margin-bottom: 18px;
+  color: #ff9800;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.loan-agreement-popup .terms-checkbox {
+  margin-bottom: 18px;
+  font-size: 0.98rem;
+  color: #222;
+  width: 100%;
+}
+
+.loan-agreement-popup .button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.loan-agreement-popup .get-btn {
+  background: linear-gradient(90deg, #ff9800 60%, #ff5722 100%);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.1);
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.loan-agreement-popup .get-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

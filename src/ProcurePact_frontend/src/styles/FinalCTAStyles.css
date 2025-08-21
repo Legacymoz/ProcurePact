@@ -3,9 +3,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 60px 40px;
-  background-color: #ffffff;
+  background-color: #fafafa;
   border-radius: 12px;
-  margin-top: 80px;
+ 
   border: 1px solid #eaeaea;
   gap: 40px;
   flex-wrap: wrap;
@@ -57,7 +57,30 @@
 }
 
 .ctaImage {
-  max-width: 100%;
+  width: 500px;
+  height: auto;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+ 
+}
+
+/* --------- Bigger screens (1920px and up) --------- */
+@media (min-width: 1920px) {
+  .ctaContent h2 {
+    font-size: 40px;
+  }
+
+  .ctaContent p {
+    font-size: 25px;
+    max-width: 600px;
+  }
+
+  .ctaButton {
+    font-size: 18px;
+    padding: 16px 32px;
+  }
+
+  .finalCtaSection {
+    padding: 80px 60px;
+    gap: 60px;
+  }
 }

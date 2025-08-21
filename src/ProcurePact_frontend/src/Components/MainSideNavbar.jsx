@@ -13,6 +13,7 @@ import {
   FaFileInvoice,
   FaSignOutAlt,
   FaSignInAlt,
+  FaMoneyBill,
 } from "react-icons/fa";
 import OisyIcon from "./OISY/OisyIcon";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
@@ -136,12 +137,13 @@ const MainSideNavbar = () => {
   //end of Oisy stuff
 
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
-    { name: "Contracts", icon: <FaFileContract />, path: "/contracts" },
-    { name: "Profile", icon: <FaUser />, path: "/profile" },
-    { name: "Connections", icon: <FaUsers />, path: "/connections" },
-    { name: "Invoices", icon: <FaFileInvoice />, path: "/invoices" },
-    { name: "OISY Wallet", icon: <OisyIcon /> }
+    { name: "Dashboard", icon: <FaHome />, path: "/app/dashboard" },
+    { name: "Contracts", icon: <FaFileContract />, path: "/app/contracts" },
+    { name: "Profile", icon: <FaUser />, path: "/app/profile" },
+    { name: "Connections", icon: <FaUsers />, path: "/app/connections" },
+    { name: "Invoices", icon: <FaFileInvoice />, path: "/app/invoices" },
+    { name: "Financial", icon: <FaMoneyBill />, path: "/app/financial" },
+    { name: "OISY Wallet", icon: <OisyIcon /> },
   ];
 
   return (

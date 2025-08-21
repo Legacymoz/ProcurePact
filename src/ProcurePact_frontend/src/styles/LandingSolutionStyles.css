@@ -3,7 +3,7 @@
   background-color: #ffffff;
   text-align: center;
   font-family: Arial, sans-serif;
-  min-height: 90vh;
+  max-height: 90vh;
 }
 
 .solutionSection h2 {
@@ -44,10 +44,11 @@
 }
 
 .pillarImage {
-  width: 80px;
-  height: 80px;
+  width: 250px;
+  height: auto;
   object-fit: contain;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
+  border-radius: 5px;
 }
 
 .pillarCard h3 {
@@ -78,5 +79,52 @@
   .pillarCard {
     flex: 1 1 100%;
     max-width: 350px;
+  }
+}
+
+
+/* Large screen (1920px and above) */
+@media (min-width: 1700px) {
+  .solutionSection {
+    padding: 80px 60px; /* more breathing space */
+    max-height: 100vh;
+    
+  }
+
+  .solutionSection h2 {
+    font-size: 37px; /* larger heading */
+    margin-bottom: 25px;
+  }
+
+  .solutionIntro {
+    max-width: 1000px; /* allow wider text block */
+    font-size: 20px;
+    line-height: 1.8;
+    margin-bottom: 50px;
+  }
+
+  .pillarsContainer {
+    gap: 40px;
+    margin-top: 90px;
+  }
+
+  .pillarCard {
+    padding: 30px;
+    border-radius: 16px;
+  }
+
+  .pillarCard h3 {
+    font-size: 25px;
+  }
+
+  .pillarCard p {
+    font-size: 20px;
+  }
+
+  .pillarImage {
+    width: 50%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
   }
 }

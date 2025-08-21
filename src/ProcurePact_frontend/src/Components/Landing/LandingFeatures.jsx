@@ -9,7 +9,7 @@ const LandingFeatures = () => {
       <div className="featuresContainer">
         <div className="featureCard">
           <img
-            src="../../public/escrow-settlement.jpg"
+            src="../../../public/Landing/escrow.png"
             alt="Instant Escrow Settlement"
             className="featureImage"
           />
@@ -23,7 +23,7 @@ const LandingFeatures = () => {
 
         <div className="featureCard">
           <img
-            src="../../public/invoice-financing.jpg"
+            src="../../../public/Landing/invoice.png"
             alt="Invoice-Backed Financing"
             className="featureImage"
           />
@@ -36,7 +36,7 @@ const LandingFeatures = () => {
 
         <div className="featureCard">
           <img
-            src="../../public/smart-contract.jpg"
+            src="../../../public/Landing/smartContract.png"
             alt="Smart Contract Lifecycle Management"
             className="featureImage"
           />
@@ -49,7 +49,7 @@ const LandingFeatures = () => {
 
         <div className="featureCard">
           <img
-            src="../../public/blockchain-security.jpg"
+            src="../../../public/Landing/fraud-proof.png"
             alt="Fraud-Proof Transactions"
             className="featureImage"
           />

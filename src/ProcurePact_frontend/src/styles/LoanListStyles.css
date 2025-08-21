@@ -1,0 +1,33 @@
+.loan-table-wrapper {
+  overflow-x: auto;
+  background: transparent;
+  border-radius: 12px;
+}
+.loan-invoice-table {
+  border-collapse: collapse;
+  width: 100%;
+  background: transparent;
+}
+.loan-invoice-table thead {
+  background: none; /* No background for header */
+  color: #222;
+}
+.loan-invoice-table th {
+  padding: 12px;
+  font-weight: 600;
+  background: none;
+}
+.loan-invoice-table td {
+  padding: 12px;
+  border: none;
+  text-align: left;
+} /* Zebra striping for rows */
+.loan-invoice-table tbody tr:nth-child(even) {
+  background: transparent;
+}
+.loan-invoice-table tbody tr:nth-child(odd) {
+  background: #e5e5e5;
+}
+.error-text {
+  color: red;
+}

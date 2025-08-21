@@ -1,6 +1,6 @@
 .main-connections-container{
     min-height: 70vh;
-    background-color: #fff;
+    /* background-color: #fff; */
 }
 
 .sub-connections-container {
@@ -28,9 +28,9 @@
 }
 .connection-button {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-top:15px;
+  justify-content: space-between;
+  padding-top: 15px;
+  gap: 15px;
   
 }
 

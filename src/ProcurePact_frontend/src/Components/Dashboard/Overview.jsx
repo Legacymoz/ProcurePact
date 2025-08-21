@@ -138,7 +138,9 @@ const Overview = () => {
             </div>
           </div>
           <div className="overview-card-right">
-            <div className="overview-card-value">{myConnections.length}</div>
+            <div className="overview-card-value">
+              {Array.isArray(myConnections) ? myConnections.length : 0}
+            </div>
             <div className="overview-card-label">Connections</div>
           </div>
         </div>

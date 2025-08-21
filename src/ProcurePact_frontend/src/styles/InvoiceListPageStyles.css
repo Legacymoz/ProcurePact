@@ -1,7 +1,7 @@
 .main-invoice-container{
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    /* background-color: #fff; */
     align-items: center;
     justify-content: center;
     margin: auto;
@@ -12,9 +12,9 @@
 .main-invoice-container .sub-invoice-container {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    padding: 50px;
-    background-color: #f9f8f6;
+    width: 100%;
+    padding: 40px;
+    background-color: #ffffff;
     border-radius: 20px;
 }
 

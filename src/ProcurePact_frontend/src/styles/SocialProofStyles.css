@@ -1,6 +1,6 @@
 .socialProofSection {
   padding: 60px 40px;
-  background-color: #f9fafc;
+  background-color: #ffffff;
   text-align: center;
   font-family: Arial, sans-serif;
 }
@@ -70,4 +70,57 @@
   margin-top: 8px;
   font-size: 14px;
   color: #888;
+}
+
+
+/* Responsive for smaller screens */
+@media (max-width: 900px) {
+  .statCard {
+    width: 100%;
+  }
+}
+
+/* Larger screen (1920px) scaling */
+@media (min-width: 1920px) {
+  .socialProofSection {
+    padding: 90px 60px;
+  }
+
+  .socialProofSection h2 {
+    font-size: 40px;
+    margin-bottom: 60px;
+  }
+
+  .statsContainer {
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+
+  .statCard {
+    width: 280px;
+    padding: 40px 30px;
+  }
+
+  .statCard h3 {
+    font-size: 48px;
+  }
+
+  .statCard p {
+    font-size: 20px;
+  }
+
+  .chartWrapper {
+    max-width: 900px;
+    padding: 30px;
+  }
+
+  .testimonial {
+    max-width: 800px;
+    font-size: 22px;
+    margin: 120px auto;
+  }
+
+  .testimonial footer {
+    font-size: 16px;
+  }
 }

@@ -7,13 +7,13 @@ const LandingSolution = () => {
       <h2>ProcurePact: The Trusted Online Platform for Seamless Trade</h2>
       <p className="solutionIntro">
         ProcurePact is a single, trusted platform designed to solve the biggest
-        challenges faced by SMEs. 
+        challenges faced by SMEs.
       </p>
 
       <div className="pillarsContainer">
         <div className="pillarCard">
           <img
-            src="../../public/payment-assurance.png"
+            src="../../../public/Landing/reliable-Payment.png"
             alt="Reliable Payment Assurance"
             className="pillarImage"
           />
@@ -26,7 +26,7 @@ const LandingSolution = () => {
 
         <div className="pillarCard">
           <img
-            src="../../public/flexible-credit.png"
+            src="../../../public/Landing/Credit.png"
             alt="Flexible Access to Credit"
             className="pillarImage"
           />
@@ -39,7 +39,7 @@ const LandingSolution = () => {
 
         <div className="pillarCard">
           <img
-            src="../../public/contract-management.png"
+            src="../../../public/Landing/smartContract.png"
             alt="Smart Contract Management"
             className="pillarImage"
           />

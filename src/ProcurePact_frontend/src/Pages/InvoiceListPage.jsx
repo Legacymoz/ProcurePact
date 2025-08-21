@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { ProcurePact_backend } from "declarations/ProcurePact_backend";
 import { useAuth } from "../Hooks/AuthContext";
 import InvoiceList from "../Components/InvoiceList";
+import LoanAgreementModal from "../Components/LoanAgreementModal";
 import "../styles/InvoiceListPageStyles.css"; // Import the CSS file
+import { useStore } from "../store/useStore";
 
 const InvoiceListPage = () => {
   const [filteredInvoices, setFilteredInvoices] = useState([]);
@@ -12,6 +14,16 @@ const InvoiceListPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("All");
+
+  const setSelectedInvoiceID = useStore((state) => state.setSelectedInvoiceID);
+    const selectedInvoiceID = useStore((state) => state.selectedInvoiceID);
+    const clearSelectedInvoiceID = useStore(
+      (state) => state.clearSelectedInvoiceID
+    );
+
+  // Modal state for LoanAgreementModal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalInvoiceId, setModalInvoiceId] = useState(null);
 
   const { user, isAuthenticated, authClient, principal } = useAuth();
 
@@ -42,6 +54,17 @@ const InvoiceListPage = () => {
     filterInvoices(filter);
   }, [invoices, filter]);
 
+  // Expose modal open function to InvoiceList
+  useEffect(() => {
+    window.onOpenAdvanceModal = (id) => {
+      setModalInvoiceId(id);
+      setModalOpen(true);
+    };
+    return () => {
+      window.onOpenAdvanceModal = null;
+    };
+  }, []);
+
   const filterInvoices = (status) => {
     setFilter(status);
      setActiveTab(status);
@@ -58,8 +81,17 @@ const InvoiceListPage = () => {
     return;
   };
 
+
+    const handleCloseModal = () => {
+      setModalOpen(false);
+      clearSelectedInvoiceID();
+    };
+
   if (loading) return <p>Loading invoices...</p>;
   console.log("Inside Invoices List Page");
+
+  // Find the invoice object for modalInvoiceId
+  const modalInvoice = filteredInvoices.find(inv => inv.contractId === modalInvoiceId);
 
   return (
     <div className="main-invoice-container">
@@ -103,6 +135,9 @@ const InvoiceListPage = () => {
         <div className="invoice-container">
           <InvoiceList invoices={filteredInvoices} />
         </div>
+        {modalOpen && (
+          <LoanAgreementModal isOpen={modalOpen} onClose={handleCloseModal} />
+        )}
       </div>
     </div>
   );

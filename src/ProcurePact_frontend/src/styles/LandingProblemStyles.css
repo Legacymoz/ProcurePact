@@ -68,3 +68,34 @@
     text-align: left;
   }
 }
+
+/* Large screen (1920px and above) */
+@media (min-width: 1600px) {
+  .problemSection {
+    padding: 100px 80px; /* more breathing room */
+  }
+
+  .problemSection h2 {
+    font-size: 40px; /* bigger heading */
+    margin-bottom: 60px;
+  }
+
+  .problemText p {
+    font-size: 25px; /* larger body text */
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .tumainiStory {
+    padding: 25px;
+    font-size: 18px;
+  }
+
+  .contentContainer {
+    gap: 60px; /* increase spacing between text and image */
+  }
+
+  .problemImage img {
+    max-width: 800px; /* scale up images */
+  }
+}

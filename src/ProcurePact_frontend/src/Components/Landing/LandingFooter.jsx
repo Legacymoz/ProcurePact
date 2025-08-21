@@ -13,16 +13,16 @@ const Footer = () => {
 
         <ul className="footerLinks">
           <li>
-            <a href="/about">About Us</a>
+            <a href="###">About Us</a>
           </li>
           <li>
-            <a href="/contact">Contact</a>
+            <a href="###">Contact</a>
           </li>
           <li>
-            <a href="/terms">Terms of Service</a>
+            <a href="###">Terms of Service</a>
           </li>
           <li>
-            <a href="/privacy">Privacy Policy</a>
+            <a href="###">Privacy Policy</a>
           </li>
         </ul>
 

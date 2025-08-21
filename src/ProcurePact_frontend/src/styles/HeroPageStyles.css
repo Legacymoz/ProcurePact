@@ -2,7 +2,7 @@
   /* background: linear-gradient(to right, #f7f9fc, #e8eff5); */
   background-color: #fff;
   font-family: Arial, sans-serif;
-  min-height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -108,5 +108,36 @@
 
   .imageContainer img {
     max-width: 100%;
+  }
+}
+
+
+@media (min-width: 1600px) {
+  .heroHeading h1 {
+    font-size: 70px; /* bigger heading */
+  }
+
+  .heroHeading p {
+    font-size: 24px;
+  }
+
+  .infoContainer {
+    font-size: 25px; /* bump body text */
+    max-width: 700px; /* give text more width */
+  }
+
+  .infoContainer .heroButton {
+    font-size: 18px;
+    padding: 14px 28px; /* bigger button */
+  }
+
+  .imageContainer img {
+    max-width: 1000px; /* scale up image */
+  }
+
+  .contentSection {
+    gap: 60px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }

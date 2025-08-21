@@ -28,6 +28,13 @@
   
   
 }
+.invoice-button{
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  gap: 10px;
+  width:130px
+}
 
 /* Zebra striping for rows */
 .invoice-table tbody tr:nth-child(even) {
@@ -72,7 +79,7 @@
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 6px 18px;
+  padding: 6px 15px;
   font-size: 1em;
   font-weight: 500;
   cursor: pointer;

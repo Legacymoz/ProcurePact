@@ -1,0 +1,69 @@
+.charts-container {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+.chart-block {
+  text-align: center;
+}
+
+.chart-wrapper {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.chart-percentage {
+  color: #f68b1e;
+  font-size: 24px;
+  margin: 10px 0 5px;
+}
+
+.chart-description {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 🔽 Responsive scaling */
+
+/* Small screens (<1000px) */
+@media (max-width: 1000px) {
+  .chart-wrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .chart-percentage {
+    font-size: 18px;
+  }
+
+  .chart-description {
+    font-size: 12px;
+  }
+
+  .charts-container {
+    gap: 30px;
+  }
+}
+
+/* Large screens (>1600px, e.g. 1920px monitors) */
+@media (min-width: 1600px) {
+  .chart-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+
+  .chart-percentage {
+    font-size: 35px;
+  }
+
+  .chart-description {
+    font-size: 22px;
+  }
+
+  .charts-container {
+    gap: 70px;
+  }
+}

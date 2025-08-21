@@ -10,8 +10,10 @@ const InvoiceViewImage = () => {
 
 
   const handleClick = () => {
-    clearSelectedInvoiceID();
     navigate(-1);
+    clearSelectedInvoiceID();
+    
+    console.log("Trying to go back.HELPPPP")
   };
 
   return (

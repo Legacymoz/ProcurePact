@@ -1,6 +1,6 @@
 .featuresSection {
   padding: 60px 40px;
-  background-color: #ffffff;
+  background-color: #fafafa;
   font-family: Arial, sans-serif;
 }
 
@@ -18,7 +18,7 @@
   left: 50%;
   transform: translateX(-50%);
   bottom: -10px;
-  width: 60px;
+  width: 90px;
   height: 3px;
   background-color: orange;
   border-radius: 2px;
@@ -48,11 +48,12 @@
   box-shadow: 0 8px 20px rgba(255, 140, 0, 0.2); /* subtle orange hover glow */
 }
 
-.featureImage {
-  width: 80px;
-  height: 80px;
+.featureCard .featureImage {
+  width: 60%;
+  height: auto;
   object-fit: contain;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
+  border-radius: 10px;
 }
 
 .featureCard h3 {
@@ -67,9 +68,69 @@
   line-height: 1.5;
 }
 
-/* Responsive */
+/* Larger screens (1920px and above) */
+@media (min-width: 1920px) {
+  .featuresSection {
+    padding: 80px 100px; /* more breathing space */
+  }
+
+  .featuresSection h2 {
+    font-size: 40px; /* bigger heading */
+  }
+
+  .featuresSection h2::after {
+    width: 110px; /* longer underline */
+    height: 4px;
+  }
+
+  .featureCard {
+    padding: 30px;
+    max-width: 600px; /* allow cards to scale more */
+  }
+
+  .featureImage {
+    width: 100px;
+    height: 100px;
+  }
+
+  .featureCard h3 {
+    font-size: 25px;
+  }
+
+  .featureCard p {
+    font-size: 20px;
+    line-height: 1.7;
+  }
+}
+
+/* Tablet screens */
 @media (max-width: 900px) {
   .featureCard {
     flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+/* Small screens (phones) */
+@media (max-width: 600px) {
+  .featuresSection {
+    padding: 40px 20px;
+  }
+
+  .featuresSection h2 {
+    font-size: 22px;
+  }
+
+  .featureImage {
+    width: 60px;
+    height: 60px;
+  }
+
+  .featureCard h3 {
+    font-size: 16px;
+  }
+
+  .featureCard p {
+    font-size: 13px;
   }
 }

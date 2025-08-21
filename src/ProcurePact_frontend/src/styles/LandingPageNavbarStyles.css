@@ -1,10 +1,75 @@
-/* Navbar container */
+/* 
 .landing-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: #ffffff; /* Blue background */
+  background-color: #ffffff; 
+  color: #000000;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.landing-navbar .logo {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: #ff5100;
+  padding-left: 20px;
+}
+
+
+.landing-navbar .navLinks {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+.navLinks li a {
+  text-decoration: none;
+  color: rgb(4, 22, 100);
+  font-size: 1rem;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.navLinks li a:hover {
+  color: #ff5100; 
+  cursor: pointer;
+}
+
+
+.getStartedButton {
+  background-color: #ffa500; 
+  color: white;
+  font-weight: 500;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.getStartedButton:hover {
+  background-color: #ff7f00; 
+} */
+ /* Navbar container */
+
+
+ /* Navbar container */
+.landing-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #ffffff;
   color: #000000;
   position: fixed;
   top: 0;
@@ -15,7 +80,7 @@
 
 /* Logo styling */
 .landing-navbar .logo {
-  font-size: 1.7rem;
+  font-size: 1.7rem; /* Default for 1440px */
   font-weight: bold;
   color: #ff5100;
   padding-left: 20px;
@@ -31,32 +96,66 @@
 }
 
 /* Navigation links */
-.navLinks li a {
+.landing-navbar .navLinks li {
   text-decoration: none;
   color: rgb(4, 22, 100);
-  font-size: 1rem;
+  font-size: 1rem; /* Default for 1440px */
   transition: color 0.3s ease;
   font-weight: 500;
 }
 
-.navLinks li a:hover {
-  color: #ff5100; /* Orange hover effect */
+.landing-navbar .navLinks li:hover {
+  color: #ff5100;
   cursor: pointer;
 }
 
 /* Get Started button */
 .getStartedButton {
-  background-color: #ffa500; /* Orange background */
+  background-color: #ffa500;
   color: white;
   font-weight: 500;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 1rem; /* Default for 1440px */
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .getStartedButton:hover {
-  background-color: #ff7f00; /* Darker orange on hover */
+  background-color: #ff7f00;
+}
+
+/* --- RESPONSIVE FONT SCALING --- */
+
+/* Smaller screens (under 1280px) */
+@media (max-width: 1280px) {
+  .landing-navbar .logo {
+    font-size: 1.5rem;
+  }
+
+  .navLinks li a {
+    font-size: 0.9rem;
+  }
+
+  .getStartedButton {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+}
+
+/* Larger screens (above 1600px, e.g., 1920px) */
+@media (min-width: 1600px) {
+  .landing-navbar .logo {
+    font-size: 3rem;
+  }
+
+  .landing-navbar .navLinks li {
+    font-size: 1.7rem;
+  }
+
+  .landing-navbar .getStartedButton {
+    font-size: 1.7rem;
+    padding: 12px 24px;
+  }
 }
