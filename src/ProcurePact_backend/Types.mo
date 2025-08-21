@@ -142,6 +142,7 @@ module Types {
     updatedAt : Int; // Timestamp of the last update to the invoice
     notes : ?Text; // Optional notes or comments on the invoice
     collateralized : Bool;
+    creditIssued: ?Bool;
   };
 
   public type CreateInvoiceArgs = {

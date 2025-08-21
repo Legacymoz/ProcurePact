@@ -39,6 +39,7 @@ persistent actor class Invoice() = this {
         updatedAt = now;
         notes = args.notes;
         collateralized = false;
+        creditIssued = null;
       };
       invoices := Trie.put(invoices, { hash = args.contractId; key = args.contractId }, Nat32.equal, invoice).0;
       #ok(args.contractId);
@@ -49,6 +50,15 @@ persistent actor class Invoice() = this {
 
   public shared func getInvoice(invoiceId : Nat32) : async ?T.Invoice {
     return Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal);
+  };
+
+  //get all invoices as an array
+  public shared func getAllInvoices() : async [T.Invoice] {
+    let invoicesArray = Trie.toArray<Nat32, T.Invoice, T.Invoice>(
+      invoices,
+      func(_k, v) = v,
+    );
+    return invoicesArray;
   };
 
   public func getBalance(userId : Principal) : async Nat {
@@ -111,6 +121,7 @@ persistent actor class Invoice() = this {
                 notes = invoice.notes;
                 penalty = invoice.penalty;
                 collateralized = invoice.collateralized;
+                creditIssued = invoice.creditIssued;
               };
               invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
               #ok("Transferred: " #debug_show (blockIndex));
@@ -147,12 +158,41 @@ persistent actor class Invoice() = this {
           notes = invoice.notes;
           penalty = invoice.penalty;
           collateralized = true;
+          creditIssued = ?false;
         };
         invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
-        return #ok("Successfully collateralized invoice!")
+        return #ok("Successfully collateralized invoice!");
       };
       case (null) {
-        return #err("Invoice not found!")
+        return #err("Invoice not found!");
+      };
+    };
+  };
+
+  // Update the creditIssued field for a given invoice
+  public shared func updateCreditIssued(invoiceId : Nat32, value : Bool) : async Result.Result<Text, Text> {
+    switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
+      case (?invoice) {
+        let updatedInvoice : T.Invoice = {
+          contractId = invoice.contractId;
+          issuer = invoice.issuer;
+          recipient = invoice.recipient;
+          dueDate = invoice.dueDate;
+          items = invoice.items;
+          totalAmount = invoice.totalAmount;
+          status = invoice.status;
+          createdAt = invoice.createdAt;
+          updatedAt = Time.now();
+          notes = invoice.notes;
+          penalty = invoice.penalty;
+          collateralized = invoice.collateralized;
+          creditIssued = ?value;
+        };
+        invoices := Trie.put(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal, updatedInvoice).0;
+        return #ok("creditIssued updated");
+      };
+      case (null) {
+        return #err("Invoice not found");
       };
     };
   };
@@ -187,6 +227,7 @@ persistent actor class Invoice() = this {
           notes = invoice.notes;
           penalty = invoice.penalty;
           collateralized = invoice.collateralized;
+          creditIssued = invoice.creditIssued;
         };
         invoices := Trie.put(invoices, { key = item.invoiceId; hash = item.invoiceId }, Nat32.equal, updatedInvoice).0;
 

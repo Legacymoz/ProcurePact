@@ -19,6 +19,9 @@ persistent actor class Credit() = this {
   public shared func issue(contractId : Nat32) : async Result.Result<Text, Text> {
     switch (await Invoice.getInvoice(contractId)) {
       case (?invoice) {
+        if (invoice.creditIssued == ?true) {
+          return #err("Credit already issued");
+        };
         let totalNat = Nat32.toNat(invoice.totalAmount);
         let transfer_amount_nat = Float.toInt(0.8 * Float.fromInt(totalNat));
         if (transfer_amount_nat < 0) {
@@ -109,6 +112,6 @@ persistent actor class Credit() = this {
         return #err("Credit record not found!");
       };
     };
-  }
+  };
 
 };
