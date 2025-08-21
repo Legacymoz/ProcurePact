@@ -16,6 +16,7 @@ persistent actor class Credit() = this {
   var credit_records : Trie.Trie<Nat32, T.CreditRecord> = Trie.empty();
 
   //issue credit
+  //🚩add validation that checks in credit_records if the invoice is paid.
   public shared func issue(contractId : Nat32) : async Result.Result<Text, Text> {
     switch (await Invoice.getInvoice(contractId)) {
       case (?invoice) {

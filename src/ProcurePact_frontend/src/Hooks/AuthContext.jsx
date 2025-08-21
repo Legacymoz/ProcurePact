@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import { Actor } from "@dfinity/agent";
 import { ProcurePact_backend } from 'declarations/ProcurePact_backend';
+import { invoice } from "declarations/invoice";
 
 export const AuthContext = createContext();
 
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }) => {
     const onIdentityUpdate = async () => {
         if (!authClient.getIdentity().getPrincipal().isAnonymous()) { //don't authenticate anonymous identities
             Actor.agentOf(ProcurePact_backend).replaceIdentity(authClient.getIdentity());
+            Actor.agentOf(invoice).replaceIdentity(authClient.getIdentity());
             setIsAuthenticated(authClient.isAuthenticated());
             setPrincipal(authClient.getIdentity().getPrincipal());
         }

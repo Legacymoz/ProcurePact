@@ -1149,8 +1149,9 @@ persistent actor class CLM() = {
     let toIssue = Array.filter<T.Invoice>(allInvoices, func inv = inv.collateralized and (inv.creditIssued == ?false));
     // 3. For each, issue credit and update invoice
     for (invoice in toIssue.vals()) {
-      let _ = await Credit.issueCredit(invoice.contractId);
+      let _ = await Credit.issue(invoice.contractId);
       // Mark creditIssued as true in the invoice canister
+      // 🚩
       let _ = await Invoice.updateCreditIssued(invoice.contractId, true);
     };
   };
