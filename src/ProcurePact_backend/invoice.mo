@@ -128,6 +128,9 @@ persistent actor class Invoice() = this {
   public shared ({ caller }) func collateralize(invoiceId : Nat32) : async Result.Result<Text, Text> {
     switch (Trie.get(invoices, { key = invoiceId; hash = invoiceId }, Nat32.equal)) {
       case (?invoice) {
+        if (caller != invoice.issuer) {
+          return #err("Not allowed!");
+        };
         if (invoice.collateralized) {
           return #err("Invoice is already collateralized!");
         };
