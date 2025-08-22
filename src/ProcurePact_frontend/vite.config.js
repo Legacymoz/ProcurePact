@@ -1,8 +1,10 @@
+import {VitePWA} from "vite-plugin-pwa"
 import { fileURLToPath, URL } from 'url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import environment from 'vite-plugin-environment';
 import dotenv from 'dotenv';
+import { manifestForPlugIn } from "./manifest";
 
 dotenv.config({ path: '../../.env' });
 
@@ -27,6 +29,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    VitePWA(manifestForPlugIn),
     environment("all", { prefix: "CANISTER_" }),
     environment("all", { prefix: "DFX_" }),
   ],
