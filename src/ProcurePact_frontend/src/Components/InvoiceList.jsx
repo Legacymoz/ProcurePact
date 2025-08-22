@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/InvoiceListStyles.css"; // Import the CSS file
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../store/useStore";
+import { useAuth } from "../Hooks/AuthContext";
 // Removed LoanAgreementModal import
 
 
@@ -17,6 +18,7 @@ const InvoiceList = ({ invoices }) => {
   const clearSelectedInvoiceID = useStore(
     (state) => state.clearSelectedInvoiceID
   );
+  const { principal } = useAuth();
 
   const [error, setError] = useState("");
   // Modal state is now managed in parent InvoiceListPage
@@ -71,11 +73,13 @@ const InvoiceList = ({ invoices }) => {
                   <button onClick={() => handleClick(invoice.contractId)}>
                     View
                   </button>
-                  <button
-                    onClick={() => handleAdvanceClick(invoice.contractId)}
-                  >
-                    Get Advance
-                  </button>
+
+                  {invoice.issuer.toText() === principal.toText() &&
+                    <button
+                      onClick={() => handleAdvanceClick(invoice.contractId)}
+                    >
+                      Get Advance
+                    </button>}
                 </div>
               </td>
             </tr>
