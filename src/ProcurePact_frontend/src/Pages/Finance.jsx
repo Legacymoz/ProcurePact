@@ -19,7 +19,7 @@ const Financial = () => {
 
   useEffect(() => {
     const invoices = allInvoices.filter(
-      (invoice) => invoice.collateralized === true
+      (invoice) => invoice.collateralized === true && invoice.issuer.toText() === principal.toText()
     );
     setCollateralizedInvoices(invoices);
     console.log("Filtered collateralizedInvoices:", collateralizedInvoices);
