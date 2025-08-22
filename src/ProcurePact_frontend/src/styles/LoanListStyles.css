@@ -28,6 +28,27 @@
 .loan-invoice-table tbody tr:nth-child(odd) {
   background: #e5e5e5;
 }
+
+.loan-invoice-table td button {
+  background: #ff8800;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 15px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(255,136,0,0.08);
+}
+
+.loan-invoice-table td button:hover,
+.loan-invoice-table td button:focus {
+  background: #e86c00;
+  box-shadow: 0 4px 16px rgba(255,136,0,0.15);
+  outline: none;
+}
+
 .error-text {
   color: red;
 }

@@ -142,7 +142,7 @@ const MainSideNavbar = () => {
     { name: "Profile", icon: <FaUser />, path: "/app/profile" },
     { name: "Connections", icon: <FaUsers />, path: "/app/connections" },
     { name: "Invoices", icon: <FaFileInvoice />, path: "/app/invoices" },
-    { name: "Financial", icon: <FaMoneyBill />, path: "/app/financial" },
+    { name: "Finance", icon: <FaMoneyBill />, path: "/app/finance" },
     { name: "OISY Wallet", icon: <OisyIcon /> },
   ];
 

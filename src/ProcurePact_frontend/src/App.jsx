@@ -15,7 +15,7 @@ import InvoiceList from "./Pages/InvoiceListPage";
 import Dashboard from "./Pages/Dashboard";
 import InvoiceImage from "./Components/InvoiceImage";
 import InvoiceViewPage from "./Pages/InvoiceViewPage";
-import Financial from "./Pages/Financial";
+import Finance from "./Pages/Finance";
 
 
 
@@ -51,7 +51,7 @@ const App = () => {
               <Route path="invoices" element={<InvoiceList />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="viewInvoice" element={<InvoiceViewPage />} />
-              <Route path="financial" element={<Financial />} />
+              <Route path="finance" element={<Finance />} />
             </Route>
           </Routes>
         </BrowserRouter>

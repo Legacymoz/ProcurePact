@@ -10,8 +10,8 @@ const Financial = () => {
   const { fetchAllInvoices, allInvoices } = useStore();
   const [filter, setFilter] = useState("All");
   const { user, isAuthenticated, authClient, principal } = useAuth();
-   const [activeTab, setActiveTab] = useState("All");
-   const [collateralizedInvoices, setCollateralizedInvoices] = useState([]);
+  const [activeTab, setActiveTab] = useState("All");
+  const [collateralizedInvoices, setCollateralizedInvoices] = useState([]);
 
   useEffect(() => {
     fetchAllInvoices(principal);
@@ -29,29 +29,29 @@ const Financial = () => {
     setFilteredInvoices(collateralizedInvoices);
   }, [collateralizedInvoices]);
 
- const filterInvoices = (status) => {
-   setFilter(status);
-   setActiveTab(status);
-   if (status === "All") {
-     setFilteredInvoices(collateralizedInvoices);
-     return;
-   }
+  const filterInvoices = (status) => {
+    setFilter(status);
+    setActiveTab(status);
+    if (status === "All") {
+      setFilteredInvoices(collateralizedInvoices);
+      return;
+    }
 
-   const filtered = collateralizedInvoices.filter(
-     (invoice) => Object.keys(invoice.status)[0] === status
-   );
-   console.log("Inside Filteration", filtered);
-   setFilteredInvoices(filtered);
-   return;
- };
+    const filtered = collateralizedInvoices.filter(
+      (invoice) => Object.keys(invoice.status)[0] === status
+    );
+    console.log("Inside Filteration", filtered);
+    setFilteredInvoices(filtered);
+    return;
+  };
 
- 
+
 
   return (
     <div className="main-invoice-container">
       <div className="sub-invoice-container">
         <div className="header">
-          <h1 style={{ fontSize: "50px" }}>Loans</h1>
+          <h1 style={{ fontSize: "50px" }}>My Loans</h1>
         </div>
 
         <LoanOverview invoices={filteredInvoices} />
@@ -79,6 +79,16 @@ const Financial = () => {
         <div className="invoice-container">
           <LoanList invoices={filteredInvoices} />
         </div>
+      </div>
+      <div className="sub-invoice-container">
+        <div className="header">
+          <h1 style={{ fontSize: "50px" }}>My NFTs</h1>
+        </div>
+        {/**
+         * List all NFTs here
+         * 
+         */}
+         <h2>Coming soon</h2>
       </div>
     </div>
   );

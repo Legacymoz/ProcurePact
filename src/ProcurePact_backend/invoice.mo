@@ -8,6 +8,7 @@ import Ledger "canister:icrc1_ledger_canister";
 import Array "mo:base/Array";
 import Error "mo:base/Error";
 import Debug "mo:base/Debug";
+import ICRC7 "mo:icrc7-mo";
 
 persistent actor class Invoice() = this {
 
@@ -200,6 +201,7 @@ persistent actor class Invoice() = this {
     };
   };
 
+  //handles overdue invoices
   func handleOverdue() : async () {
     let now = Time.now();
     let invoicesArray = Trie.toArray<Nat32, T.Invoice, { invoiceId : Nat32; invoice : T.Invoice }>(

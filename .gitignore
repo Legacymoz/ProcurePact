@@ -25,3 +25,5 @@ dist/
 .env
 
 deploy.sh
+
+.mops
