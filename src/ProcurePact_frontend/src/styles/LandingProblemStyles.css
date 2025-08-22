@@ -52,6 +52,38 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.statsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  background: white;
+  border-radius: 10px;
+  padding: 30px 20px;
+  width: 220px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+}
+
+.statCard h3 {
+  font-size: 36px;
+  color: orange; /* Subtle orange highlight */
+  margin-bottom: 10px;
+}
+
+.statCard p {
+  font-size: 14px;
+  color: #333;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .contentContainer {
@@ -63,9 +95,11 @@
     font-size: 22px;
     margin-bottom: 20px;
   }
+}
 
-  .tumainiStory {
-    text-align: left;
+@media (max-width: 900px) {
+  .statCard {
+    width: 100%;
   }
 }
 
@@ -91,11 +125,26 @@
     font-size: 18px;
   }
 
+  .statCard {
+    width: 280px;
+    padding: 40px 30px;
+  }
+
+  .statCard h3 {
+    font-size: 48px;
+  }
+
+  .statCard p {
+    font-size: 20px;
+  }
+
   .contentContainer {
     gap: 60px; /* increase spacing between text and image */
   }
 
   .problemImage img {
     max-width: 800px; /* scale up images */
+
+    
   }
 }

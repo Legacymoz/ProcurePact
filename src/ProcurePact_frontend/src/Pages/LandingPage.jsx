@@ -1,10 +1,8 @@
 import React from 'react'
-import HeroPage from '../Components/HeroPage'
+import HeroPage from '../Components/Landing/HeroPage'
 import LandingProblem from '../Components/Landing/LandingProblem'
 import LandingSolution from '../Components/Landing/LandingSolution'
-import LandingFeatures from '../Components/Landing/LandingFeatures'
-import SocialProof from '../Components/SocialProof'
-import FinalCTA from '../Components/FinalCTA'
+import FinalCTA from '../Components/Landing/FinalCTA'
 import Footer from '../Components/Landing/LandingFooter'
 import '../styles/LandingPageStyles.css'
 import LandingPageNavbar from '../Components/Landing/LandingPageNavbar'
@@ -18,9 +16,7 @@ const LandingPage = () => {
       <div className="content">
         <HeroPage />
         <LandingProblem />
-        <LandingSolution />
-        <LandingFeatures />
-        <SocialProof />
+        <LandingSolution/>
         <FinalCTA />
         <Footer />
       </div>

@@ -4,49 +4,78 @@ import "../../styles/LandingSolutionStyles.css";
 const LandingSolution = () => {
   return (
     <section className="solutionSection" id="solution">
-      <h2>ProcurePact: The Trusted Online Platform for Seamless Trade</h2>
+      <h2>ProcurePact: Powering SME Trade with Liquidity & Trust</h2>
       <p className="solutionIntro">
-        ProcurePact is a single, trusted platform designed to solve the biggest
-        challenges faced by SMEs.
+        We give SMEs the tools to trade confidently. Instant payments, access to
+        credit, and seamless contract management in one secure platform.
       </p>
 
-      <div className="pillarsContainer">
-        <div className="pillarCard">
+      <div className="featuresContainer">
+        <div className="featureCard">
           <img
-            src="../../../public/Landing/reliable-Payment.png"
-            alt="Reliable Payment Assurance"
-            className="pillarImage"
+            src="../../../public/Landing/usdt.png"
+            alt="Instant Stablecoin Payments"
+            className="featureImage"
           />
-          <h3>Reliable Payment Assurance</h3>
+          <h3>Instant Stablecoin Payments</h3>
           <p>
-            Ensure secure and timely payments for every transaction, giving SMEs
-            peace of mind and financial stability.
+            Settle deals instantly with escrow-backed stablecoin payments. No
+            more delays, fewer disputes, and stronger vendor trust.
           </p>
         </div>
 
-        <div className="pillarCard">
+        <div className="featureCard">
           <img
-            src="../../../public/Landing/Credit.png"
-            alt="Flexible Access to Credit"
-            className="pillarImage"
+            src="../../../public/Landing/invoice.png"
+            alt="Invoice-Backed Credit"
+            className="featureImage"
           />
-          <h3>Flexible Access to Credit</h3>
+          <h3>Invoice-Backed Credit</h3>
           <p>
-            Unlock instant liquidity with tailored financing options to keep
-            your operations running smoothly.
+            Turn pending invoices into working capital. Unlock short-term
+            liquidity when you need it most, without traditional collateral.
           </p>
         </div>
 
-        <div className="pillarCard">
+        <div className="featureCard">
           <img
             src="../../../public/Landing/smartContract.png"
-            alt="Smart Contract Management"
-            className="pillarImage"
+            alt="Smart Contract Lifecycle"
+            className="featureImage"
           />
-          <h3>Smart Contract Management</h3>
+          <h3>Smart Contract Lifecycle</h3>
           <p>
-            Automate and manage trade contracts with full transparency, reducing
-            disputes and streamlining operations.
+            Manage vendor agreements, delivery notes, and invoices in one place.
+            Automated workflows reduce friction and speed up trade.
+          </p>
+        </div>
+
+        <div className="featureCard">
+          <img
+            src="../../../public/Landing/fraud-proof.png"
+            alt="Fraud-Proof Transactions"
+            className="featureImage"
+          />
+          <h3>Fraud-Proof Transactions</h3>
+          <p>
+            Every record is secured on an immutable blockchain ledger, ensuring
+            end-to-end transparency and fraud prevention.
+          </p>
+        </div>
+
+        <div className="featureCard comingSoon">
+          <img
+            src="../../../public/Landing/analytics.jpg"
+            alt="Real-Time Business Intelligence"
+            className="featureImage"
+          />
+          <h3>
+            Real-Time Business Intelligence <span className="comingSoonTag">Coming Soon</span>
+          </h3>
+          <p>
+            Gain instant insights into payments, cash flow, and trade
+            performance with real-time analytics—helping SMEs make smarter,
+            data-driven decisions.
           </p>
         </div>
       </div>

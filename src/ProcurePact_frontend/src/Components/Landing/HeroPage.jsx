@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/HeroPageStyles.css";
+import "../../styles/HeroPageStyles.css";
 import { useNavigate } from "react-router-dom";
 
 const HeroPage = () => {
@@ -10,8 +10,7 @@ const HeroPage = () => {
       {/* Top heading */}
       <div className="heroHeading">
         <h1>
-          Secure Your Trade.{" "}
-          <span className="highlight-text">Automate Your Finance.</span>
+          Seamless Trade. <span className="highlight-text">Instant Cash Flow. </span>Smarter Growth.
         </h1>
         <p className="tagline">Grow your Business with Us</p>
       </div>
@@ -20,9 +19,7 @@ const HeroPage = () => {
       <div className="contentSection">
         <div className="infoContainer">
           <p>
-            A trusted online platform for small and medium-sized enterprises to
-            ensure reliable payments, unlock instant liquidity, and streamline
-            trade operations.
+            We are a secure platform for SMEs to trade confidently—fast payments, easy access to credit, and streamlined vendor agreements across markets
           </p>
           <button className="heroButton" onClick={() => navigate("/")}>
             Get Started

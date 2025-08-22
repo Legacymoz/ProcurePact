@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/FinalCTAStyles.css";
+import "../../styles/FinalCTAStyles.css";
 
 const FinalCTA = () => {
   return (

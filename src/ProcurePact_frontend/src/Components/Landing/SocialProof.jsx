@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/SocialProofStyles.css";
+import "../../styles/SocialProofStyles.css";
 import SocialProofChart from "./SocialProofChart";
 
 
