@@ -3,6 +3,7 @@ import "../styles/LayoutStyles.css";
 import MainNavbar from "./MainNavbar";
 import { Outlet } from "react-router-dom";
 import MainSideNavbar from "./MainSideNavbar";
+import ProcureChat from "./ProcureChat/ProcureChat";
 
 const Layout = () => {
   return (
@@ -14,6 +15,7 @@ const Layout = () => {
 
       <div className="main-content">
         <Outlet />
+        <ProcureChat/>
       </div>
     </div>
   );
