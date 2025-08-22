@@ -80,7 +80,7 @@ const Financial = () => {
           <LoanList invoices={filteredInvoices} />
         </div>
       </div>
-      <div className="sub-invoice-container">
+      <div className="sub-invoice-container mt-3">
         <div className="header">
           <h1 style={{ fontSize: "50px" }}>My NFTs</h1>
         </div>
@@ -88,7 +88,7 @@ const Financial = () => {
          * List all NFTs here
          * 
          */}
-         <h2>Coming soon</h2>
+        <h2>Coming soon</h2>
       </div>
     </div>
   );
