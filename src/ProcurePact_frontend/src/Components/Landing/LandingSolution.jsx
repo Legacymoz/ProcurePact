@@ -13,7 +13,7 @@ const LandingSolution = () => {
       <div className="featuresContainer">
         <div className="featureCard">
           <img
-            src="../../../public/Landing/usdt.png"
+            src="/Landing/usdt.png"
             alt="Instant Stablecoin Payments"
             className="featureImage"
           />
@@ -26,7 +26,7 @@ const LandingSolution = () => {
 
         <div className="featureCard">
           <img
-            src="../../../public/Landing/invoice.png"
+            src="/Landing/invoice.png"
             alt="Invoice-Backed Credit"
             className="featureImage"
           />
@@ -39,7 +39,7 @@ const LandingSolution = () => {
 
         <div className="featureCard">
           <img
-            src="../../../public/Landing/smartContract.png"
+            src="/Landing/smartContract.png"
             alt="Smart Contract Lifecycle"
             className="featureImage"
           />
@@ -52,7 +52,7 @@ const LandingSolution = () => {
 
         <div className="featureCard">
           <img
-            src="../../../public/Landing/fraud-proof.png"
+            src="/Landing/fraud-proof.png"
             alt="Fraud-Proof Transactions"
             className="featureImage"
           />
@@ -65,7 +65,7 @@ const LandingSolution = () => {
 
         <div className="featureCard comingSoon">
           <img
-            src="../../../public/Landing/analytics.jpg"
+            src="/Landing/analytics.jpg"
             alt="Real-Time Business Intelligence"
             className="featureImage"
           />

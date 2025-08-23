@@ -27,7 +27,7 @@ const HeroPage = () => {
         </div>
 
         <div className="imageContainer">
-          <img src="/cartoon-handshake.jpg" alt="The handshake" />
+          <img src="/Landing/cartoon-handshake.jpg" alt="The handshake" />
         </div>
       </div>
     </div>

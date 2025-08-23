@@ -34,7 +34,7 @@ const LandingProblem = () => {
         </div>
         <div className="problemImage">
           <img
-            src="../../public/business-owner.jpg"
+            src="Landing/business-owner.jpg"
             alt="Frustrated SME owner facing payment delays"
           />
         </div>

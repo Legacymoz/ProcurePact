@@ -14,7 +14,7 @@ const FinalCTA = () => {
       </div>
       <div className="ctaImageWrapper">
         <img
-          src="../../../public/Landing/Laptop-Interface.png"
+          src="/Landing/Laptop-Interface.png"
           alt="ProcurePact Dashboard"
           className="ctaImage"
         />
