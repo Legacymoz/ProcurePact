@@ -3,28 +3,36 @@ ProcurePact empowers SMEs in cross-border trade with instant payments, one-click
 
 ## 🚀 Features
 - Procure-to-Pay
+
 Full contract lifecycle management(CLM) for vendor agreements, from contract creation, document management, e.g, delivery notes and invoices, to payment for goods and services delivered.
 
 - ckUSDT stablecoin settlement
+
 Pay for vendor agreements with ckUSDT stablecoin, enabling low-cost cross-border procurement.
 
 - Locking ckUSDT in Escrow
+
 On-Delivery agreements lock ckUSDT stablecoins in an escrow account, assuring suppliers of payment once deliveries are made, while protecting buyers if suppliers default
 
 - Invoice-backed stablecoin credit
+
 Convert pending invoices into short-term loans, unlocking instant liquidity without traditional collateral requirements. At the click of a button, get ckUSDT deposited into your wallet
 
 - Buyer-Supplier Relationship Management
+
 Build and manage your network of customers and suppliers. Request new connections and set up vendor agreements seamlessly.
 
 
 - OISY Crypto wallet
+
 A built-in OISY wallet enables seamless deposits and withdrawals of tokens
 
 - Progressive Web App (PWA)
+
 Our Progressive Web App (PWA) works on mobile, desktop, and web, offering native-like performance across devices.
 
 - Internet Identity Authentication
+
 Secure on-chain authentication with Internet Identity
 
 ## 🚀 Beta (Partially Implemented)
