@@ -33,7 +33,7 @@ ProcurePact empowers SMEs in cross-border trade with instant payments, one-click
 - User Interface
 
 ## 🚀 Running the project locally
-# Prerequisites
+### Prerequisites
 - Node.js
 - IC sdk
 
