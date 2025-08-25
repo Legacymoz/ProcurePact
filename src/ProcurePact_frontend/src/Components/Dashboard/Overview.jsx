@@ -77,7 +77,7 @@ const Overview = () => {
           </div>
           <div className="overview-card-right">
             <div className="overview-card-value">
-              {balance !== null ? `$${balance}` : "Loading..."}
+              {balance !== null ? `USDT ${balance}` : "Loading..."}
             </div>
             <div className="overview-card-label">Balance</div>
           </div>

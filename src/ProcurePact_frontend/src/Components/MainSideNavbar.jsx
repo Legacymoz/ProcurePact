@@ -170,8 +170,9 @@ const MainSideNavbar = () => {
       </div>
       {/* Login/Logout Section */}
       <div className="auth-section" onClick={isAuthenticated ? logout : login}>
+        {<><img src="icp_logo.ico" alt="ICP"/><span>  </span></>}
         {isAuthenticated ? <FaSignOutAlt /> : <FaSignInAlt />}
-        <span>{isAuthenticated ? "Logout" : "Login"}</span>
+        <span>{isAuthenticated ? "Logout" : " Login"}</span>
       </div>
     </div>
   );

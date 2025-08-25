@@ -63,7 +63,9 @@ const InvoiceList = ({ invoices }) => {
           {invoices.map((invoice, index) => (
             <tr key={index}>
               <td>{invoice.contractId}</td>
-              <td className="recipient-cell">{invoice.recipient.toText()}</td>
+              <td className="recipient-cell">
+                <div className="recipient-text">{invoice.recipient.toText()}</div>
+              </td>
               <td>{formatNanoDate(invoice.createdAt)}</td>
               <td>{formatNanoDate(invoice.dueDate)}</td>
               <td>{invoice.totalAmount}</td>

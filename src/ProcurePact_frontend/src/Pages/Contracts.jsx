@@ -56,10 +56,13 @@ const Contracts = () => {
     const statusKey = Object.keys(contract?.status || {})[0] || "";
     const paymentTerm = Object.keys(contract?.paymentTerm[0] || {})[0] || "";
 
+    console.log(statusKey, paymentTerm);
+
     if (statusKey === "Draft") {
       navigate(`/app/contract/${contractId}`);
     } else if (statusKey === "Active") {
       if (paymentTerm === "OnDelivery") {
+        console.log("called");
         navigate(`/app/contract/lock-tokens/${contractId}`);
       } else if (paymentTerm == "Deferred") {
         navigate(`/app/contract/delivery-note/${contractId}`);

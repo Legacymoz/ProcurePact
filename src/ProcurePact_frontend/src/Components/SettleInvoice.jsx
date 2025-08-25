@@ -47,11 +47,13 @@ const SettleInvoice = () => {
     };
 
     const getUserBalance = async () => {
+      if(!principal) return;
         try {
             const bal = await ledger.balance({
                 owner: principal,
-                subaccount: [], // or: undefined if not using subaccounts
+                subaccount: null, // or: undefined if not using subaccounts
             });
+
             setUserBalance(Number(bal));
         } catch (error) {
             console.error("Error fetching user balance:", error);
@@ -236,7 +238,7 @@ const SettleInvoice = () => {
                 </section>
                 <section className="invoice-section">
                     <h3>Pay Invoice</h3>
-                    <p>Available wallet balance: ${userBalance}</p>
+                    <p>Available wallet balance: USDT {userBalance}</p>
                     <button className="btn btn-primary" onClick={() => handleSubmit(fetchedInvoice?.totalAmount)}>
                         Pay
                     </button>

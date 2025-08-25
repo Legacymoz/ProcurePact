@@ -58,6 +58,15 @@
   scrollbar-width: none; /* Hide scrollbar by default (Firefox) */
 
 }
+
+.recipient-text {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+
+}
 /* Show scrollbar on hover (Firefox) */
 .invoice-table td.recipient-cell:hover {
   scrollbar-width: thin;
