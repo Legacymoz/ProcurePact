@@ -6,6 +6,7 @@ ProcurePact is a procure-to-pay platform empowering SMEs engaged in cross-border
 
 - [Features](#features)
 - [Beta (Partially Implemented)](#beta-partially-implemented)
+- [Tech Stack](#tech-stack)
 - [Canister Structure](#canister-structure)
 - [Running the Project Locally](#running-the-project-locally)
 - [Examples](#examples)
@@ -13,7 +14,8 @@ ProcurePact is a procure-to-pay platform empowering SMEs engaged in cross-border
 
 ## Features
 
-Full contract lifecycle management (CLM) for vendor agreements, from contract creation, document management, e.g, delivery notes and invoices, to payment for goods and services delivered.
+### Procure-to-pay
+Full lifecycle management for vendor agreements, from contract creation, document management, e.g, delivery notes and invoices, to payment for goods and services delivered.
 
 ### ckUSDT Stablecoin Settlement
 
@@ -47,6 +49,11 @@ Secure on-chain authentication with Internet Identity.
 
 - AI chatbot for real-time business intelligence - ProcureChat
 - Tokenization of invoices to NFTs for third party asset trading
+
+## Tech Stack
+
+Backend: Motoko
+Frontend: React+Vite
 
 ## Canister Structure
 
