@@ -79,6 +79,8 @@ User Interface.
 
 ## Running the Project Locally
 
+⚠️Note: The main branch is for testing and uses an ICRC ledger to deploy a dummy token for local testing. The mainnet branch uses the 3rd party ckUSDT ledger with id ```cngnf-vqaaa-aaaar-qag4q-cai``` on the mainnet.
+
 ### Prerequisites
 
 1. **Clone the repository**
