@@ -21,7 +21,7 @@ const HeroPage = () => {
           <p>
             We are a secure platform for SMEs to trade confidently—fast payments, easy access to credit, and streamlined vendor agreements across markets
           </p>
-          <button className="heroButton" onClick={() => navigate("/")}>
+          <button className="heroButton" onClick={() => navigate("/app")}>
             Get Started
           </button>
         </div>
