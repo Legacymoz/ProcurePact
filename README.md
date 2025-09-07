@@ -2,6 +2,8 @@
 
 ProcurePact is a procure-to-pay platform empowering SMEs engaged in cross-border trade with instant payments, one-click invoice-backed loans, and business intelligence to keep cash flowing and decisions smart.
 
+Click the link to view the demo, https://6nfnf-pqaaa-aaaab-absoq-cai.icp0.io/
+
 ## Table of Contents
 
 - [Features](#features)
